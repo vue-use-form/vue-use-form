@@ -1,7 +1,5 @@
 import type { RegisterOptions } from './validator'
 
-export interface Field { value: any; rule: RegisterOptions }
-
 export interface FieldError {
   type: keyof RegisterOptions
   // types?: MultipleFieldErrors
