@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import { reactive, ref, unref } from 'vue'
+import { reactive, ref, toRefs, unref } from 'vue'
 import type { FormState, UseFormProps, UseFormReturn } from '../types/form'
 import type { Field, FieldElement, FieldValues } from '../types/filed'
 
@@ -19,7 +19,7 @@ export function createForm<
 ) {
   const fields = {} as Record<keyof TFieldValues, Field>
 
-  const formState = reactive<FormState<TFieldValues>>({
+  const formState = {
     isDirty: false,
     isValidating: false,
     // dirtyFields: {} as FieldNamesMarkedBoolean<TFieldValues>,
@@ -29,8 +29,8 @@ export function createForm<
     isSubmitting: false,
     isSubmitSuccessful: false,
     isValid: false,
-    errors: {} as FieldErrors<TFieldValues>,
-  })
+    errors: reactive({}) as FieldErrors<TFieldValues>,
+  } as FormState<TFieldValues>
 
   const _transformRef = (ref: Ref<FieldElement | any>) => {
     const unwrap = unref(ref)
@@ -38,10 +38,10 @@ export function createForm<
     if (isHTMLElement(unwrap))
       el = unwrap
 
-    else if (isHTMLElement(unwrap.$el))
+    else if (isHTMLElement(unwrap?.$el))
       el = unwrap.$el
 
-    else if (isHTMLElement(unwrap.ref.value))
+    else if (isHTMLElement(unwrap?.ref?.value))
       el = unwrap.ref.value
 
     if ((el as FieldElement).tagName === 'input' || (el as FieldElement).tagName === 'select' || (el as FieldElement).tagName === 'textarea')
@@ -58,7 +58,9 @@ export function createForm<
 
   const onChange = (evt?: Event) => {
     formState.isDirty = true
+
     validateFields()
+    console.log(formState.errors)
   }
 
   const register = (name: keyof TFieldValues, options: RegisterOptions) => {
@@ -96,8 +98,12 @@ export function createForm<
       },
     }
   }
+
+  const useFiled = (name: keyof TFieldValues, options: RegisterOptions) => () => register(name, options)
+
   return {
     register,
-    formState,
+    formState: toRefs(formState),
+    useFiled,
   }
 }
