@@ -10,15 +10,15 @@ interface Inputs {
 const { register } = useForm<Inputs>()
 
 const txt = ref('')
-
-function test() {
-  console.log('1')
-}
+const radio = ref()
 </script>
 
 <template>
-  <el-input :="register('username', {})" />
-  <input :="register('password', {})">
+  <el-input
+    :="register('username', {
+    required: { value: true, message: '用户名不能为空' },
+  })"
+  />
 </template>
 
 <style>
