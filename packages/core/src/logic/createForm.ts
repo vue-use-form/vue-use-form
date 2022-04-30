@@ -1,12 +1,11 @@
 import type { Ref } from 'vue'
 import { reactive, ref, unref } from 'vue'
-
 import type { FormState, UseFormProps, UseFormReturn } from '../types/form'
-import type { FieldValues } from '../types/filed'
+import type { FieldElement, FieldValues } from '../types/filed'
 
 import type { Field, FieldErrors } from '../types/errors'
 import type { RegisterOptions } from '../types/validator'
-import { deleteProperty, isHTMLElement, isString } from '../utils'
+import { deleteProperty, isHTMLElement, isString } from '../utils/index'
 import { validateField } from './validate'
 
 const onModelValueUpdate = 'onUpdate:modelValue'
@@ -32,44 +31,54 @@ export function createForm<
     errors: {} as FieldErrors<TFieldValues>,
   })
 
-  const _transformRef = (ref: Ref<HTMLElement | any>) => {
+  const _transformRef = (ref: Ref<FieldElement | any>) => {
     const unwrap = unref(ref)
-
+    let el
     if (isHTMLElement(unwrap))
-      return unwrap
+      el = unwrap
 
-    if (isHTMLElement(unwrap.$el))
-      return unwrap.$el
+    else if (isHTMLElement(unwrap.$el))
+      el = unwrap.$el
 
-    if (isHTMLElement(unwrap?.ref.value))
-      return unwrap.ref.value
+    else if (isHTMLElement(unwrap.ref.value))
+      el = unwrap.ref.value
+
+    if ((el as FieldElement).tagName === 'input' || (el as FieldElement).tagName === 'select' || (el as FieldElement).tagName === 'textarea')
+      return el
+
+    return el.querySelectorAll('input, select, textarea')[0]
   }
 
   const validateFields = () => {
     Object.keys(fields).forEach((key) => {
-      const filed = fields[key]
-      ;(Object.keys(filed.rule) as (keyof RegisterOptions)[]).forEach((ruleKey) => {
-        const validateRes = validateField(filed.rule[ruleKey])
-      })
+      const validateRes = validateField(fields[key])
     })
   }
 
   const onChange = (evt?: Event) => {
     formState.isDirty = true
+
+    if (props.mode === 'onChange')
+      validateFields()
   }
 
   const register = (name: keyof TFieldValues, options: RegisterOptions) => {
     if (options.defaultValue) {
-      fields[name].value = options.defaultValue
+      fields[name].inputValue = options.defaultValue
       deleteProperty(options, 'defaultValue')
     }
 
-    const modelVal = ref(fields[name]?.value || '')
-    const elRef = ref<HTMLElement | null>(null)
+    const modelVal = ref(fields[name]?.inputValue || '')
+    const elRef = ref<FieldElement | null>(null)
 
-    function assignBindAttrs(el: HTMLElement, value: any) {
+    function assignBindAttrs(el: FieldElement, value: any, newValue?: any) {
       elRef.value = el
       modelVal.value = value
+      fields[name] = {
+        inputValue: newValue,
+        rule: { ...options },
+        ref: elRef.value!,
+      }
     }
 
     return {
@@ -77,11 +86,7 @@ export function createForm<
       modelValue: modelVal.value,
       onBlur: onChange,
       [onModelValueUpdate]: (newValue: TFieldValues[keyof TFieldValues]) => {
-        fields[name] = {
-          value: newValue,
-          rule: { ...options },
-        }
-        assignBindAttrs(_transformRef(elRef), modelVal)
+        assignBindAttrs(_transformRef(elRef), modelVal, newValue)
         onChange()
       },
       onInput(evt: InputEvent) {
