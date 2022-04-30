@@ -52,6 +52,7 @@ export function createForm<
 
   const validateFields = () => {
     Object.keys(fields).forEach((key) => {
+      // TODO solve type problem
       formState.errors = validateField(fields[key])
     })
   }
@@ -60,7 +61,6 @@ export function createForm<
     formState.isDirty = true
 
     validateFields()
-    console.log(formState.errors)
   }
 
   const register = (name: keyof TFieldValues, options: RegisterOptions) => {
