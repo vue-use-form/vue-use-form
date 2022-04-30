@@ -8,3 +8,4 @@ export const isObject = (val: unknown): val is Record<any, any> =>
   val !== null && typeof val === 'object'
 
 export const isHTMLElement = (val: unknown): val is HTMLElement => val instanceof HTMLElement
+
