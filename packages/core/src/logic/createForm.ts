@@ -1,11 +1,12 @@
 import type { Ref } from 'vue'
 import { reactive, ref, unref } from 'vue'
 import type { FormState, UseFormProps, UseFormReturn } from '../types/form'
-import type { FieldElement, FieldValues } from '../types/filed'
+import type { Field, FieldElement, FieldValues } from '../types/filed'
 
-import type { Field, FieldErrors } from '../types/errors'
+import type { FieldError, FieldErrors } from '../types/errors'
 import type { RegisterOptions } from '../types/validator'
 import { deleteProperty, isHTMLElement, isString } from '../utils/index'
+
 import { validateField } from './validate'
 
 const onModelValueUpdate = 'onUpdate:modelValue'
@@ -51,15 +52,13 @@ export function createForm<
 
   const validateFields = () => {
     Object.keys(fields).forEach((key) => {
-      const validateRes = validateField(fields[key])
+      formState.errors = validateField(fields[key])
     })
   }
 
   const onChange = (evt?: Event) => {
     formState.isDirty = true
-
-    if (props.mode === 'onChange')
-      validateFields()
+    validateFields()
   }
 
   const register = (name: keyof TFieldValues, options: RegisterOptions) => {
@@ -78,6 +77,7 @@ export function createForm<
         inputValue: newValue,
         rule: { ...options },
         ref: elRef.value!,
+        name: name as string,
       }
     }
 

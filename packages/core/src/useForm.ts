@@ -6,8 +6,12 @@ export function useForm<
   TFieldValues extends FieldValues = FieldValues,
   TContext = any,
   >(
-  props?: UseFormProps<TFieldValues, TContext>,
+  props: UseFormProps<TFieldValues, TContext> = {},
 ) {
+  props = {
+    mode: 'onChange',
+    ...props,
+  }
   return {
     ...createForm<TFieldValues, TContext>(props),
   }

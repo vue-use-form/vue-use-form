@@ -8,4 +8,5 @@ export interface Field {
   inputValue: any
   rule: RegisterOptions
   ref: FieldElement
+  name: string
 }

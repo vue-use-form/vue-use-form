@@ -1,9 +1,11 @@
 import type { RegisterOptions } from './validator'
+import type { FieldElement } from './filed'
 
-export interface FieldError {
+export type FieldError = Partial<{
   type: keyof RegisterOptions
   // types?: MultipleFieldErrors
   message?: string
-}
+  ref?: FieldElement
+}>
 
 export type FieldErrors<TFieldValues> = Partial<Record<keyof TFieldValues, FieldError>>
