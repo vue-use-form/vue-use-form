@@ -1,0 +1,7 @@
+{
+  "extends": "@antfu",
+  "rules": {
+    "quote-props": "off",
+    "no-useless-return": "off",
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "vue-composable-form",
+  "version": "0.0.0",
+  "description": "Some composables form validator for vue",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Snowingfox",
+  "license": "MIT",
+  "peerDependencies": {
+    "vue": "^3.2.0"
+  },
+  "dependencies": {
+    "vue": "^3.2.0"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.21.1",
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.9",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-typescript": "^7.16.7",
+    "eslint": "^8.14.0",
+    "jest": "^28.0.2",
+    "rollup": "^2.70.2",
+    "typescript": "^4.6.4"
+  }
+}
