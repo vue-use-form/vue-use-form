@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build-docs:en": "cd docs/en && npm run build",
-    "build-docs:cn": "cd docs/zh-CN && npm run build"
+    "build-docs:cn": "cd docs/zh-CN && npm run build",
+    "build-examples": "cd examples && npm run build"
   },
   "author": "Snowingfox",
   "license": "MIT",
