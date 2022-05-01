@@ -52,8 +52,7 @@ export function createForm<
 
   const validateFields = () => {
     Object.keys(fields).forEach((key) => {
-      // TODO solve type problem
-      formState.errors = validateField(fields[key])
+      formState.errors = validateField(fields[key]) as Record<keyof TFieldValues, FieldError>
     })
   }
 
