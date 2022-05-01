@@ -16,6 +16,7 @@ const inputValidate = useFiled('username', {
 </script>
 
 <template>
+  {{ errors }}
   <el-input
     v-bind="inputValidate()"
   />
