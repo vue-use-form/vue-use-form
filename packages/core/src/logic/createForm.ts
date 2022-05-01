@@ -7,6 +7,7 @@ import type { FieldError, FieldErrors } from '../types/errors'
 import type { RegisterOptions } from '../types/validator'
 import { deleteProperty, isHTMLElement, isString } from '../utils/index'
 
+import type { Keys } from '../types/utils'
 import { validateField } from './validate'
 
 const onModelValueUpdate = 'onUpdate:modelValue'
@@ -17,7 +18,9 @@ export function createForm<
   >(
   props: UseFormProps<TFieldValues, TContext> = {},
 ) {
-  const fields = {} as Record<keyof TFieldValues, Field>
+  type FiledKeys = Keys<TFieldValues>
+
+  const fields = {} as Record<FiledKeys, Field>
 
   const formState = {
     isDirty: false,
@@ -29,7 +32,7 @@ export function createForm<
     isSubmitting: false,
     isSubmitSuccessful: false,
     isValid: false,
-    errors: reactive({}) as FieldErrors<TFieldValues>,
+    errors: {} as FieldErrors<TFieldValues>,
   } as FormState<TFieldValues>
 
   const _transformRef = (ref: Ref<FieldElement | any>) => {
@@ -52,7 +55,7 @@ export function createForm<
 
   const validateFields = () => {
     Object.keys(fields).forEach((key) => {
-      formState.errors = validateField(fields[key]) as Record<keyof TFieldValues, FieldError>
+      (formState.errors[key] as FieldError) = validateField(fields[key])
     })
   }
 
@@ -62,7 +65,7 @@ export function createForm<
     validateFields()
   }
 
-  const register = (name: keyof TFieldValues, options: RegisterOptions) => {
+  const register = (name: FiledKeys, options: RegisterOptions) => {
     if (options.defaultValue) {
       fields[name].inputValue = options.defaultValue
       deleteProperty(options, 'defaultValue')
@@ -86,7 +89,7 @@ export function createForm<
       ref: elRef,
       modelValue: modelVal.value,
       onBlur: onChange,
-      [onModelValueUpdate]: (newValue: TFieldValues[keyof TFieldValues]) => {
+      [onModelValueUpdate]: (newValue: TFieldValues[FiledKeys]) => {
         assignBindAttrs(_transformRef(elRef), modelVal, newValue)
         onChange()
       },
@@ -98,7 +101,7 @@ export function createForm<
     }
   }
 
-  const useFiled = (name: keyof TFieldValues, options: RegisterOptions) => () => register(name, options)
+  const useFiled = (name: FiledKeys, options: RegisterOptions) => () => register(name, options)
 
   return {
     register,

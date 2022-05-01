@@ -6,7 +6,7 @@ import { transformMessage } from '../utils/transformMessage'
 export function validateField(
   field: Field,
   validateAllFieldCriteria = false,
-): Record<string, FieldError> {
+): Partial<FieldError> {
   const { inputValue, name } = field
   const {
     required,
@@ -32,13 +32,13 @@ export function validateField(
   const isCheckBox = isCheckBoxInput(el)
   const isRadioOrCheckBox = isRadio || isCheckBox
 
-  const error: Record<string, FieldError> = {}
+  let error: FieldError = {}
 
   if (required && !isRadioOrCheckBox) {
     const { value, message } = transformMessage(required)
 
     if (isEmpty(inputValue) && value) {
-      error[name] = {
+      error = {
         type: 'required',
         message,
         ref: el,
