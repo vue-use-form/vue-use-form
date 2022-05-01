@@ -1,0 +1,8 @@
+[build.environment]
+  NPM_FLAGS = "--version"
+  NODE_OPTIONS = "--max_old_space_size=4096"
+  NODE_VERSION = "16"
+
+[build]
+  publish = "docs/en/.vitepress/dist"
+  command = "npx pnpm i --store=node_modules/.pnpm-store && npm run install-fonts && npm run build-docs:en"
