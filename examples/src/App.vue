@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import { isReactive, ref, watchEffect } from 'vue'
 import { useForm } from '../../packages/core/src/useForm'
 
 interface Inputs {
@@ -7,17 +7,17 @@ interface Inputs {
   password: string
 }
 
-const { register } = useForm<Inputs>()
+const { register, formState: { errors }, useFiled } = useForm<Inputs>()
 
-const txt = ref('')
-const radio = ref()
+const inputValidate = useFiled('username', {
+  required: { value: true, message: '用户名不能为空' },
+})
+
 </script>
 
 <template>
   <el-input
-    :="register('username', {
-    required: { value: true, message: '用户名不能为空' },
-  })"
+    v-bind="inputValidate()"
   />
 </template>
 
