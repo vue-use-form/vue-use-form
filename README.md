@@ -4,7 +4,7 @@ vue-composable-form
 
 
 <p align="center">
- <a>Documentation</a>
+ <a href="">Documentation</a>
 </p>
 <p align="center">
  <a href="">中文文档</a>
