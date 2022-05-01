@@ -1,4 +1,5 @@
-import type { DefaultValues } from './utils'
+import type { ToRefs } from '@vue/reactivity'
+import type { DefaultValues, UnpackNestedValue } from './utils'
 import type { FieldErrors } from './errors'
 import type { FieldValues } from './filed'
 
@@ -26,6 +27,21 @@ export type UseFormProps<TFieldValues, TContext> = Partial<{
   delayError: number
 }>
 
+export type SubmitHandler<TFieldValues extends FieldValues> = (
+  data: UnpackNestedValue<TFieldValues>,
+  event?: Event,
+) => any | Promise<any>
+
+export type SubmitErrorHandler<TFieldValues extends FieldValues> = (
+  errors: FieldErrors<TFieldValues>,
+  event?: Event,
+) => any | Promise<any>
+
+export type UseFormHandleSubmit<TFieldValues extends FieldValues> = (
+  onValid: SubmitHandler<TFieldValues>,
+  onInvalid?: SubmitErrorHandler<TFieldValues>,
+) => (e?: Event) => Promise<void>
+
 export type UseFormWatch<T> = T
 
 export type UseFormClearErrors<T> = T
@@ -44,13 +60,13 @@ export type UseFormResetField<T> = T
 
 export type UseFormReset<T> = T
 
-export type UseFormHandleSubmit<T> = T
-
 export type UseFormUnregister<T> = T
 
 export type UseFormRegister<T> = T
 
 export type UseFormSetFocus<T> = T
+
+export type UseFormUseRegister<T> = () => UseFormRegister<T>
 
 export interface UseFormReturn<
   TFieldValues extends FieldValues = FieldValues,
@@ -68,6 +84,7 @@ export interface UseFormReturn<
   handleSubmit: UseFormHandleSubmit<TFieldValues>
   unregister: UseFormUnregister<TFieldValues>
   register: UseFormRegister<TFieldValues>
+  useRegister: UseFormUseRegister<TFieldValues>
   setFocus: UseFormSetFocus<TFieldValues>
 }
 

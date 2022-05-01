@@ -3,6 +3,14 @@ import type { FieldPathValue } from './utils'
 
 export type Message = string
 
+export interface ValidationMode {
+  onBlur: 'onBlur'
+  onChange: 'onChange'
+  onSubmit: 'onSubmit'
+  onTouched: 'onTouched'
+  all: 'all'
+}
+
 export type ValidationValue = boolean | number | string | RegExp
 
 export type ValidationRule<
@@ -43,7 +51,6 @@ export type RegisterOptions<
     onChange?: (event: any) => void
     onBlur?: (event: any) => void
     disabled: boolean
-    defaultValue: any
     // deps: InternalFieldName | InternalFieldName[]
   }>
 

@@ -9,7 +9,14 @@ export function useForm<
   props: UseFormProps<TFieldValues, TContext> = {},
 ) {
   props = {
-    mode: 'onChange',
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
+    defaultValues: {} as UseFormProps<TFieldValues, TContext>['defaultValues'],
+    criteriaMode: 'firstError',
+    shouldFocusError: true,
+    shouldUnregister: false,
+    shouldUseNativeValidation: false,
+    delayError: undefined,
     ...props,
   }
   return {
