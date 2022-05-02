@@ -8,17 +8,19 @@ export const isString = (val: unknown): val is string => typeof val === 'string'
 
 export const isBoolean = (val: unknown): val is Boolean => typeof val === 'boolean'
 
-export const isObject = (val: unknown): val is Record<any, any> =>
+export const isObject = (val: unknown) =>
   val !== null && typeof val === 'object'
 
-export const isEmptyObject = (val: unknown): val is Record<any, any> =>
-  isObject(val) && Object.keys(val).length === 0
+export const isArray = (val: unknown): val is Array<unknown> => Array.isArray(val)
+
+export const isEmptyObject = (val: unknown) =>
+  isObject(val) && Object.keys(val as object).length === 0
 
 export const isUndefined = (val: unknown): val is undefined => typeof val === 'undefined'
 
 export const isNull = (val: unknown): val is null => val === null
 
-export const isNullOrUndefined = (val: unknown): val is null | undefined =>
+export const isNullOrUndefined = (val: unknown) =>
   isNull(val) || isUndefined(val)
 
 export const isHTMLElement = (val: unknown): val is HTMLElement => val instanceof HTMLElement
