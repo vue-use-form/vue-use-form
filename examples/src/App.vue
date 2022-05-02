@@ -1,34 +1,54 @@
 <script setup lang="ts">
 import { useForm } from '../../packages/core/src/useForm'
-import type { SubmitErrorHandler, SubmitHandler } from '../../packages/core/src/types/form'
-const { register, formState: { errors }, useRegister, handleSubmit } = useForm({
-  mode: 'onChange',
-})
 
 interface Inputs {
   username: string
+  password: string
 }
 
-const onSubmit: SubmitHandler<Inputs> = data => console.log(data)
-const onError: SubmitErrorHandler<Inputs> = err => console.log(err)
+const {
+  register,
+  formState: { errors },
+  useRegister,
+  unregister,
+  useArrayRegister,
+  handleSubmit,
+  createErrorHandler,
+  createSubmitHandler,
+} = useForm<Inputs>({
+  mode: 'onChange',
+  shouldFocusError: true,
+})
 
-function checkIsPositive(value: any) {
-  console.log(value)
-}
+const validate = useArrayRegister([
+  { name: 'username', options: { required: 'user name cannot be empty!' } },
+  { name: 'password', options: { required: 'password cannot be empty!' } },
+])
+
+unregister('username')
+
+const onSubmit = createSubmitHandler((data) => {
+  // eslint-disable-next-line no-console
+  console.log(data)
+})
+
+const onError = createErrorHandler((errors) => {
+  // eslint-disable-next-line no-console
+  console.log(errors)
+})
+
 </script>
 
 <template>
-
+  {{ errors }}
   <el-input
-    v-bind="register('username', {
-      required: { value: true, message: 'Username is required' },
-      maxLength:{ value: 10, message: 'Username is too long' },
-      minLength: { value: 3, message: 'Username is too short' },
-      value: 'Jane'
-    })"
+    :="validate().username"
+  />
+  <el-input
+    :="validate().password"
   />
 
-  <button type="submit" @click="handleSubmit(onSubmit, onErrors)()" v-text="'提交'" />
+  <button type="submit" @click="handleSubmit(onSubmit, onError)()" v-text="'提交'" />
 </template>
 
 <style>

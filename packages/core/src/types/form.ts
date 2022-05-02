@@ -1,7 +1,9 @@
 import type { ToRefs } from '@vue/reactivity'
+import type { Ref } from 'vue'
 import type { DefaultValues, UnpackNestedValue } from './utils'
 import type { FieldErrors } from './errors'
 import type { FieldValues } from './filed'
+import type { RegisterOptions } from './validator'
 
 export type Mode = 'onSubmit' | 'onBlur' | 'onChange' | 'onTouched' | 'all'
 
@@ -20,7 +22,7 @@ export type UseFormProps<TFieldValues, TContext> = Partial<{
   defaultValues: DefaultValues<TFieldValues>
   // resolver: Resolver<TFieldValues, TContext>
   context: TContext
-  shouldFocusError: boolean
+  shouldFocusError: boolean | Ref<boolean>
   shouldUnregister: boolean
   shouldUseNativeValidation: boolean
   criteriaMode: CriteriaMode
@@ -66,7 +68,7 @@ export type UseFormRegister<T> = T
 
 export type UseFormSetFocus<T> = T
 
-export type UseFormUseRegister<T> = () => UseFormRegister<T>
+export type UseFormUseRegister<TFieldValues extends FieldValues> = (name: keyof TFieldValues, options: RegisterOptions) => UseFormRegister<TFieldValues>
 
 export interface UseFormReturn<
   TFieldValues extends FieldValues = FieldValues,

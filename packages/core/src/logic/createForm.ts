@@ -1,15 +1,15 @@
 import type { Ref } from 'vue'
 import { reactive, ref, toRefs, unref, watch } from 'vue'
-import type { FormState, UseFormHandleSubmit, UseFormProps, UseFormReturn } from '../types/form'
+import type { FormState, SubmitErrorHandler, SubmitHandler, UseFormHandleSubmit, UseFormProps, UseFormReturn } from '../types/form'
 import type { Field, FieldElement, FieldValues } from '../types/filed'
-
 import type { FieldError, FieldErrors } from '../types/errors'
 import type { RegisterOptions } from '../types/validator'
-import { deleteProperty, isEmptyObject, isHTMLElement, isString } from '../utils'
-
+import { deleteProperty, isArray, isEmptyObject, isHTMLElement, isNullOrUndefined, isString } from '../utils'
 import { VALIDATION_MODE } from '../shared/constant'
 import { getValidationMode } from '../utils/getValidationMode'
 import type { UnpackNestedValue } from '../types/utils'
+import { createErrorHandler as createErrorHandlerUtil, createSubmitHandler as createSubmitHandlerUtil } from '../utils/createHandler'
+
 import { validateField } from './validate'
 
 const onModelValueUpdate = 'onUpdate:modelValue'
@@ -20,7 +20,8 @@ export function createForm<
   >(
   _options: UseFormProps<TFieldValues, TContext> = {},
 ) {
-  const fields = {} as Record<keyof TFieldValues, Field>
+  // what about use Map?
+  const fields = reactive<Partial<Record<keyof TFieldValues, Field>>>({}) as Record<keyof TFieldValues, Field>
 
   const formState = reactive<FormState<TFieldValues>>({
     isDirty: false,
@@ -28,7 +29,6 @@ export function createForm<
     // dirtyFields: {} as FieldNamesMarkedBoolean<TFieldValues>,
     isSubmitted: false,
     submitCount: 0,
-    // touchedFields: {} as FieldNamesMarkedBoolean<TFieldValues>,
     isSubmitting: false,
     isSubmitSuccessful: false,
     isValid: false,
@@ -60,12 +60,18 @@ export function createForm<
   }
 
   const _validateFieldByName = async (fieldName: keyof TFieldValues) => {
-    const res = await validateField(fields[fieldName], shouldDisplayAllAssociatedErrors)
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    cleanupUnRegister()
+    if (isEmptyObject(fields[fieldName]) || isNullOrUndefined(fields[fieldName])) {
+      return
+    }
+    const res = await validateField(fields[fieldName], shouldDisplayAllAssociatedErrors, unref(_options.shouldFocusError)!)
 
-    if (Object.keys(res).length)
+    if (Object.keys(res).length) {
       (formState.errors[fieldName] as FieldError) = res
-    else
+    } else {
       deleteProperty(formState.errors, fieldName as string)
+    }
   }
 
   const _validateFields = async () => {
@@ -96,6 +102,9 @@ export function createForm<
       onSubmit(fields as UnpackNestedValue<TFieldValues>, e)
     }
   }
+
+  const createErrorHandler = (fn: SubmitErrorHandler<TFieldValues>) => createErrorHandlerUtil<TFieldValues>(fn)
+  const createSubmitHandler = (fn: SubmitHandler<TFieldValues>) => createSubmitHandlerUtil<TFieldValues>(fn)
 
   const register = (name: keyof TFieldValues, options: RegisterOptions) => {
     const modelVal = ref(fields[name]?.inputValue || '')
@@ -154,12 +163,39 @@ export function createForm<
     }
   }
 
+  const unRegisterSet = new Set<keyof TFieldValues>()
+  const unregister = (fieldsName: keyof TFieldValues | (keyof TFieldValues)[]) => {
+    if (!isArray(fieldsName)) {
+      fieldsName = [fieldsName]
+    }
+    fieldsName.forEach(fieldName => unRegisterSet.add(fieldName))
+  }
+
+  const cleanupUnRegister = () => {
+    for (const fieldName of unRegisterSet) {
+      deleteProperty(formState.errors, fieldName as string)
+      deleteProperty(fields, fieldName as string)
+      unRegisterSet.delete(fieldName)
+    }
+  }
+
   const useRegister = (name: keyof TFieldValues, options: RegisterOptions) => () => register(name, options)
+  const useArrayRegister = (arr: { name: keyof TFieldValues; options: RegisterOptions }[]) => (): Partial<Record<keyof TFieldValues, ReturnType<typeof register>>> => {
+    const res: Partial<Record<keyof TFieldValues, ReturnType<typeof register>>> = {}
+    for (const { name, options } of arr) {
+      res[name] = register(name, options)
+    }
+    return res
+  }
 
   return {
-    register,
     formState: toRefs(formState),
+    register,
+    unregister,
     useRegister,
+    useArrayRegister,
     handleSubmit,
+    createSubmitHandler,
+    createErrorHandler,
   }
 }

@@ -1,7 +1,7 @@
 import type { FieldError } from '../types/errors'
 import {
   isCheckBoxInput,
-  isEmpty,
+  isEmpty, isEmptyObject,
   isFunction,
   isNullOrUndefined,
   isObject,
@@ -9,13 +9,20 @@ import {
   isRegex,
   isString,
 } from '../utils'
-import type { Field } from '../types/filed'
+import type { Field, FieldElement } from '../types/filed'
 import { getValueAndMessage } from '../utils/transformMessage'
 import { getValidatorError } from '../utils/getValidatorError'
+
+function handleDeferError(error: FieldError, shouldError: boolean) {
+  if (!isEmptyObject(error) && shouldError) {
+    (error.ref as FieldElement).focus()
+  }
+}
 
 export async function validateField(
   field: Field,
   validateAllFieldCriteria: boolean,
+  shouldFocusOnError: boolean,
 ): Promise<FieldError> {
   const { inputValue } = field
 
@@ -46,118 +53,122 @@ export async function validateField(
 
   let error: FieldError = {}
 
-  if (required && !isRadioOrCheckBox) {
-    const { value, message } = getValueAndMessage(required)
+  try {
+    if (required && !isRadioOrCheckBox) {
+      const { value, message } = getValueAndMessage(required)
 
-    if (isEmptyValue && value) {
-      error = {
-        type: 'required',
-        message,
-        ref: el,
+      if (isEmptyValue && value) {
+        error = {
+          type: 'required',
+          message,
+          ref: el,
+        }
+
+        if (!validateAllFieldCriteria)
+          return error
       }
-
-      if (!validateAllFieldCriteria)
-        return error
     }
-  }
 
-  if (!isEmptyValue && (!isNullOrUndefined(max) || !isNullOrUndefined(min))) {
-    let exceedMax
-    let exceedMin
-    const { value: maxValue, message: maxMsg } = getValueAndMessage(max)
-    const { value: minValue, message: minMsg } = getValueAndMessage(min)
+    if (!isEmptyValue && (!isNullOrUndefined(max) || !isNullOrUndefined(min))) {
+      let exceedMax
+      let exceedMin
+      const { value: maxValue, message: maxMsg } = getValueAndMessage(max)
+      const { value: minValue, message: minMsg } = getValueAndMessage(min)
 
-    if (!isNaN(inputValue)) {
-      const inputNumber = (el as HTMLInputElement).valueAsNumber || +inputValue
-      if (minValue && inputNumber < minValue)
-        exceedMin = true
-      if (maxValue && inputNumber > maxValue)
-        exceedMax = true
-    }
-    else {
-      if (isString(inputValue)) {
-        const valueDate
-          = (el as HTMLInputElement).valueAsDate || new Date(inputValue as string)
-
-        if (minValue && valueDate < minValue)
+      if (!isNaN(inputValue)) {
+        const inputNumber = (el as HTMLInputElement).valueAsNumber || +inputValue
+        if (minValue && inputNumber < minValue)
           exceedMin = true
-        if (maxValue && valueDate > maxValue)
+        if (maxValue && inputNumber > maxValue)
           exceedMax = true
       }
-    }
+      else {
+        if (isString(inputValue)) {
+          const valueDate
+            = (el as HTMLInputElement).valueAsDate || new Date(inputValue as string)
 
-    if (exceedMax || exceedMin) {
-      error = {
-        type: exceedMax ? 'max' : 'min',
-        message: exceedMax ? maxMsg : minMsg,
-        ref: el,
+          if (minValue && valueDate < minValue)
+            exceedMin = true
+          if (maxValue && valueDate > maxValue)
+            exceedMax = true
+        }
       }
 
-      if (!validateAllFieldCriteria)
-        return error
-    }
-  }
+      if (exceedMax || exceedMin) {
+        error = {
+          type: exceedMax ? 'max' : 'min',
+          message: exceedMax ? maxMsg : minMsg,
+          ref: el,
+        }
 
-  if ((maxLength || minLength) && !isEmptyValue && isString(inputValue)) {
-    let exceedMax
-    let exceedMin
-    const { value: maxValue, message: maxMsg } = getValueAndMessage(maxLength)
-    const { value: minValue, message: minMsg } = getValueAndMessage(minLength)
-
-    if (minValue && inputValue.length <= minValue)
-      exceedMin = true
-
-    if (maxValue && inputValue.length >= maxValue)
-      exceedMax = true
-
-    if (exceedMax || exceedMin) {
-      error = {
-        type: exceedMax ? 'maxLength' : 'minLength',
-        message: exceedMax ? maxMsg : minMsg,
-        ref: el,
+        if (!validateAllFieldCriteria)
+          return error
       }
-
-      return error
     }
-  }
 
-  if (pattern && !isEmptyValue && isString(inputValue)) {
-    const { value: patternValue, message } = getValueAndMessage(pattern)
+    if ((maxLength || minLength) && !isEmptyValue && isString(inputValue)) {
+      let exceedMax
+      let exceedMin
+      const { value: maxValue, message: maxMsg } = getValueAndMessage(maxLength)
+      const { value: minValue, message: minMsg } = getValueAndMessage(minLength)
 
-    if (isRegex(patternValue) && !inputValue.match(patternValue)) {
-      error = {
-        type: 'pattern',
-        message,
-        ref: el,
+      if (minValue && inputValue.length <= minValue)
+        exceedMin = true
+
+      if (maxValue && inputValue.length >= maxValue)
+        exceedMax = true
+
+      if (exceedMax || exceedMin) {
+        error = {
+          type: exceedMax ? 'maxLength' : 'minLength',
+          message: exceedMax ? maxMsg : minMsg,
+          ref: el,
+        }
+
+        return error
       }
-
-      if (!validateAllFieldCriteria)
-        return error
     }
-  }
 
-  if (validate) {
-    if (isFunction(validate)) {
-      const result = await validate(inputValue)
-      const validateResult = getValidatorError(result, el)
+    if (pattern && !isEmptyValue && isString(inputValue)) {
+      const { value: patternValue, message } = getValueAndMessage(pattern)
 
-      if (validateResult)
-        error = validateResult
+      if (isRegex(patternValue) && !inputValue.match(patternValue)) {
+        error = {
+          type: 'pattern',
+          message,
+          ref: el,
+        }
 
-      if (!validateAllFieldCriteria)
-        return error
-    } else if (isObject(validate)) {
-      for (const key in validate) {
-        const result = await validate[key](inputValue)
-        const validateResult = getValidatorError(result, el, key)
+        if (!validateAllFieldCriteria)
+          return error
+      }
+    }
+
+    if (validate) {
+      if (isFunction(validate)) {
+        const result = await validate(inputValue)
+        const validateResult = getValidatorError(result, el)
 
         if (validateResult)
           error = validateResult
 
         if (!validateAllFieldCriteria)
           return error
+      } else if (isObject(validate)) {
+        for (const key in validate) {
+          const result = await validate[key](inputValue)
+          const validateResult = getValidatorError(result, el, key)
+
+          if (validateResult)
+            error = validateResult
+
+          if (!validateAllFieldCriteria)
+            return error
+        }
       }
     }
+  } finally {
+    handleDeferError(error, shouldFocusOnError)
   }
 
   return error
