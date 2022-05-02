@@ -5,5 +5,6 @@
     "no-useless-return": "off",
     "curly": "off",
     "@typescript-eslint/brace-style": "off",
+    "n/handle-callback-err": "off",
   }
 }
