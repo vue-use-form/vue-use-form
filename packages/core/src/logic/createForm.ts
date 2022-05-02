@@ -62,9 +62,10 @@ export function createForm<
   const _validateFieldByName = async (fieldName: keyof TFieldValues) => {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     cleanupUnRegister()
-    if (isEmptyObject(fields[fieldName]) || isNullOrUndefined(fields[fieldName])) {
+    if (isEmptyObject(fields) || isNullOrUndefined(fields[fieldName])) {
       return
     }
+
     const res = await validateField(fields[fieldName], shouldDisplayAllAssociatedErrors, unref(_options.shouldFocusError)!)
 
     if (Object.keys(res).length) {
@@ -106,12 +107,15 @@ export function createForm<
   const createErrorHandler = (fn: SubmitErrorHandler<TFieldValues>) => createErrorHandlerUtil<TFieldValues>(fn)
   const createSubmitHandler = (fn: SubmitHandler<TFieldValues>) => createSubmitHandlerUtil<TFieldValues>(fn)
 
+  const unRegisterSet = new Set<keyof TFieldValues>()
+
   const register = (name: keyof TFieldValues, options: RegisterOptions) => {
     const modelVal = ref(fields[name]?.inputValue || '')
     const elRef = ref<FieldElement | null>(null)
 
     if (!fields[name]) {
       fields[name] = {} as Field
+
       assignBindAttrs()
     }
 
@@ -163,11 +167,11 @@ export function createForm<
     }
   }
 
-  const unRegisterSet = new Set<keyof TFieldValues>()
   const unregister = (fieldsName: keyof TFieldValues | (keyof TFieldValues)[]) => {
     if (!isArray(fieldsName)) {
       fieldsName = [fieldsName]
     }
+
     fieldsName.forEach(fieldName => unRegisterSet.add(fieldName))
   }
 
@@ -175,7 +179,6 @@ export function createForm<
     for (const fieldName of unRegisterSet) {
       deleteProperty(formState.errors, fieldName as string)
       deleteProperty(fields, fieldName as string)
-      unRegisterSet.delete(fieldName)
     }
   }
 

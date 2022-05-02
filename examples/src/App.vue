@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useForm } from '../../packages/core/src/useForm'
 
 interface Inputs {
@@ -17,38 +18,42 @@ const {
   createSubmitHandler,
 } = useForm<Inputs>({
   mode: 'onChange',
-  shouldFocusError: true,
+  shouldFocusError: false,
 })
-
-const validate = useArrayRegister([
-  { name: 'username', options: { required: 'user name cannot be empty!' } },
-  { name: 'password', options: { required: 'password cannot be empty!' } },
-])
 
 unregister('username')
 
 const onSubmit = createSubmitHandler((data) => {
-  // eslint-disable-next-line no-console
   console.log(data)
 })
 
 const onError = createErrorHandler((errors) => {
-  // eslint-disable-next-line no-console
   console.log(errors)
 })
 
+function renderTime() {
+  console.log(1)
+}
 </script>
 
 <template>
-  {{ errors }}
+  <input
+    :="register('username', {
+      required: true,
+    })"
+  >
   <el-input
-    :="validate().username"
-  />
-  <el-input
-    :="validate().password"
-  />
-
-  <button type="submit" @click="handleSubmit(onSubmit, onError)()" v-text="'提交'" />
+    :="register('password', {
+      required: { value: true,message: '请输入密码' },
+      pattern: { value:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/, message:'密码格式错误' },
+      validate:{
+        isStartWithAt: (value) => value.startsWith('@'),
+        isEndWithDollar: (value) => value.endsWith('$'),
+      }
+    })"
+  >
+    <button type="submit" @click="handleSubmit(onSubmit, onError)()" v-text="'提交'" />
+  </el-input>
 </template>
 
 <style>
