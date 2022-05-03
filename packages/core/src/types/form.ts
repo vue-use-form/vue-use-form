@@ -29,6 +29,18 @@ export type UseFormProps<TFieldValues, TContext> = Partial<{
   delayError: number
 }>
 
+export type KeepStateOptions = Partial<{
+  keepDirtyValues: boolean
+  keepErrors: boolean
+  keepDirty: boolean
+  keepValues: boolean
+  keepDefaultValues: boolean
+  keepIsSubmitted: boolean
+  keepTouched: boolean
+  keepIsValid: boolean
+  keepSubmitCount: boolean
+}>
+
 export type SubmitHandler<TFieldValues extends FieldValues> = (
   data: UnpackNestedValue<TFieldValues>,
   event?: Event,
@@ -60,7 +72,10 @@ export type UseFormTrigger<T> = T
 
 export type UseFormResetField<T> = T
 
-export type UseFormReset<T> = T
+export type UseFormReset<TFieldValues extends FieldValues> = (
+  values?: DefaultValues<TFieldValues> | UnpackNestedValue<TFieldValues>,
+  keepStateOptions?: KeepStateOptions,
+) => void
 
 export type UseFormUnregister<T> = T
 

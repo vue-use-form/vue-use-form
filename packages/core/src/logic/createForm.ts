@@ -10,6 +10,7 @@ import { getValidationMode } from '../utils/getValidationMode'
 import type { UnpackNestedValue } from '../types/utils'
 import { createErrorHandler as createErrorHandlerUtil, createSubmitHandler as createSubmitHandlerUtil } from '../utils/createHandler'
 
+import { warn } from '../utils/warn'
 import { validateField } from './validate'
 
 const onModelValueUpdate = 'onUpdate:modelValue'
@@ -19,7 +20,7 @@ export function createForm<
   TContext = any,
   >(
   _options: UseFormProps<TFieldValues, TContext> = {},
-) {
+): UseFormReturn<TFieldValues> {
   // what about use Map?
   const fields = reactive<Partial<Record<keyof TFieldValues, Field>>>({}) as Record<keyof TFieldValues, Field>
 
@@ -115,7 +116,6 @@ export function createForm<
 
     if (!fields[name]) {
       fields[name] = {} as Field
-
       assignBindAttrs()
     }
 
@@ -128,7 +128,8 @@ export function createForm<
       if (newEl) {
         const el = _transformRef(elRef)
         if (isHTMLElement(el)) {
-          fields[name].ref = el as FieldElement
+          if (!isNullOrUndefined(fields[name]))
+            fields[name].ref = el as FieldElement
         }
       }
     })
@@ -183,20 +184,13 @@ export function createForm<
   }
 
   const useRegister = (name: keyof TFieldValues, options: RegisterOptions) => () => register(name, options)
-  const useArrayRegister = (arr: { name: keyof TFieldValues; options: RegisterOptions }[]) => (): Partial<Record<keyof TFieldValues, ReturnType<typeof register>>> => {
-    const res: Partial<Record<keyof TFieldValues, ReturnType<typeof register>>> = {}
-    for (const { name, options } of arr) {
-      res[name] = register(name, options)
-    }
-    return res
-  }
 
   return {
     formState: toRefs(formState),
     register,
     unregister,
     useRegister,
-    useArrayRegister,
+
     handleSubmit,
     createSubmitHandler,
     createErrorHandler,
