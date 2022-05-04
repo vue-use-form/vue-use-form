@@ -1,16 +1,23 @@
 import type { Ref } from 'vue'
 import { reactive, ref, toRefs, unref, watch } from 'vue'
-import type { FormState, SubmitErrorHandler, SubmitHandler, UseFormHandleSubmit, UseFormProps, UseFormReturn } from '../types/form'
+import type {
+  FieldNamesMarkedBoolean,
+  FormState,
+  SubmitErrorHandler,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormProps,
+  UseFormReturn,
+} from '../types/form'
 import type { Field, FieldElement, FieldValues } from '../types/filed'
 import type { FieldError, FieldErrors } from '../types/errors'
 import type { RegisterOptions } from '../types/validator'
-import { deleteProperty, isArray, isEmptyObject, isHTMLElement, isNullOrUndefined, isString } from '../utils'
+import { isArray, isEmptyObject, isFunction, isHTMLElement, isNullOrUndefined, isString } from '../utils'
 import { VALIDATION_MODE } from '../shared/constant'
 import { getValidationMode } from '../utils/getValidationMode'
 import type { UnpackNestedValue } from '../types/utils'
 import { createErrorHandler as createErrorHandlerUtil, createSubmitHandler as createSubmitHandlerUtil } from '../utils/createHandler'
-
-import { warn } from '../utils/warn'
+import { get, set, unset } from '../utils/object'
 import { validateField } from './validate'
 
 const onModelValueUpdate = 'onUpdate:modelValue'
@@ -19,15 +26,15 @@ export function createForm<
   TFieldValues extends FieldValues = FieldValues,
   TContext = any,
   >(
-  _options: UseFormProps<TFieldValues, TContext> = {},
-): UseFormReturn<TFieldValues> {
+  _options: UseFormProps<TFieldValues, TContext>,
+) {
   // what about use Map?
   const fields = reactive<Partial<Record<keyof TFieldValues, Field>>>({}) as Record<keyof TFieldValues, Field>
 
   const formState = reactive<FormState<TFieldValues>>({
     isDirty: false,
     isValidating: false,
-    // dirtyFields: {} as FieldNamesMarkedBoolean<TFieldValues>,
+    dirtyFields: {} as FieldNamesMarkedBoolean<TFieldValues>,
     isSubmitted: false,
     submitCount: 0,
     isSubmitting: false,
@@ -40,6 +47,10 @@ export function createForm<
   const validationModeAfterSubmit = getValidationMode(_options.reValidateMode!)
   const shouldDisplayAllAssociatedErrors
     = _options.criteriaMode === VALIDATION_MODE.all
+
+  const _getDefaultVal = (name: keyof TFieldValues) => {
+    return get(_options.defaultValues, name as string) || ''
+  }
 
   const _transformRef = (ref: Ref<FieldElement | any>) => {
     const unwrap = unref(ref)
@@ -60,40 +71,65 @@ export function createForm<
     return el.querySelectorAll('input, select, textarea')[0]
   }
 
-  const _validateFieldByName = async (fieldName: keyof TFieldValues) => {
+  const _validateFieldByName = async (fieldName: keyof TFieldValues, isValidateAllFields = false) => {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     cleanupUnRegister()
     if (isEmptyObject(fields) || isNullOrUndefined(fields[fieldName])) {
       return
     }
-
+    !isValidateAllFields && set(formState, 'isValidating', true)
     const res = await validateField(fields[fieldName], shouldDisplayAllAssociatedErrors, unref(_options.shouldFocusError)!)
-
+    !isValidateAllFields && set(formState, 'isValidating', false)
     if (Object.keys(res).length) {
       (formState.errors[fieldName] as FieldError) = res
     } else {
-      deleteProperty(formState.errors, fieldName as string)
+      unset(formState.errors, fieldName as string)
     }
   }
 
   const _validateFields = async () => {
     for (const fieldName of Object.keys(fields)) {
-      await _validateFieldByName(fieldName)
+      set(formState, 'isValidating', true)
+      await _validateFieldByName(fieldName, true)
+      set(formState, 'isValidating', false)
+    }
+  }
+
+  const _handleDirtyFields = (name: keyof TFieldValues, evt: InputEvent | string) => {
+    const inputVal = isString(evt) ? evt : (evt.target as FieldElement).value
+    const defaultVal = _getDefaultVal(name)
+    if (defaultVal === inputVal) {
+      set(formState, 'isDirty', false)
+      unset(formState.dirtyFields, name as string)
+    } else {
+      set(formState, 'isDirty', true)
+      set(formState.dirtyFields, name as string, true)
     }
   }
 
   const onChange = async (name: keyof TFieldValues) => {
-    formState.isDirty = true
-
+    set(formState, 'isValidating', true)
     await _validateFieldByName(name)
+    set(formState, 'isValidating', false)
+
+    if (isEmptyObject(formState.errors)) {
+      set(formState, 'isValid', true)
+    } else {
+      set(formState, 'isValid', false)
+    }
   }
 
   const handleSubmit: UseFormHandleSubmit<TFieldValues> = (onSubmit, onError?) => {
+    set(formState, 'isSubmitting', true)
+    formState.submitCount++
     return async (e) => {
       await _validateFields()
       if (!isEmptyObject(formState.errors)) {
-        if (onError)
-          onError(formState.errors, e)
+        if (isFunction(onError)) {
+          await onError(formState.errors, e)
+          set(formState, 'isSubmitting', false)
+          set(formState, 'isSubmitted', true)
+        }
 
         return
       }
@@ -101,7 +137,10 @@ export function createForm<
       for (const fieldName in fields) {
         res[fieldName] = fields[fieldName].inputValue
       }
-      onSubmit(fields as UnpackNestedValue<TFieldValues>, e)
+      await onSubmit(fields as UnpackNestedValue<TFieldValues>, e)
+      set(formState, 'isSubmitting', false)
+      set(formState, 'isSubmitted', true)
+      set(formState, 'isSubmitSuccessful', true)
     }
   }
 
@@ -115,13 +154,13 @@ export function createForm<
     const elRef = ref<FieldElement | null>(null)
 
     if (!fields[name]) {
-      fields[name] = {} as Field
+      set(fields, name, {} as Field)
       assignBindAttrs()
     }
 
     if (options.value) {
-      fields[name].inputValue = options.value
-      deleteProperty(options, 'value')
+      set(fields[name], 'inputValue', options.value)
+      unset(options, 'value')
     }
 
     watch(elRef, (newEl) => {
@@ -137,12 +176,12 @@ export function createForm<
     function assignBindAttrs(el: FieldElement = {} as any, newValue = options.value) {
       elRef.value = el
       modelVal.value = modelVal
-      fields[name] = {
+      set(fields, name, {
         inputValue: newValue,
         rule: { ...options },
         ref: elRef.value!,
         name: name as string,
-      }
+      })
     }
 
     return {
@@ -158,6 +197,7 @@ export function createForm<
           onChange(name)
       },
       onInput(evt: InputEvent) {
+        _handleDirtyFields(name, evt)
         // filter UI Component
         if (isString(evt))
           return
@@ -178,8 +218,9 @@ export function createForm<
 
   const cleanupUnRegister = () => {
     for (const fieldName of unRegisterSet) {
-      deleteProperty(formState.errors, fieldName as string)
-      deleteProperty(fields, fieldName as string)
+      unset(formState.errors, fieldName as string)
+      unset(fields, fieldName as string)
+      unset(formState.dirtyFields, fieldName as string)
     }
   }
 
@@ -190,7 +231,6 @@ export function createForm<
     register,
     unregister,
     useRegister,
-
     handleSubmit,
     createSubmitHandler,
     createErrorHandler,

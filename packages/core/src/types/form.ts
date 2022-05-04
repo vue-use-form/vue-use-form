@@ -1,6 +1,5 @@
-import type { ToRefs } from '@vue/reactivity'
 import type { Ref } from 'vue'
-import type { DefaultValues, UnpackNestedValue } from './utils'
+import type { DeepMap, DeepPartial, DefaultValues, UnpackNestedValue } from './utils'
 import type { FieldErrors } from './errors'
 import type { FieldValues } from './filed'
 import type { RegisterOptions } from './validator'
@@ -11,7 +10,12 @@ export type CriteriaMode = 'firstError' | 'all'
 
 export type TFiledValue = Record<string, any>
 
-export type UseFormProps<TFieldValues, TContext> = Partial<{
+export type FieldNamesMarkedBoolean<TFieldValues extends FieldValues> = DeepMap<
+  DeepPartial<TFieldValues>,
+  boolean
+  >
+
+export interface UseFormProps<TFieldValues, TContext> {
   /*
   * Form Mode
   *
@@ -27,7 +31,7 @@ export type UseFormProps<TFieldValues, TContext> = Partial<{
   shouldUseNativeValidation: boolean
   criteriaMode: CriteriaMode
   delayError: number
-}>
+}
 
 export type KeepStateOptions = Partial<{
   keepDirtyValues: boolean
@@ -107,11 +111,10 @@ export interface UseFormReturn<
 
 export interface FormState<TFieldValues> {
   isDirty: boolean
-  // dirtyFields: FieldNamesMarkedBoolean<TFieldValues>
+  dirtyFields: FieldNamesMarkedBoolean<TFieldValues>
   isSubmitted: boolean
   isSubmitSuccessful: boolean
   submitCount: number
-  // touchedFields: FieldNamesMarkedBoolean<TFieldValues>
   isSubmitting: boolean
   isValidating: boolean
   isValid: boolean

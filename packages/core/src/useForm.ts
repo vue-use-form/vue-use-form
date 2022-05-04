@@ -6,7 +6,7 @@ export function useForm<
   TFieldValues extends FieldValues = FieldValues,
   TContext = any,
   >(
-  props: UseFormProps<TFieldValues, TContext> = {},
+  props: Partial<UseFormProps<TFieldValues, TContext>> = {},
 ) {
   props = {
     mode: 'onSubmit',

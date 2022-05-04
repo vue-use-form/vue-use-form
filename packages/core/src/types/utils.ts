@@ -22,4 +22,14 @@ export type DeepPartial<T> = T extends Date | FileList | File | NestedValue
   ? T
   : { [K in keyof T]?: DeepPartial<T[K]> }
 
-export type Keys<T> = keyof T
+export type NonUndefined<T> = T extends undefined ? never : T
+
+export type IsAny<T> = 0 extends 1 & T ? true : false
+
+export type DeepMap<T, TValue> = IsAny<T> extends true
+  ? any
+  : T extends Date | FileList | File | NestedValue
+    ? TValue
+    : T extends object
+      ? { [K in keyof T]: DeepMap<NonUndefined<T[K]>, TValue> }
+      : TValue
