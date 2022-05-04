@@ -1,59 +1,72 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+
 import { useForm } from '../../packages/core/src/useForm'
 
 interface Inputs {
-  username: string
+  test: string
+  username: number
   password: string
 }
 
 const {
   register,
-  formState: { errors },
+  formState,
   useRegister,
   unregister,
-  useArrayRegister,
   handleSubmit,
   createErrorHandler,
   createSubmitHandler,
 } = useForm<Inputs>({
-  mode: 'onChange',
+  mode: 'onSubmit',
   shouldFocusError: false,
+  defaultValues: {
+    username: 114514,
+  },
 })
 
-unregister('username')
-
-const onSubmit = createSubmitHandler((data) => {
-  console.log(data)
+const onSubmit = createSubmitHandler(async (data) => {
+  await setTimeout(() => {
+    console.log(data)
+  }, 2000)
+  console.log('timeouted')
 })
 
-const onError = createErrorHandler((errors) => {
-  console.log(errors)
+const onError = createErrorHandler(async (data) => {
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(1)
+    }, 2000)
+  })
 })
 
-function renderTime() {
-  console.log(1)
+const handleUnregister = () => {
+  unregister('username')
+}
+
+async function api() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(1)
+    }, 3000)
+  })
 }
 </script>
 
 <template>
-  <input
-    :="register('username', {
-      required: true,
-    })"
-  >
+  <p v-for="(item, name) in formState">
+    {{ name }} : {{ item }}
+  </p>
   <el-input
-    :="register('password', {
-      required: { value: true,message: '请输入密码' },
-      pattern: { value:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/, message:'密码格式错误' },
-      validate:{
-        isStartWithAt: (value) => value.startsWith('@'),
-        isEndWithDollar: (value) => value.endsWith('$'),
+    :="register('test', {
+      required: { value: true, message: '请输入密码' },
+      validate: async (value) => {
+        await api()
       }
     })"
-  >
-    <button type="submit" @click="handleSubmit(onSubmit, onError)()" v-text="'提交'" />
-  </el-input>
+  />
+
+  <el-button type="primary" @click="handleSubmit(onSubmit, onError)()" v-text="'提交'" />
+  <el-button @click="handleUnregister" v-text="'delete filed'" />
 </template>
 
 <style>
