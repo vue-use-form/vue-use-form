@@ -12,7 +12,7 @@ import type {
 import type { Field, FieldElement, FieldValues } from '../types/filed'
 import type { FieldError, FieldErrors } from '../types/errors'
 import type { RegisterOptions } from '../types/validator'
-import { isArray, isEmptyObject, isFunction, isHTMLElement, isNullOrUndefined, isString } from '../utils'
+import { isArray, isEmptyObject, isFunction, isHTMLElement, isNullOrUndefined, isString } from '../utils/index'
 import { VALIDATION_MODE } from '../shared/constant'
 import { getValidationMode } from '../utils/getValidationMode'
 import type { UnpackNestedValue } from '../types/utils'
@@ -227,7 +227,7 @@ export function createForm<
   const useRegister = (name: keyof TFieldValues, options: RegisterOptions) => () => register(name, options)
 
   return {
-    formState: toRefs(formState),
+    formState,
     register,
     unregister,
     useRegister,
