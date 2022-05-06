@@ -8,7 +8,7 @@ import {
   isRadioInput,
   isRegex,
   isString,
-} from '../utils'
+} from '../utils/index'
 import type { Field, FieldElement } from '../types/filed'
 import { getValueAndMessage } from '../utils/transformMessage'
 import { getValidatorError } from '../utils/getValidatorError'
@@ -41,7 +41,6 @@ export async function validateField(
     onChange,
     onBlur,
     disabled,
-    defaultValue,
   } = field.rule
 
   const el = field.ref

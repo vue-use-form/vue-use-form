@@ -20,6 +20,6 @@ export function useForm<
     ...props,
   }
   return {
-    ...createForm<TFieldValues, TContext>(props),
+    ...createForm<TFieldValues, TContext>(props as UseFormProps<TFieldValues, TContext>),
   }
 }

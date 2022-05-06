@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import type { Ref } from 'vue'
 import type { DeepMap, DeepPartial, DefaultValues, UnpackNestedValue } from './utils'
 import type { FieldErrors } from './errors'
