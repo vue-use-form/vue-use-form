@@ -1,13 +1,29 @@
 {
   "name": "@vue-composable-form/core",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "",
   "license": "MIT",
   "author": "snowingfox",
-  "main": "index.esm.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "main": "dist/index.cjs",
+  "keywords": [
+    "vue",
+    "vue-composable-form",
+    "vue-hook-form",
+    "vue-form",
+    "vue-validate"
+  ],
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
   },
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "vue": "^3.2.0"
   }
