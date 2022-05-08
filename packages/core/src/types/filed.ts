@@ -9,4 +9,5 @@ export interface Field {
   rule: RegisterOptions
   ref: FieldElement
   name: string
+  resetVal: any
 }
