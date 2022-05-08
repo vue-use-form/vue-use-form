@@ -25,9 +25,9 @@ export const isNullOrUndefined = (val: unknown) =>
 
 export const isHTMLElement = (val: unknown): val is HTMLElement => val instanceof HTMLElement
 
-export const isRadioInput = (el: FieldElement) => el.type === 'radio'
+export const isRadioInput = (el: FieldElement): el is HTMLInputElement => el.type === 'radio'
 
-export const isCheckBoxInput = (el: FieldElement) => el.type === 'checkbox'
+export const isCheckBoxInput = (el: FieldElement): el is HTMLInputElement => el.type === 'checkbox'
 
 export const isEmpty = (val: unknown) => val === '' || val === null || val === undefined
 
