@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@vue-composable-form/core": "0.0.1",
+
     "element-plus": "^2.1.11",
     "vue": "^3.2.25"
   },
