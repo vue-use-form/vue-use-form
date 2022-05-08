@@ -1,18 +1,26 @@
 import type { Ref } from 'vue'
-import { reactive, ref, toRefs, unref, watch } from 'vue'
+import { computed, reactive, ref, unref, watch } from 'vue'
 import type {
   FieldNamesMarkedBoolean,
   FormState,
   SubmitErrorHandler,
   SubmitHandler,
   UseFormHandleSubmit,
-  UseFormProps,
+  UseFormProps, UseFormReset,
   UseFormReturn,
 } from '../types/form'
 import type { Field, FieldElement, FieldValues } from '../types/filed'
 import type { FieldError, FieldErrors } from '../types/errors'
 import type { RegisterOptions } from '../types/validator'
-import { isArray, isEmptyObject, isFunction, isHTMLElement, isNullOrUndefined, isString } from '../utils/index'
+import {
+  isArray, isCheckBoxInput,
+  isEmptyObject,
+  isFunction,
+  isHTMLElement,
+  isNullOrUndefined,
+  isRadioInput,
+  isString,
+} from '../utils'
 import { VALIDATION_MODE } from '../shared/constant'
 import { getValidationMode } from '../utils/getValidationMode'
 import type { UnpackNestedValue } from '../types/utils'
@@ -28,6 +36,7 @@ export function createForm<
   >(
   _options: UseFormProps<TFieldValues, TContext>,
 ) {
+  type FieldsKey = keyof TFieldValues
   // what about use Map?
   const fields = reactive<Partial<Record<keyof TFieldValues, Field>>>({}) as Record<keyof TFieldValues, Field>
 
@@ -147,10 +156,43 @@ export function createForm<
   const createErrorHandler = (fn: SubmitErrorHandler<TFieldValues>) => createErrorHandlerUtil<TFieldValues>(fn)
   const createSubmitHandler = (fn: SubmitHandler<TFieldValues>) => createSubmitHandlerUtil<TFieldValues>(fn)
 
+  const _resetFields = (fieldsName: FieldsKey | FieldsKey[]) => {
+    if (!isArray(fieldsName)) {
+      fieldsName = [fieldsName]
+    }
+    for (const name of fieldsName) {
+      const defaultVal = get(_options.defaultValues, name as string)
+      const field = get(fields, name as string)
+      const el = field?.ref
+      let inputVal: string | boolean
+
+      if (!el) {
+        return
+      }
+
+      if (isCheckBoxInput(el)) {
+        inputVal = el.checked
+      }
+
+      if (defaultVal) {
+        set(fields[name as string], 'inputValue', defaultVal)
+      } else {
+        set(fields[name as string], 'inputValue', inputVal)
+      }
+    }
+  }
+
+  // reset all fields
+  const reset: UseFormReset<TFieldValues> = (values, keepStateOptions = {}) => {
+    if (!values) {
+      return
+    }
+  }
+
   const unRegisterSet = new Set<keyof TFieldValues>()
 
   const register = (name: keyof TFieldValues, options: RegisterOptions) => {
-    const modelVal = ref(fields[name]?.inputValue || '')
+    const modelVal = computed(() => fields[name]?.inputValue || '')
     const elRef = ref<FieldElement | null>(null)
 
     if (!fields[name]) {
@@ -175,7 +217,7 @@ export function createForm<
 
     function assignBindAttrs(el: FieldElement = {} as any, newValue = options.value) {
       elRef.value = el
-      modelVal.value = modelVal
+
       set(fields, name, {
         inputValue: newValue,
         rule: { ...options },
