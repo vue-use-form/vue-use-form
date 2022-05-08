@@ -160,11 +160,12 @@ export function createForm<
     if (!isArray(fieldsName)) {
       fieldsName = [fieldsName]
     }
+
     for (const name of fieldsName) {
       const defaultVal = get(_options.defaultValues, name as string)
       const field = get(fields, name as string)
       const el = field?.ref
-      let inputVal: string | boolean
+      let inputVal: string | boolean = defaultVal || get(field!, 'resetVal') || ''
 
       if (!el) {
         return
@@ -185,8 +186,17 @@ export function createForm<
   // reset all fields
   const reset: UseFormReset<TFieldValues> = (values, keepStateOptions = {}) => {
     if (!values) {
+      _resetFields(Object.keys(fields))
       return
     }
+
+    const keys: string[] = []
+    ;(Object.keys(values) as (keyof TFieldValues)[]).forEach((key) => {
+      set(fields[key], 'resetVal', (values as TFieldValues)[key])
+      keys.push(key as string)
+    })
+
+    _resetFields(keys)
   }
 
   const unRegisterSet = new Set<keyof TFieldValues>()
@@ -276,5 +286,6 @@ export function createForm<
     handleSubmit,
     createSubmitHandler,
     createErrorHandler,
+    reset,
   }
 }
