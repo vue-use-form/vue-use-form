@@ -26,6 +26,7 @@
     "@rollup/plugin-replace": "^4.0.0",
     "@types/jest": "^27.4.1",
     "@vue/test-utils": "^2.0.0-rc.21",
+    "core-js": "^3.22.4",
     "eslint": "^8.14.0",
     "jest": "^28.0.3",
     "rollup": "^2.70.2",

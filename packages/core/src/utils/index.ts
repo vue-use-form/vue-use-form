@@ -4,6 +4,7 @@ export const deleteProperty = <T extends object>(obj: T, prop: keyof T) => delet
 
 export const isFunction = (val: unknown): val is Function =>
   typeof val === 'function'
+
 export const isString = (val: unknown): val is string => typeof val === 'string'
 
 export const isBoolean = (val: unknown): val is Boolean => typeof val === 'boolean'
@@ -32,3 +33,11 @@ export const isCheckBoxInput = (el: FieldElement): el is HTMLInputElement => el.
 export const isEmpty = (val: unknown) => val === '' || val === null || val === undefined
 
 export const isRegex = (val: unknown): val is RegExp => val instanceof RegExp
+
+export const isObjectType = (val: unknown) => typeof val === 'object'
+
+export const isPrimitive = (val: unknown) =>
+  isNullOrUndefined(val) || !isObjectType(val)
+
+export const isDateObject = (val: unknown): val is Date => val instanceof Date
+
