@@ -23,9 +23,10 @@ import {
 } from '../utils'
 import { VALIDATION_MODE } from '../shared/constant'
 import { getValidationMode } from '../utils/getValidationMode'
-import type { UnpackNestedValue } from '../types/utils'
+import type { DefaultValues, UnpackNestedValue } from '../types/utils'
 import { createErrorHandler as createErrorHandlerUtil, createSubmitHandler as createSubmitHandlerUtil } from '../utils/createHandler'
 import { get, set, unset } from '../utils/object'
+import { deepEqual } from '../utils/deepEqual'
 import { validateField } from './validate'
 
 const onModelValueUpdate = 'onUpdate:modelValue'
@@ -40,7 +41,9 @@ export function createForm<
   // what about use Map?
   const fields = reactive<Partial<Record<keyof TFieldValues, Field>>>({}) as Record<keyof TFieldValues, Field>
 
-  const formState = reactive<FormState<TFieldValues>>({
+  type TFormState = FormState<TFieldValues>
+  type TFormStateKey = keyof TFormState
+  const formState = reactive<TFormState>({
     isDirty: false,
     isValidating: false,
     dirtyFields: {} as FieldNamesMarkedBoolean<TFieldValues>,
@@ -167,6 +170,7 @@ export function createForm<
       const el = field?.ref
       let inputVal: string | boolean = defaultVal || get(field!, 'resetVal') || ''
 
+      console.log(el)
       if (!el) {
         return
       }
@@ -183,8 +187,45 @@ export function createForm<
     }
   }
 
-  // reset all fields
-  const reset: UseFormReset<TFieldValues> = (values, keepStateOptions = {}) => {
+  const _setFormState = (props: { [K in TFormStateKey]?: TFormState[TFormStateKey] }) => {
+    (Object.keys(props) as TFormStateKey[]).forEach((key) => {
+      set(formState, key, props[key])
+    })
+  }
+
+  const _getDirtyFields = (values?: Record<string, any>) => {
+    const dirtyFields = get(formState, 'dirtyFields')
+    if (!values) {
+      return dirtyFields
+    }
+
+    const res = { ...dirtyFields }
+    const keys = Object.keys(values)
+    for (const key of keys) {
+      const defaultVal = get(_options.defaultValues, key)
+      if (deepEqual(res[key], defaultVal)) {
+        unset(res, key)
+      }
+    }
+
+    return res as TFormState['dirtyFields']
+  }
+
+  const reset: UseFormReset<TFieldValues> = (values, keepStateOptions?) => {
+    if (!keepStateOptions) {
+      keepStateOptions = {}
+    }
+
+    _setFormState({
+      isSubmitted: !!keepStateOptions.keepIsSubmitted,
+      submitCount: keepStateOptions.keepSubmitCount ? formState.submitCount : 0,
+      errors: keepStateOptions.keepErrors ? formState.errors : {},
+      isDirty: keepStateOptions.keepDirty ? formState.isDirty : !deepEqual(values, _options.defaultValues),
+      dirtyFields: keepStateOptions.keepDirty ? formState.dirtyFields : _getDirtyFields(values),
+      isSubmitting: false,
+      isSubmitSuccessful: false,
+    })
+
     if (!values) {
       _resetFields(Object.keys(fields))
       return
@@ -218,9 +259,8 @@ export function createForm<
     watch(elRef, (newEl) => {
       if (newEl) {
         const el = _transformRef(elRef)
-        if (isHTMLElement(el)) {
-          if (!isNullOrUndefined(fields[name]))
-            fields[name].ref = el as FieldElement
+        if (isHTMLElement(el) && !isNullOrUndefined(fields[name])) {
+          fields[name].ref = el as FieldElement
         }
       }
     })
