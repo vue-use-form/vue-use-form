@@ -3,7 +3,7 @@
 import type { Ref } from 'vue'
 import type { DeepMap, DeepPartial, DefaultValues, UnpackNestedValue } from './utils'
 import type { FieldErrors } from './errors'
-import type { FieldValues } from './filed'
+import type { Field, FieldValues } from './filed'
 import type { RegisterOptions } from './validator'
 
 export type Mode = 'onSubmit' | 'onBlur' | 'onChange' | 'onTouched' | 'all'
@@ -121,4 +121,5 @@ export interface FormState<TFieldValues> {
   isValidating: boolean
   isValid: boolean
   errors: FieldErrors<TFieldValues>
+  fields: Record<keyof TFieldValues, Field>
 }

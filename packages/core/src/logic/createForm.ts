@@ -1,5 +1,6 @@
 import type { Ref } from 'vue'
 import { computed, reactive, ref, unref, watch } from 'vue'
+import type { Partial } from 'rollup-plugin-typescript2/dist/partial'
 import type {
   FieldNamesMarkedBoolean,
   FormState,
@@ -41,6 +42,8 @@ export function createForm<
   // what about use Map?
   const fields = reactive<Partial<Record<keyof TFieldValues, Field>>>({}) as Record<keyof TFieldValues, Field>
 
+  const fieldsState = reactive<Partial<Record<FieldsKey, FieldState>>>({})
+
   type TFormState = FormState<TFieldValues>
   type TFormStateKey = keyof TFormState
   const formState = reactive<TFormState>({
@@ -53,6 +56,7 @@ export function createForm<
     isSubmitSuccessful: false,
     isValid: false,
     errors: {} as FieldErrors<TFieldValues>,
+    fields,
   }) as FormState<TFieldValues>
 
   const validationModeBeforeSubmit = getValidationMode(_options.mode!)
@@ -74,16 +78,17 @@ export function createForm<
     const unwrap = unref(ref)
     let el
 
-    if (isHTMLElement(unwrap))
+    if (isHTMLElement(unwrap)) {
       el = unwrap
-
-    else if (isHTMLElement(unwrap?.$el))
+    }
+    else if (isHTMLElement(unwrap?.$el)) {
       el = unwrap.$el
-
-    else if (isHTMLElement(unwrap?.ref?.value))
+    }
+    else if (isHTMLElement(unwrap?.ref?.value)) {
       el = unwrap.ref.value
+    }
 
-    if ((el as FieldElement).tagName === 'INPUT' || (el as FieldElement).tagName === 'SELECT' || (el as FieldElement).tagName === 'TEXTAREA')
+    if ((el as FieldElement)?.tagName === 'INPUT' || (el as FieldElement)?.tagName === 'SELECT' || (el as FieldElement)?.tagName === 'TEXTAREA')
       return el
 
     return el.querySelectorAll('input, select, textarea')[0]
@@ -175,7 +180,7 @@ export function createForm<
       const defaultVal = get(_options.defaultValues, name as string)
       const field = get(fields, name as string)
       const el = field?.ref
-      let inputVal: string | boolean = get(field!, 'resetVal') || defaultVal
+      let inputVal = get(field!, 'resetVal') || defaultVal
 
       if (!el) {
         return
@@ -193,12 +198,12 @@ export function createForm<
     }
   }
 
-  const _getInputValues = (names: TFormStateKey | TFormStateKey[]) => {
+  const _getInputValues = (names: FieldsKey | FieldsKey[]) => {
     if (!isArray(names)) {
       names = [names]
     }
 
-    const res: Record<TFormStateKey, any> = {} as any
+    const res: Record<FieldsKey, any> = {} as any
 
     names.forEach((name) => {
       set(res, name, get(fields[name], 'inputValue'))
@@ -267,6 +272,14 @@ export function createForm<
 
     _resetFields(keys)
     setFormState()
+  }
+
+  const getValues = (fields: keyof TFieldValues | (keyof TFieldValues)[]) => {
+    if (isArray(fields)) {
+      return ref(fields.map(field => _getInputValues(field as string)))
+    }
+
+    return ref(_getInputValues(fields as string))
   }
 
   const unRegisterSet = new Set<keyof TFieldValues>()
@@ -360,5 +373,6 @@ export function createForm<
     createSubmitHandler,
     createErrorHandler,
     reset,
+    getValues,
   }
 }

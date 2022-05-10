@@ -35,7 +35,6 @@ export async function validateField(
     pattern,
     validate,
     valueAsNumber,
-    valueAsDate,
     setValueAs,
     shouldUnregister,
     onChange,
