@@ -175,7 +175,7 @@ export function createForm<
       const defaultVal = get(_options.defaultValues, name as string)
       const field = get(fields, name as string)
       const el = field?.ref
-      let inputVal: string | boolean = get(field!, 'resetVal') || defaultVal || ''
+      let inputVal: string | boolean = get(field!, 'resetVal') || defaultVal
 
       if (!el) {
         return
@@ -186,6 +186,10 @@ export function createForm<
       }
 
       set(fields[name as string], 'inputValue', inputVal)
+
+      if (deepEqual(inputVal, defaultVal)) {
+        unset(formState.dirtyFields, name as string)
+      }
     }
   }
 
@@ -220,7 +224,6 @@ export function createForm<
 
     const pureValues = getPureFieldsOnInputValues()
 
-    console.log(pureValues)
     const dirtyFields: TFormState['dirtyFields'] = {} as any
 
     Object.keys(inputValues).forEach((field) => {
@@ -237,15 +240,18 @@ export function createForm<
       keepStateOptions = {} as any
     }
 
-    const setFormState = () => _setFormState({
-      isSubmitted: !!keepStateOptions!.keepIsSubmitted,
-      submitCount: keepStateOptions!.keepSubmitCount ? formState.submitCount : 0,
-      errors: keepStateOptions!.keepErrors ? formState.errors : {},
-      isDirty: keepStateOptions!.keepDirty ? formState.isDirty : !deepEqual(values, _options.defaultValues),
-      dirtyFields: keepStateOptions!.keepDirty ? formState.dirtyFields : _getDirtyFields(),
-      isSubmitting: false,
-      isSubmitSuccessful: false,
-    })
+    const setFormState = () => {
+      const dirtyFields = _getDirtyFields()
+      _setFormState({
+        isSubmitted: !!keepStateOptions!.keepIsSubmitted,
+        submitCount: keepStateOptions!.keepSubmitCount ? formState.submitCount : 0,
+        errors: keepStateOptions!.keepErrors ? formState.errors : {},
+        isDirty: keepStateOptions!.keepDirty ? formState.isDirty : Object.keys(dirtyFields).length > 0,
+        dirtyFields: keepStateOptions!.keepDirty ? formState.dirtyFields : dirtyFields,
+        isSubmitting: false,
+        isSubmitSuccessful: false,
+      })
+    }
 
     if (!values) {
       _resetFields(Object.keys(fields))
@@ -275,6 +281,7 @@ export function createForm<
       set(fields[name], 'inputValue', _options.defaultValues[name as string] || options.value || '')
     }
 
+    // TODO add default value and finish reset function
     if (options.value) {
       set(fields[name], 'inputValue', options.value)
       unset(options, 'value')
