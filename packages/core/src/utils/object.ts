@@ -23,3 +23,5 @@ export function unset<T extends object, K extends keyof T>(
 
   return obj
 }
+
+export const hasProp = <T extends object, K extends keyof T>(obj: T, key: K) => Reflect.has(obj, key)

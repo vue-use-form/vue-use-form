@@ -25,7 +25,7 @@ import { VALIDATION_MODE } from '../shared/constant'
 import { getValidationMode } from '../utils/getValidationMode'
 import type { DefaultValues, UnpackNestedValue } from '../types/utils'
 import { createErrorHandler as createErrorHandlerUtil, createSubmitHandler as createSubmitHandlerUtil } from '../utils/createHandler'
-import { get, set, unset } from '../utils/object'
+import { get, hasProp, set, unset } from '../utils/object'
 import { deepEqual } from '../utils/deepEqual'
 import { validateField } from './validate'
 
@@ -59,6 +59,12 @@ export function createForm<
   const validationModeAfterSubmit = getValidationMode(_options.reValidateMode!)
   const shouldDisplayAllAssociatedErrors
     = _options.criteriaMode === VALIDATION_MODE.all
+
+  const _setFormState = (props: { [K in TFormStateKey]?: TFormState[TFormStateKey] }) => {
+    (Object.keys(props) as TFormStateKey[]).forEach((key) => {
+      set(formState, key, props[key])
+    })
+  }
 
   const _getDefaultVal = (name: keyof TFieldValues) => {
     return get(_options.defaultValues, name as string) || ''
@@ -110,6 +116,7 @@ export function createForm<
   const _handleDirtyFields = (name: keyof TFieldValues, evt: InputEvent | string) => {
     const inputVal = isString(evt) ? evt : (evt.target as FieldElement).value
     const defaultVal = _getDefaultVal(name)
+
     if (defaultVal === inputVal) {
       set(formState, 'isDirty', false)
       unset(formState.dirtyFields, name as string)
@@ -168,9 +175,8 @@ export function createForm<
       const defaultVal = get(_options.defaultValues, name as string)
       const field = get(fields, name as string)
       const el = field?.ref
-      let inputVal: string | boolean = defaultVal || get(field!, 'resetVal') || ''
+      let inputVal: string | boolean = get(field!, 'resetVal') || defaultVal || ''
 
-      console.log(el)
       if (!el) {
         return
       }
@@ -179,55 +185,71 @@ export function createForm<
         inputVal = el.checked
       }
 
-      if (defaultVal) {
-        set(fields[name as string], 'inputValue', defaultVal)
-      } else {
-        set(fields[name as string], 'inputValue', inputVal)
-      }
+      set(fields[name as string], 'inputValue', inputVal)
     }
   }
 
-  const _setFormState = (props: { [K in TFormStateKey]?: TFormState[TFormStateKey] }) => {
-    (Object.keys(props) as TFormStateKey[]).forEach((key) => {
-      set(formState, key, props[key])
+  const _getInputValues = (names: TFormStateKey | TFormStateKey[]) => {
+    if (!isArray(names)) {
+      names = [names]
+    }
+
+    const res: Record<TFormStateKey, any> = {} as any
+
+    names.forEach((name) => {
+      set(res, name, get(fields[name], 'inputValue'))
     })
+
+    return res
   }
 
-  const _getDirtyFields = (values?: Record<string, any>) => {
-    const dirtyFields = get(formState, 'dirtyFields')
-    if (!values) {
-      return dirtyFields
+  const _getDirtyFields = () => {
+    const inputValues = _getInputValues(Object.keys(fields) as TFormStateKey[])
+
+    function getPureFieldsOnInputValues() {
+      const res: Record<keyof TFieldValues, any> = {} as any
+
+      Object.entries(inputValues).forEach(([field, value]) => {
+        if (!hasProp(formState.dirtyFields, field)) {
+          set(res, field, value)
+        }
+      })
+
+      return res
     }
 
-    const res = { ...dirtyFields }
-    const keys = Object.keys(values)
-    for (const key of keys) {
-      const defaultVal = get(_options.defaultValues, key)
-      if (deepEqual(res[key], defaultVal)) {
-        unset(res, key)
+    const pureValues = getPureFieldsOnInputValues()
+
+    console.log(pureValues)
+    const dirtyFields: TFormState['dirtyFields'] = {} as any
+
+    Object.keys(inputValues).forEach((field) => {
+      if (!hasProp(pureValues, field)) {
+        set(dirtyFields, field, true)
       }
-    }
+    })
 
-    return res as TFormState['dirtyFields']
+    return dirtyFields
   }
 
   const reset: UseFormReset<TFieldValues> = (values, keepStateOptions?) => {
     if (!keepStateOptions) {
-      keepStateOptions = {}
+      keepStateOptions = {} as any
     }
 
-    _setFormState({
-      isSubmitted: !!keepStateOptions.keepIsSubmitted,
-      submitCount: keepStateOptions.keepSubmitCount ? formState.submitCount : 0,
-      errors: keepStateOptions.keepErrors ? formState.errors : {},
-      isDirty: keepStateOptions.keepDirty ? formState.isDirty : !deepEqual(values, _options.defaultValues),
-      dirtyFields: keepStateOptions.keepDirty ? formState.dirtyFields : _getDirtyFields(values),
+    const setFormState = () => _setFormState({
+      isSubmitted: !!keepStateOptions!.keepIsSubmitted,
+      submitCount: keepStateOptions!.keepSubmitCount ? formState.submitCount : 0,
+      errors: keepStateOptions!.keepErrors ? formState.errors : {},
+      isDirty: keepStateOptions!.keepDirty ? formState.isDirty : !deepEqual(values, _options.defaultValues),
+      dirtyFields: keepStateOptions!.keepDirty ? formState.dirtyFields : _getDirtyFields(),
       isSubmitting: false,
       isSubmitSuccessful: false,
     })
 
     if (!values) {
       _resetFields(Object.keys(fields))
+      setFormState()
       return
     }
 
@@ -238,6 +260,7 @@ export function createForm<
     })
 
     _resetFields(keys)
+    setFormState()
   }
 
   const unRegisterSet = new Set<keyof TFieldValues>()
@@ -249,6 +272,7 @@ export function createForm<
     if (!fields[name]) {
       set(fields, name, {} as Field)
       assignBindAttrs()
+      set(fields[name], 'inputValue', _options.defaultValues[name as string] || options.value || '')
     }
 
     if (options.value) {
@@ -279,14 +303,16 @@ export function createForm<
     return {
       ref: elRef,
       modelValue: modelVal.value,
+      value: modelVal.value,
       onBlur: () => {
         if (validationModeBeforeSubmit.isOnBlur)
           onChange(name)
       },
       [onModelValueUpdate]: (newValue: TFieldValues[keyof TFieldValues]) => {
         assignBindAttrs(_transformRef(elRef), newValue)
-        if (validationModeBeforeSubmit.isOnChange)
+        if (validationModeBeforeSubmit.isOnChange) {
           onChange(name)
+        }
       },
       onInput(evt: InputEvent) {
         _handleDirtyFields(name, evt)
