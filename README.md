@@ -10,7 +10,18 @@ vue-composable-form
  <a href="https://vue-form-cn.netlify.app/">中文文档</a>(🔨施工中...)
 </p>
 
+## Install
 
+```bash
+# npm
+npm i @vue-composable-form/core
+
+# pnpm
+pnpm i @vue-composable-form/core
+
+# yarn
+yarn add @vue-composable-form/core
+```
 
 ## Base Example
 
