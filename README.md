@@ -41,6 +41,7 @@ const {
   createErrorHandler,
   handleSubmit,
   register,
+  useRegister
 } = useForm<Inputs>({
   mode: 'onChange',
 })
@@ -53,7 +54,7 @@ const onError = createErrorHandler((error) => {
   console.log(error)
 })
 
-const passwordField = register('password', {
+const passwordField = useRegister('password', {
   required: { value: true, message: 'Password is required' },
   minLength: { value: 6, message: 'Password must be at least 6 characters' },
   maxLength: { value: 20, message: 'Password must be at most 20 characters' },
