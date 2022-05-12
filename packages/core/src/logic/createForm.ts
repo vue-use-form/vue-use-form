@@ -1,16 +1,16 @@
 import type { Ref } from 'vue'
 import { computed, reactive, ref, unref, watch } from 'vue'
-import type { Partial } from 'rollup-plugin-typescript2/dist/partial'
 import type {
   FieldNamesMarkedBoolean,
+
   FormState,
   SubmitErrorHandler,
   SubmitHandler,
-  UseFormHandleSubmit,
-  UseFormProps, UseFormReset,
+  UseFormHandleSubmit, UseFormProps,
+  UseFormReset,
   UseFormReturn,
 } from '../types/form'
-import type { Field, FieldElement, FieldValues } from '../types/filed'
+import type { Field, FieldElement, FieldState, FieldValues } from '../types/filed'
 import type { FieldError, FieldErrors } from '../types/errors'
 import type { RegisterOptions } from '../types/validator'
 import {
@@ -28,6 +28,7 @@ import type { DefaultValues, UnpackNestedValue } from '../types/utils'
 import { createErrorHandler as createErrorHandlerUtil, createSubmitHandler as createSubmitHandlerUtil } from '../utils/createHandler'
 import { get, hasProp, set, unset } from '../utils/object'
 import { deepEqual } from '../utils/deepEqual'
+
 import { validateField } from './validate'
 
 const onModelValueUpdate = 'onUpdate:modelValue'
@@ -42,7 +43,7 @@ export function createForm<
   // what about use Map?
   const fields = reactive<Partial<Record<keyof TFieldValues, Field>>>({}) as Record<keyof TFieldValues, Field>
 
-  const fieldsState = reactive<Partial<Record<FieldsKey, FieldState>>>({})
+  const fieldsState = {} as Partial<Record<FieldsKey, FieldState>>
 
   type TFormState = FormState<TFieldValues>
   type TFormStateKey = keyof TFormState
@@ -276,10 +277,10 @@ export function createForm<
 
   const getValues = (fields: keyof TFieldValues | (keyof TFieldValues)[]) => {
     if (isArray(fields)) {
-      return ref(fields.map(field => _getInputValues(field as string)))
+      return fields.map(field => _getInputValues(field as string))
     }
 
-    return ref(_getInputValues(fields as string))
+    return _getInputValues(fields as string)
   }
 
   const unRegisterSet = new Set<keyof TFieldValues>()
@@ -364,7 +365,7 @@ export function createForm<
 
   const useRegister = (name: keyof TFieldValues, options: RegisterOptions) => () => register(name, options)
 
-  return {
+  return reactive({
     formState,
     register,
     unregister,
@@ -374,5 +375,5 @@ export function createForm<
     createErrorHandler,
     reset,
     getValues,
-  }
+  })
 }

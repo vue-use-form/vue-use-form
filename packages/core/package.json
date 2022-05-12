@@ -1,17 +1,21 @@
 {
-  "name": "@vue-composable-form/core",
-  "version": "0.0.5",
+  "name": "vue-use-form",
+  "version": "0.0.3",
   "description": "",
-  "license": "MIT",
-  "author": "snowingfox",
-  "main": "dist/index.cjs",
   "keywords": [
     "vue",
     "vue-composable-form",
     "vue-hook-form",
     "vue-form",
-    "vue-validate"
+    "vue-validate",
+    "vue-use-form"
   ],
+  "license": "MIT",
+  "author": "snowingfox",
+  "repository": {
+    "url": "https://github.com/vue-use-form/vue-use-form"
+  },
+  "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "exports": {
