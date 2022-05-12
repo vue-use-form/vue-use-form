@@ -1,7 +1,8 @@
 <h1 align="center">
-vue-composable-form
+vue-use-form
 </h1>
 
+## Thanks [logaretm](https://github.com/logaretm) for giving us the name of lib
 
 <p align="center">
  <a href="https://vue-form-docs.netlify.app/">Documentation</a>(🔨under construction...)
@@ -14,21 +15,20 @@ vue-composable-form
 
 ```bash
 # npm
-npm i @vue-composable-form/core
+npm i vue-use-form
 
 # pnpm
-pnpm i @vue-composable-form/core
+pnpm i vue-use-form
 
 # yarn
-yarn add @vue-composable-form/core
+yarn add vue-use-form
 ```
 
 ## Base Example
 
 ```vue
-
 <script setup lang="ts">
-import { useForm } from './packages/core/src/index.ts';
+import { useForm } from 'vue-use-form'
 
 interface Inputs {
   username: string
@@ -58,26 +58,29 @@ const passwordField = useRegister('password', {
   required: { value: true, message: 'Password is required' },
   minLength: { value: 6, message: 'Password must be at least 6 characters' },
   maxLength: { value: 20, message: 'Password must be at most 20 characters' },
-  validate: (value) => value.match(/^[a-zA-Z0-9]+$/),
+  validate: value => value.match(/^[a-zA-Z0-9]+$/),
 })
 
 </script>
 
 <template>
   <form>
-    <input :="register('username', {
+    <input
+      :="register('username', {
       required: 'Username is required!',
       minLength: { value: 6, message: 'Username must be at least 6 characters' },
       maxLength: { value: 20, message: 'Username must be at most 20 characters' },
       validate: {
         isStartWithAt: (val) => val.startsWith('@'),
-        isContainSharp: (val) => val.includes('#') 
+        isContainSharp: (val) => val.includes('#')
       },
-    })"/>
-    <input :="passwordField()"/>
-    <button type="submit" @click="handleSubmit(onSubmit, onError)()">Submit</button>
+    })"
+    >
+    <input :="passwordField()">
+    <button type="submit" @click="handleSubmit(onSubmit, onError)()">
+      Submit
+    </button>
   </form>
 </template>
-
 
 ```
