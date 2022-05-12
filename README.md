@@ -2,14 +2,15 @@
 vue-use-form
 </h1>
 
-## Thanks [logaretm](https://github.com/logaretm) for giving us the name of lib
-
 <p align="center">
  <a href="https://vue-form-docs.netlify.app/">Documentation</a>(🔨under construction...)
 </p>
 <p align="center">
  <a href="https://vue-form-cn.netlify.app/">中文文档</a>(🔨施工中...)
 </p>
+
+
+## 🎉Thanks [logaretm](https://github.com/logaretm) for giving us the name of lib
 
 ## Install
 
