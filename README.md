@@ -25,7 +25,10 @@ pnpm i vue-use-form
 yarn add vue-use-form
 ```
 
-## Base Example
+## Online Example
+[stackblitz](https://stackblitz.com/edit/vitejs-vite-ztou8m?file=src%2FApp.vue,src%2Fmain.ts&terminal=dev)
+
+## Basic Example
 
 ```vue
 <script setup lang="ts">
