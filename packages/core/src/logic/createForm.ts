@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import { computed, reactive, ref, unref, watch } from 'vue'
+import { computed, isReactive, reactive, ref, unref, watch, watchEffect } from 'vue'
 import type {
   FieldNamesMarkedBoolean,
 
@@ -119,19 +119,6 @@ export function createForm<
     }
   }
 
-  const _handleDirtyFields = (name: keyof TFieldValues, evt: InputEvent | string) => {
-    const inputVal = isString(evt) ? evt : (evt.target as FieldElement).value
-    const defaultVal = _getDefaultVal(name)
-
-    if (defaultVal === inputVal) {
-      set(formState, 'isDirty', false)
-      unset(formState.dirtyFields, name as string)
-    } else {
-      set(formState, 'isDirty', true)
-      set(formState.dirtyFields, name as string, true)
-    }
-  }
-
   const onChange = async (name: keyof TFieldValues) => {
     set(formState, 'isValidating', true)
     await _validateFieldByName(name)
@@ -172,7 +159,7 @@ export function createForm<
   const createErrorHandler = (fn: SubmitErrorHandler<TFieldValues>) => createErrorHandlerUtil<TFieldValues>(fn)
   const createSubmitHandler = (fn: SubmitHandler<TFieldValues>) => createSubmitHandlerUtil<TFieldValues>(fn)
 
-  const _resetFields = (fieldsName: FieldsKey | FieldsKey[]) => {
+  const _resetFields = (fieldsName: FieldsKey | FieldsKey[], keepDirty = false) => {
     if (!isArray(fieldsName)) {
       fieldsName = [fieldsName]
     }
@@ -193,7 +180,7 @@ export function createForm<
 
       set(fields[name as string], 'inputValue', inputVal)
 
-      if (deepEqual(inputVal, defaultVal)) {
+      if (!keepDirty && deepEqual(inputVal, defaultVal)) {
         unset(formState.dirtyFields, name as string)
       }
     }
@@ -241,6 +228,19 @@ export function createForm<
     return dirtyFields
   }
 
+  const _handleDirtyFields = (name: keyof TFieldValues, evt: InputEvent | string) => {
+    const inputVal = isString(evt) ? evt : (evt.target as FieldElement).value
+    const defaultVal = _getDefaultVal(name)
+
+    if (defaultVal === inputVal) {
+      set(formState, 'isDirty', false)
+      unset(formState.dirtyFields, name as string)
+    } else {
+      set(formState, 'isDirty', true)
+      set(formState.dirtyFields, name as string, true)
+    }
+  }
+
   const reset: UseFormReset<TFieldValues> = (values, keepStateOptions?) => {
     if (!keepStateOptions) {
       keepStateOptions = {} as any
@@ -248,6 +248,7 @@ export function createForm<
 
     const setFormState = () => {
       const dirtyFields = _getDirtyFields()
+
       _setFormState({
         isSubmitted: !!keepStateOptions!.keepIsSubmitted,
         submitCount: keepStateOptions!.keepSubmitCount ? formState.submitCount : 0,
@@ -271,7 +272,7 @@ export function createForm<
       keys.push(key as string)
     })
 
-    _resetFields(keys)
+    _resetFields(keys, !!keepStateOptions?.keepDirty)
     setFormState()
   }
 
@@ -295,7 +296,6 @@ export function createForm<
       set(fields[name], 'inputValue', _options.defaultValues[name as string] || options.value || '')
     }
 
-    // TODO add default value and finish reset function
     if (options.value) {
       set(fields[name], 'inputValue', options.value)
       unset(options, 'value')
