@@ -77,7 +77,7 @@ export type UseFormTrigger<T> = T
 export type UseFormResetField<T> = T
 
 export type UseFormReset<TFieldValues extends FieldValues> = (
-  values?: DefaultValues<TFieldValues> | UnpackNestedValue<TFieldValues>,
+  values?: DefaultValues<TFieldValues> | UnpackNestedValue<TFieldValues> | 'all',
   keepStateOptions?: KeepStateOptions,
 ) => void
 
@@ -120,4 +120,5 @@ export interface FormState<TFieldValues> {
   isValid: boolean
   errors: FieldErrors<TFieldValues>
   fields: Record<keyof TFieldValues, Field>
+  touchedFields: FieldNamesMarkedBoolean<TFieldValues>
 }

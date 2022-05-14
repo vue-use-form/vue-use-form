@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import { computed, isReactive, reactive, ref, unref, watch, watchEffect } from 'vue'
+import { computed, reactive, ref, unref, watch, watchEffect } from 'vue'
 import type {
   FieldNamesMarkedBoolean,
 
@@ -57,6 +57,7 @@ export function createForm<
     isSubmitSuccessful: false,
     isValid: false,
     errors: {} as FieldErrors<TFieldValues>,
+    touchedFields: {} as FieldNamesMarkedBoolean<TFieldValues>,
     fields,
   }) as FormState<TFieldValues>
 
@@ -72,7 +73,7 @@ export function createForm<
   }
 
   const _getDefaultVal = (name: keyof TFieldValues) => {
-    return get(_options.defaultValues, name as string) || ''
+    return get(_options.defaultValues, name as string) ?? ''
   }
 
   const _transformRef = (ref: Ref<FieldElement | any>) => {
@@ -119,46 +120,6 @@ export function createForm<
     }
   }
 
-  const onChange = async (name: keyof TFieldValues) => {
-    set(formState, 'isValidating', true)
-    await _validateFieldByName(name)
-    set(formState, 'isValidating', false)
-
-    if (isEmptyObject(formState.errors)) {
-      set(formState, 'isValid', true)
-    } else {
-      set(formState, 'isValid', false)
-    }
-  }
-
-  const handleSubmit: UseFormHandleSubmit<TFieldValues> = (onSubmit, onError?) => {
-    set(formState, 'isSubmitting', true)
-    formState.submitCount++
-    return async (e) => {
-      await _validateFields()
-      if (!isEmptyObject(formState.errors)) {
-        if (isFunction(onError)) {
-          await onError(formState.errors, e)
-          set(formState, 'isSubmitting', false)
-          set(formState, 'isSubmitted', true)
-        }
-
-        return
-      }
-      const res: Record<string, any> = {}
-      for (const fieldName in fields) {
-        res[fieldName] = fields[fieldName].inputValue
-      }
-      await onSubmit(fields as UnpackNestedValue<TFieldValues>, e)
-      set(formState, 'isSubmitting', false)
-      set(formState, 'isSubmitted', true)
-      set(formState, 'isSubmitSuccessful', true)
-    }
-  }
-
-  const createErrorHandler = (fn: SubmitErrorHandler<TFieldValues>) => createErrorHandlerUtil<TFieldValues>(fn)
-  const createSubmitHandler = (fn: SubmitHandler<TFieldValues>) => createSubmitHandlerUtil<TFieldValues>(fn)
-
   const _resetFields = (fieldsName: FieldsKey | FieldsKey[], keepDirty = false) => {
     if (!isArray(fieldsName)) {
       fieldsName = [fieldsName]
@@ -179,6 +140,8 @@ export function createForm<
       }
 
       set(fields[name as string], 'inputValue', inputVal)
+      set(fields[name as string], 'resetVal', inputVal)
+      set(fields[name as string], 'resetCount', (get(fields[name as string], 'resetCount') || 0) + 1)
 
       if (!keepDirty && deepEqual(inputVal, defaultVal)) {
         unset(formState.dirtyFields, name as string)
@@ -241,6 +204,10 @@ export function createForm<
     }
   }
 
+  const _handleTouchedFields = (name: keyof TFieldValues) => {
+    set(formState, 'touchedFields', { ...get(formState, 'touchedFields'), [name]: true })
+  }
+
   const reset: UseFormReset<TFieldValues> = (values, keepStateOptions?) => {
     if (!keepStateOptions) {
       keepStateOptions = {} as any
@@ -260,7 +227,7 @@ export function createForm<
       })
     }
 
-    if (!values) {
+    if (!values || values === 'all') {
       _resetFields(Object.keys(fields))
       setFormState()
       return
@@ -284,8 +251,53 @@ export function createForm<
     return _getInputValues(fields as string)
   }
 
+  const onChange = async (name: keyof TFieldValues) => {
+    _handleDirtyFields(name, fields[name].inputValue)
+    _handleTouchedFields(name)
+    set(formState, 'isValidating', true)
+    await _validateFieldByName(name)
+    set(formState, 'isValidating', false)
+
+    if (isEmptyObject(formState.errors)) {
+      set(formState, 'isValid', true)
+    } else {
+      set(formState, 'isValid', false)
+    }
+  }
+
+  const handleSubmit: UseFormHandleSubmit<TFieldValues> = (onSubmit, onError?) => {
+    set(formState, 'isSubmitting', true)
+    formState.submitCount++
+    return async (e) => {
+      await _validateFields()
+      if (!isEmptyObject(formState.errors)) {
+        if (isFunction(onError)) {
+          await onError(formState.errors, e)
+          set(formState, 'isSubmitting', false)
+          set(formState, 'isSubmitted', true)
+        }
+
+        return
+      }
+      const res: Record<string, any> = {}
+      for (const fieldName in fields) {
+        res[fieldName] = fields[fieldName].inputValue
+      }
+      await onSubmit(fields as UnpackNestedValue<TFieldValues>, e)
+      set(formState, 'isSubmitting', false)
+      set(formState, 'isSubmitted', true)
+      set(formState, 'isSubmitSuccessful', true)
+    }
+  }
+
+  const createErrorHandler = (fn: SubmitErrorHandler<TFieldValues>) => createErrorHandlerUtil<TFieldValues>(fn)
+  const createSubmitHandler = (fn: SubmitHandler<TFieldValues>) => createSubmitHandlerUtil<TFieldValues>(fn)
+
   const unRegisterSet = new Set<keyof TFieldValues>()
 
+  /***
+   * There has a problem that once your input changed, the register will trigger again.
+   * */
   const register = (name: keyof TFieldValues, options: RegisterOptions) => {
     const modelVal = computed(() => fields[name]?.inputValue || '')
     const elRef = ref<FieldElement | null>(null)
@@ -294,6 +306,7 @@ export function createForm<
       set(fields, name, {} as Field)
       assignBindAttrs()
       set(fields[name], 'inputValue', _options.defaultValues[name as string] || options.value || '')
+      set(fields[name], 'resetCount', 0)
     }
 
     if (options.value) {
@@ -336,7 +349,6 @@ export function createForm<
         }
       },
       onInput(evt: InputEvent) {
-        _handleDirtyFields(name, evt)
         // filter UI Component
         if (isString(evt))
           return
@@ -355,6 +367,31 @@ export function createForm<
     fieldsName.forEach(fieldName => unRegisterSet.add(fieldName))
   }
 
+  const useField = (name: keyof TFieldValues, options: RegisterOptions & { ref?: Ref<FieldElement> }) => {
+    const modelVal = ref(_getDefaultVal(name) || options.value || (fields[name] || {}).inputValue || '') as Ref
+    set(fields, name, {} as Field)
+    set(fields[name], 'ref', options.ref || null)
+    unset(options, 'ref')
+    set(fields[name], 'rule', options)
+
+    watch(modelVal, (newVal) => {
+      set(fields[name], 'inputValue', newVal)
+      if (validationModeBeforeSubmit.isOnChange) {
+        onChange(name)
+      }
+    })
+
+    watchEffect(() => {
+      if (fields[name].resetCount) {
+        modelVal.value = get(fields, 'resetVal') || ''
+      }
+    })
+
+    return modelVal
+  }
+
+  const useRegister = (name: keyof TFieldValues, options: RegisterOptions) => () => register(name, options)
+
   const cleanupUnRegister = () => {
     for (const fieldName of unRegisterSet) {
       unset(formState.errors, fieldName as string)
@@ -363,12 +400,11 @@ export function createForm<
     }
   }
 
-  const useRegister = (name: keyof TFieldValues, options: RegisterOptions) => () => register(name, options)
-
   return reactive({
     formState,
     register,
     unregister,
+    useField,
     useRegister,
     handleSubmit,
     createSubmitHandler,
@@ -377,3 +413,4 @@ export function createForm<
     getValues,
   })
 }
+

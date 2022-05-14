@@ -11,6 +11,7 @@ export interface Field {
   ref: FieldElement
   name: string
   resetVal: any
+  resetCount: number
 }
 
 export interface FieldState {
