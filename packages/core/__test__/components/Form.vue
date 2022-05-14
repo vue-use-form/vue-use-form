@@ -1,9 +1,13 @@
 <script>
-import { useForm } from '../../src/useForm'
+import { useForm } from '../../src'
 
 export default {
   data() {
-    const { formState: { errors }, register } = useForm()
+    const { formState: { errors }, register } = useForm({
+      defaultValues: {
+        username: 'snowingfox',
+      },
+    })
 
     return {
       register,

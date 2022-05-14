@@ -1,30 +1,30 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, watchEffect } from 'vue'
 import { useForm } from '../../packages/core/src'
+import type { FieldElement } from '../../packages/core/src/types/filed'
 
 interface Inputs {
-  name: string
-  region: string
-  date1: Date
+  username: string
+  password: string
 }
 
 const {
-  formState: { errors, fields },
+  formState,
   createSubmitHandler,
   createErrorHandler,
   handleSubmit,
   register,
+  reset,
   getValues,
+  useField,
 } = useForm<Inputs>({
   mode: 'onChange',
 })
 
-const pickerRef = ref()
-
-const rootRef = ref()
-
-watchEffect(() => {
-  console.log(fields)
+const passwordRef = ref<FieldElement>({} as any)
+const password = useField('password', {
+  ref: passwordRef,
+  required: true,
 })
 
 const onSubmit = createSubmitHandler((data) => {
@@ -35,30 +35,35 @@ const onError = createErrorHandler((error) => {
   console.log(error)
 })
 
+function handleCancel() {
+  reset('all', {
+    keepDirty: true,
+  })
+}
+
 </script>
 
 <template>
+  <div>
+    <ul>
+      <li v-for="(val, key) in formState">
+        {{ key }}:{{ val }}
+      </li>
+    </ul>
+  </div>
   <el-form label-width="120px">
-    <el-form-item
-      :="register('date1', {
-            required: 'Please select end time',
-            valueAsDate: true,
-            validate: (value) => value === 1
-          })"
-    >
-      <el-time-picker
-        ref="rootRef"
-        v-model="fields.date1.inputValue"
-        placeholder="Pick a time"
-        style="width: 100%"
-      />
-    </el-form-item>
-    <el-form-item>
-      <el-button type="primary" @click="handleSubmit(onSubmit, onError)()">
-        Create
-      </el-button>
-      <el-button>Cancel</el-button>
-    </el-form-item>
+    <el-input
+      :="register('username', {
+      required: 'Username is required',
+    })"
+    />
+    <el-input ref="passwordRef" v-model="password" />
+    <el-button type="primary" @click="handleSubmit(onSubmit, onError)()">
+      Create
+    </el-button>
+    <el-button @click="handleCancel">
+      Cancel
+    </el-button>
   </el-form>
 </template>
 

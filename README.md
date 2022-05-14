@@ -30,6 +30,9 @@ yarn add vue-use-form
 
 ## Basic Example
 
+
+Notice: The lib is still under development, so some API cannot get from `vue-use-form` package, you can clone this repo to your local, then you can use the latest feature.
+
 ```vue
 <script setup lang="ts">
 import { useForm } from 'vue-use-form'
@@ -37,6 +40,7 @@ import { useForm } from 'vue-use-form'
 interface Inputs {
   username: string
   password: string
+  age: number
 }
 
 const {
@@ -46,6 +50,7 @@ const {
   handleSubmit,
   register,
   useRegister
+  useField,
 } = useForm<Inputs>({
   mode: 'onChange',
 })
@@ -65,6 +70,12 @@ const passwordField = useRegister('password', {
   validate: value => value.match(/^[a-zA-Z0-9]+$/),
 })
 
+const ageModel = useField('age', {
+  valAsNumber: true,
+  required: { value: true, message: 'Age is required' },
+  min: { value: 18, message: 'Age must be at least 18' },
+})
+
 </script>
 
 <template>
@@ -81,6 +92,7 @@ const passwordField = useRegister('password', {
     })"
     >
     <input :="passwordField()">
+    <input v-model="ageModel"/>
     <button type="submit" @click="handleSubmit(onSubmit, onError)()">
       Submit
     </button>
