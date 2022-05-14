@@ -5,23 +5,21 @@ export function set<T extends object, K extends keyof T>(
 ) {
   obj[key] = value
 
-  return obj
+  return Reflect.set(obj, key, value)
 }
 
 export function get<T extends object, K extends keyof T>(
   obj: T,
   key: K,
 ): T[K] | undefined {
-  return obj[key]
+  return Reflect.get(obj, key)
 }
 
 export function unset<T extends object, K extends keyof T>(
   obj: T,
   key: K,
 ) {
-  delete obj[key]
-
-  return obj
+  return Reflect.deleteProperty(obj, key)
 }
 
 export const hasProp = <T extends object, K extends keyof T>(obj: T, key: K) => Reflect.has(obj, key)
