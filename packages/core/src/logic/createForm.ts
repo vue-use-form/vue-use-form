@@ -33,6 +33,7 @@ import { validateField } from './validate'
 
 const onModelValueUpdate = 'onUpdate:modelValue'
 
+// TODO: Refactor with v-model bind, i made a mistake, it don't need the dom necessary
 export function createForm<
   TFieldValues extends FieldValues = FieldValues,
   TContext = any,

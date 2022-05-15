@@ -12,6 +12,7 @@ import {
 import type { Field, FieldElement } from '../types/filed'
 import { getValueAndMessage } from '../utils/transformMessage'
 import { getValidatorError } from '../utils/getValidatorError'
+import { set } from '../utils/object'
 
 function handleDeferError(error: FieldError, shouldError: boolean) {
   if (!isEmptyObject(error) && shouldError) {
@@ -24,7 +25,7 @@ export async function validateField(
   validateAllFieldCriteria: boolean,
   shouldFocusOnError: boolean,
 ): Promise<FieldError> {
-  const { inputValue } = field
+  const inputValue = field.inputValue
 
   const {
     required,
@@ -35,6 +36,7 @@ export async function validateField(
     pattern,
     validate,
     valueAsNumber,
+    valueAsDate,
     setValueAs,
     shouldUnregister,
     onChange,
@@ -50,6 +52,16 @@ export async function validateField(
   const isEmptyValue = isEmpty(inputValue)
 
   let error: FieldError = {}
+
+  if (valueAsNumber) {
+    set(field, 'inputValue', (el as HTMLInputElement).valueAsNumber)
+  } else if (valueAsDate) {
+    set(field, 'inputValue', (el as HTMLInputElement).valueAsDate)
+  } else if (setValueAs) {
+    set(field, 'inputValue', setValueAs(inputValue))
+  }
+
+  console.log(el)
 
   try {
     if (required && !isRadioOrCheckBox) {
