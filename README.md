@@ -30,7 +30,6 @@ yarn add vue-use-form
 
 ## Basic Example
 
-
 Notice: The lib is still under development, so some API cannot get from `vue-use-form` package, you can clone this repo to your local, then you can use the latest feature.
 
 ```vue
@@ -72,7 +71,7 @@ const passwordField = useRegister('password', {
 
 const ageModel = useField('age', {
   valAsNumber: true,
-  required: { value: true, message: 'Age is required' },
+  required: 'Age is required',
   min: { value: 18, message: 'Age must be at least 18' },
 })
 
@@ -98,5 +97,4 @@ const ageModel = useField('age', {
     </button>
   </form>
 </template>
-
 ```
