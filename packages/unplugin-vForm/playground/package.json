@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "nodemon -w '../src/**/*.ts' -e .ts -x 'vite'"
+  },
+  "devDependencies": {
+    "vite": "^2.9.2",
+    "vite-plugin-inspect": "^0.4.3"
+  }
+}
