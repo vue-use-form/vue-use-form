@@ -1,3 +1,4 @@
+import type { Ref } from 'vue'
 import type { RegisterOptions } from './validator'
 import type { FieldError } from './errors'
 
@@ -6,9 +7,8 @@ export type FieldValues = Record<string, any>
 export type FieldElement = HTMLInputElement| HTMLSelectElement | HTMLTextAreaElement
 
 export interface Field {
-  inputValue: any
+  inputValue: Ref
   rule: RegisterOptions
-  ref: FieldElement
   name: string
   resetVal: any
   resetCount: number

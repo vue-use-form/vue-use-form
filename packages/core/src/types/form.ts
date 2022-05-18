@@ -1,7 +1,7 @@
 import type { Ref } from 'vue'
 import type { DeepMap, DeepPartial, DefaultValues, UnpackNestedValue } from './utils'
 import type { FieldErrors } from './errors'
-import type { Field, FieldValues } from './filed'
+import type { FieldValues } from './filed'
 import type { RegisterOptions } from './validator'
 
 export type Mode = 'onSubmit' | 'onBlur' | 'onChange' | 'onTouched' | 'all'
@@ -81,13 +81,25 @@ export type UseFormReset<TFieldValues extends FieldValues> = (
   keepStateOptions?: KeepStateOptions,
 ) => void
 
-export type UseFormUnregister<T> = T
+export type UseFormUnregister<TFieldValues extends FieldValues> = (
+  name?: keyof TFieldValues,
+  options?: Omit<
+    KeepStateOptions,
+    | 'keepIsSubmitted'
+    | 'keepSubmitCount'
+    | 'keepValues'
+    | 'keepDefaultValues'
+    | 'keepErrors'
+    > & { keepValue?: boolean; keepDefaultValue?: boolean; keepError?: boolean },
+) => void
 
-export type UseFormRegister<T> = T
+export type UseFormRegisterReturn<T> = Ref<T>
+
+export type UseFormRegister<T extends FieldValues, K extends keyof T> = (name: K, options?: RegisterOptions) => UseFormRegisterReturn<T[K]>
 
 export type UseFormSetFocus<T> = T
 
-export type UseFormUseRegister<TFieldValues extends FieldValues> = (name: keyof TFieldValues, options: RegisterOptions) => UseFormRegister<TFieldValues>
+export type UseFormUseRegister<TFieldValues extends FieldValues> = (name: keyof TFieldValues, options: RegisterOptions) => UseFormRegister<TFieldValues, keyof TFieldValues>
 
 export interface UseFormReturn<
   TFieldValues extends FieldValues = FieldValues,
@@ -104,7 +116,7 @@ export interface UseFormReturn<
   reset: UseFormReset<TFieldValues>
   handleSubmit: UseFormHandleSubmit<TFieldValues>
   unregister: UseFormUnregister<TFieldValues>
-  register: UseFormRegister<TFieldValues>
+  register: UseFormRegister<TFieldValues, keyof TFieldValues>
   useRegister: UseFormUseRegister<TFieldValues>
   setFocus: UseFormSetFocus<TFieldValues>
 }
@@ -119,6 +131,6 @@ export interface FormState<TFieldValues> {
   isValidating: boolean
   isValid: boolean
   errors: FieldErrors<TFieldValues>
-  fields: Record<keyof TFieldValues, Field>
+  isTouched: boolean
   touchedFields: FieldNamesMarkedBoolean<TFieldValues>
 }
