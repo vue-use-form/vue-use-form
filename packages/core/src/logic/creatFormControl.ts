@@ -5,6 +5,7 @@ import type { FieldErrors } from '../types/errors'
 import { isEmptyObject } from '../utils'
 import { get, set } from '../utils/object'
 import type { DefaultValues } from '../types/utils'
+import { getValidationMode } from '../utils/getValidationMode'
 
 export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
   TContext = any,
@@ -31,12 +32,14 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
 
   const _defaultValues = _options.defaultValues || {} as DefaultValues<TFieldValues>
 
+  const validationModeBeforeSubmit = getValidationMode(_options.mode!)
+
   const _validate = () => {}
 
   const trigger = () => {}
 
   const _onChange = (name: FieldsKey) => {
-    console.log(_fields)
+
   }
 
   const register: UseFormRegister<TFieldValues, FieldsKey> = (fieldName, options) => {
@@ -47,8 +50,10 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
 
     _fields[fieldName].inputValue = model
 
-    watch(model, (newModel) => {
-      console.log(newModel)
+    watch(model, () => {
+      if (validationModeBeforeSubmit.isOnChange) {
+        _onChange(fieldName)
+      }
     })
 
     return model
@@ -67,6 +72,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
       unregister,
     },
     register,
+    unregister,
   })
 }
 
