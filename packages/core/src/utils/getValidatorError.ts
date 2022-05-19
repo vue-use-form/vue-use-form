@@ -1,11 +1,9 @@
 import type { RegisterOptions, ValidateResult } from '../types/validator'
-import type { FieldElement } from '../types/filed'
 import type { FieldError } from '../types/errors'
 import { isBoolean, isString } from './index'
 
 export function getValidatorError(
   result: ValidateResult,
-  ref: FieldElement,
   type = 'validate',
 ): FieldError | undefined {
   if (
@@ -14,7 +12,11 @@ export function getValidatorError(
     return {
       type: type as keyof RegisterOptions,
       message: isString(result) ? result : '',
-      ref,
+    }
+  } else if (isString(result)) {
+    return {
+      type: type as keyof RegisterOptions,
+      message: result,
     }
   }
 }

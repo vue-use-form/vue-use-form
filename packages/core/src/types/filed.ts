@@ -9,7 +9,6 @@ export type FieldElement = HTMLInputElement| HTMLSelectElement | HTMLTextAreaEle
 export interface Field {
   inputValue: Ref
   rule: RegisterOptions
-  name: string
   resetVal: any
   resetCount: number
 }
