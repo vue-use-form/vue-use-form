@@ -33,7 +33,7 @@ I'm trying to support the directive `v-form` to bind `register` function like th
  required: 'Username is required!'
 })" />
 ```
-But as for now, we can't make it work, i found another way to realize it by compiler
+But as for now, we can't make it work because of the mechanism of vue, i found another way to realize it by compiler
 ```vue
 <script setup>
 const { register } = useForm()
