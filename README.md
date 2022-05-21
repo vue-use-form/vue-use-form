@@ -49,10 +49,10 @@ It will be transformed to
 <script setup>
 const { register, useRegister } = useForm()
 
-const _usernameField = useRegister()
+const [_usernameField, _usernameRef] = useRegister()
 </script>
 <template>
-    <input v-model="_usernameField()" />
+    <input ref="_usernameRef" v-model="_usernameField()" />
 </template>
 ```
 But it will cost much time, So i decide to develop the form first.
@@ -95,25 +95,21 @@ const onError = createErrorHandler((error) => {
   console.log(error)
 })
 
-const passwordField = useRegister('password', {
+const [passwordField, passwordRef] = useRegister('password', {
   required: { value: true, message: 'Password is required' },
   minLength: { value: 6, message: 'Password must be at least 6 characters' },
   maxLength: { value: 20, message: 'Password must be at most 20 characters' },
   validate: value => value.match(/^[a-zA-Z0-9]+$/),
 })
 
-const ageModel = useField('age', {
-  valAsNumber: true,
-  required: 'Age is required',
-  min: { value: 18, message: 'Age must be at least 18' },
-})
 
 </script>
 
 <template>
   <form>
+    <!-- v-form is still in WIP, we will create a plugin to support this feature -->
     <input
-      :="register('username', {
+      v-form="register('username', {
       required: 'Username is required!',
       minLength: { value: 6, message: 'Username must be at least 6 characters' },
       maxLength: { value: 20, message: 'Username must be at most 20 characters' },
@@ -123,8 +119,7 @@ const ageModel = useField('age', {
       },
     })"
     >
-    <input :="passwordField()">
-    <input v-model="ageModel"/>
+    <input v-model="passwordField" ref="passwordField">
     <button type="submit" @click="handleSubmit(onSubmit, onError)()">
       Submit
     </button>
