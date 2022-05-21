@@ -8,6 +8,7 @@ export type FieldElement = HTMLInputElement| HTMLSelectElement | HTMLTextAreaEle
 
 export interface Field {
   inputValue: Ref
+  el: FieldElement
   rule: RegisterOptions
   resetVal: any
   resetCount: number

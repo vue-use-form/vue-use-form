@@ -8,7 +8,6 @@ import type {
   SubmitHandler,
   UseFormHandleSubmit, UseFormProps,
   UseFormReset,
-  UseFormReturn,
 } from '../types/form'
 import type { Field, FieldElement, FieldState, FieldValues } from '../types/filed'
 import type { FieldError, FieldErrors } from '../types/errors'
@@ -19,12 +18,11 @@ import {
   isFunction,
   isHTMLElement,
   isNullOrUndefined,
-  isRadioInput,
   isString,
 } from '../utils'
 import { VALIDATION_MODE } from '../shared/constant'
 import { getValidationMode } from '../utils/getValidationMode'
-import type { DefaultValues, UnpackNestedValue } from '../types/utils'
+import type { UnpackNestedValue } from '../types/utils'
 import { createErrorHandler as createErrorHandlerUtil, createSubmitHandler as createSubmitHandlerUtil } from '../utils/createHandler'
 import { get, hasProp, set, unset } from '../utils/object'
 import { deepEqual } from '../utils/deepEqual'

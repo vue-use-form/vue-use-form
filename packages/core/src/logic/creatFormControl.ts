@@ -1,13 +1,15 @@
-import { reactive, ref, watch } from 'vue'
+import type { Ref } from 'vue'
+import { reactive, ref, unref, watch } from 'vue'
 import type { Field, FieldValues } from '../types/filed'
 import type {
   FieldNamesMarkedBoolean,
   FormState,
+  MaybeRefAll,
   SubmitErrorHandler,
   SubmitHandler,
   UseFormHandleSubmit,
-  UseFormProps,
-  UseFormRegister, UseFormUnregister,
+  UseFormProps, UseFormRegister, UseFormReturn,
+  UseFormUnregister,
 } from '../types/form'
 import type { FieldErrors } from '../types/errors'
 import { isEmptyObject, isFunction, isNullOrUndefined } from '../utils'
@@ -21,16 +23,20 @@ import {
 } from '../utils/createHandler'
 
 import { VALIDATION_MODE } from '../shared/constant'
+import { getFormEl } from '../utils/getFormEl'
+import { unrefOptions } from '../utils/unrefOptions'
 import { validateField } from './validate'
 
 export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
   TContext = any,
 >(
-  _options: Partial<UseFormProps<TFieldValues, TContext>>,
+  _props: Partial<MaybeRefAll<UseFormProps<TFieldValues, TContext>>>,
 ) {
   type FieldsKey = keyof TFieldValues
   type TFormState = FormState<TFieldValues>
   type TFormStateKey = keyof TFormState
+
+  const _options = unrefOptions(_props) as UseFormProps<TFieldValues, TContext>
 
   const _fields = {} as Record<FieldsKey, Field>
 
@@ -83,7 +89,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
     const setValidating = (payload: boolean) => !isValidateAllFields && _setValidating(payload)
 
     setValidating(true)
-    const res = await validateField(_fields[fieldName], shouldDisplayAllAssociatedErrors)
+    const res = await validateField(_fields[fieldName], unref(_options.shouldFocusError!), shouldDisplayAllAssociatedErrors)
     setValidating(false)
     if (Object.keys(res).length) {
       set(_formState.errors, fieldName, res)
@@ -111,6 +117,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
   const register: UseFormRegister<TFieldValues, FieldsKey> = (fieldName, options) => {
     const defaultVal = get(_defaultValues, fieldName as string) || options?.value
     const model = ref(defaultVal)
+    const elRef = ref<HTMLElement>()
 
     _setFields(fieldName, {
       inputValue: model,
@@ -124,7 +131,11 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
       }
     })
 
-    return model
+    watch(elRef, (newRef) => {
+      set(_fields, fieldName, { ..._fields[fieldName], el: getFormEl(newRef) })
+    })
+
+    return [model, elRef as Ref<HTMLElement>]
   }
 
   const unregister: UseFormUnregister<TFieldValues> = (fieldName, options) => {
@@ -132,15 +143,19 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
   }
 
   const handleSubmit: UseFormHandleSubmit<TFieldValues> = (onSubmit, onError?) => {
-    set(_formState, 'isSubmitting', true)
+    _setFormState({
+      isSubmitting: true,
+    })
     _formState.submitCount++
     return async (e) => {
       await _validateAllFields()
       if (!isEmptyObject(_formState.errors)) {
         if (isFunction(onError)) {
           await onError(_formState.errors, e)
-          set(_formState, 'isSubmitting', false)
-          set(_formState, 'isSubmitted', true)
+          _setFormState({
+            isSubmitting: false,
+            isSubmitted: true,
+          })
         }
 
         return
@@ -150,9 +165,11 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
         res[fieldName] = _fields[fieldName].inputValue
       }
       await onSubmit(_fields as UnpackNestedValue<TFieldValues>, e)
-      set(_formState, 'isSubmitting', false)
-      set(_formState, 'isSubmitted', true)
-      set(_formState, 'isSubmitSuccessful', true)
+      _setFormState({
+        isSubmitting: false,
+        isSubmitted: true,
+        isSubmitSuccessful: true,
+      })
     }
   }
 

@@ -1,3 +1,5 @@
+import type { Ref } from 'vue'
+
 export type FieldPathValue<FieldValues, FiledName extends keyof FieldValues> = FieldValues[FiledName]
 
 declare const $NestedValue: unique symbol
@@ -33,3 +35,5 @@ export type DeepMap<T, TValue> = IsAny<T> extends true
     : T extends object
       ? { [K in keyof T]: DeepMap<NonUndefined<T[K]>, TValue> }
       : TValue
+
+export type MaybeRef<T> = T | Ref<T>

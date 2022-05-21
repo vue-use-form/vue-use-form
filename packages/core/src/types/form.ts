@@ -1,5 +1,5 @@
-import type { Ref } from 'vue'
-import type { DeepMap, DeepPartial, DefaultValues, UnpackNestedValue } from './utils'
+import type { Ref, ToRef, ToRefs } from 'vue'
+import type { DeepMap, DeepPartial, DefaultValues, MaybeRef, UnpackNestedValue } from './utils'
 import type { FieldErrors } from './errors'
 import type { FieldValues } from './filed'
 import type { RegisterOptions } from './validator'
@@ -15,18 +15,17 @@ export type FieldNamesMarkedBoolean<TFieldValues extends FieldValues> = DeepMap<
   boolean
   >
 
+export type MaybeRefAll<T extends object> = {
+  [K in keyof T]: MaybeRef<T[K]>
+}
+
 export interface UseFormProps<TFieldValues, TContext> {
-  /*
-  * Form Mode
-  *
-  * @default 'onSubmit'
-  */
   mode: Mode
   reValidateMode: Exclude<Mode, 'onTouched' | 'all'>
   defaultValues: DefaultValues<TFieldValues>
   // resolver: Resolver<TFieldValues, TContext>
   context: TContext
-  shouldFocusError: boolean | Ref<boolean>
+  shouldFocusError: boolean
   shouldUnregister: boolean
   shouldUseNativeValidation: boolean
   criteriaMode: CriteriaMode
@@ -93,7 +92,7 @@ export type UseFormUnregister<TFieldValues extends FieldValues> = (
     > & { keepValue?: boolean; keepDefaultValue?: boolean; keepError?: boolean },
 ) => void
 
-export type UseFormRegisterReturn<T> = Ref<T>
+export type UseFormRegisterReturn<T> = [Ref<T>, Ref<HTMLElement>]
 
 export type UseFormRegister<T extends FieldValues, K extends keyof T> = (name: K, options?: RegisterOptions) => UseFormRegisterReturn<T[K]>
 
