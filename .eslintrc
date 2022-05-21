@@ -6,5 +6,6 @@
     "curly": "off",
     "@typescript-eslint/brace-style": "off",
     "n/handle-callback-err": "off",
+    "prefer-const": "off"
   }
 }
