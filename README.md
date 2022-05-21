@@ -25,6 +25,39 @@ pnpm i vue-use-form
 yarn add vue-use-form
 ```
 
+## LOG
+### 2022/5/19
+I'm trying to support the directive `v-form` to bind `register` function like this
+```vue
+<input v-form="register("username", {
+ required: 'Username is required!'
+})" />
+```
+But as for now, we can't make it work because of the mechanism of vue, i found another way to realize it by compiler
+```vue
+<script setup>
+const { register } = useForm()
+</script>
+<template>
+    <input v-form="register("username", {
+     required: 'Username is required!'
+    })" />
+</template>
+```
+It will be transformed to
+```vue
+<script setup>
+const { register, useRegister } = useForm()
+
+const _usernameField = useRegister()
+</script>
+<template>
+    <input v-model="_usernameField()" />
+</template>
+```
+But it will cost much time, So i decide to develop the form first.
+
+
 ## Online Example
 [stackblitz](https://stackblitz.com/edit/vitejs-vite-ztou8m?file=src%2FApp.vue,src%2Fmain.ts&terminal=dev)
 
