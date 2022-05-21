@@ -107,7 +107,7 @@ const [passwordField, passwordRef] = useRegister('password', {
 
 <template>
   <form>
-    <!-- v-form is still in WIP, we will create a plugin to support this feature -->
+    <!-- v-form is still in WIP, we will make a plugin to support this feature -->
     <input
       v-form="register('username', {
       required: 'Username is required!',
