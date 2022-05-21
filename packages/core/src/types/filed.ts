@@ -12,6 +12,7 @@ export interface Field {
   rule: RegisterOptions
   resetVal: any
   resetCount: number
+  isDirty: boolean
 }
 
 export interface FieldState {

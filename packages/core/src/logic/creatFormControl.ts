@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import { reactive, ref, unref, watch } from 'vue'
+import { reactive, ref, unref, useTransitionState, watch } from 'vue'
 import type { Field, FieldValues } from '../types/filed'
 import type {
   FieldNamesMarkedBoolean,
@@ -8,11 +8,12 @@ import type {
   SubmitErrorHandler,
   SubmitHandler,
   UseFormHandleSubmit,
-  UseFormProps, UseFormRegister, UseFormReturn,
+  UseFormProps, UseFormRegister, UseFormReset,
+  UseFormReturn,
   UseFormUnregister,
 } from '../types/form'
 import type { FieldErrors } from '../types/errors'
-import { isEmptyObject, isFunction, isNullOrUndefined } from '../utils'
+import { isEmptyObject, isFunction, isNullOrUndefined, isRadioInput, isString } from '../utils'
 import { get, set, unset } from '../utils/object'
 import type { DefaultValues, UnpackNestedValue } from '../types/utils'
 import { getValidationMode } from '../utils/getValidationMode'
@@ -25,6 +26,7 @@ import {
 import { VALIDATION_MODE } from '../shared/constant'
 import { getFormEl } from '../utils/getFormEl'
 import { unrefOptions } from '../utils/unrefOptions'
+import { deepEqual } from '../utils/deepEqual'
 import { validateField } from './validate'
 
 export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
@@ -77,9 +79,44 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
 
   const _setValidating = (isValidating: boolean) => _setFormState({ isValidating })
 
-  const _getDirtyFields = () => {}
+  const _getDirtyFields = () => {
+    const dirtyFields = {} as TFormState['dirtyFields']
 
-  const _handleDirtyFields = () => {}
+    Object.entries(_fields).forEach(([key, val]) => {
+      if (val.isDirty) {
+        set(dirtyFields, key, true)
+      }
+    })
+
+    return dirtyFields
+  }
+
+  const _handleDirtyFields = () => {
+    Object.entries(_fields).forEach(([key, val]) => {
+      const defaultVal = get(_defaultValues, key)
+
+      if (deepEqual(defaultVal, val)) {
+        _setFields(key, {
+          isDirty: false,
+        })
+      } else {
+        _setFields(key, {
+          isDirty: true,
+        })
+      }
+    })
+
+    // update dirtyFields
+    _setFormState({
+      dirtyFields: _getDirtyFields(),
+    })
+  }
+
+  const _handleIsValidFields = () => {
+    _setFormState({
+      isValid: isEmptyObject(_formState.errors),
+    })
+  }
 
   const _validate = async (fieldName: FieldsKey, isValidateAllFields = false) => {
     if (isEmptyObject(_fields) || isNullOrUndefined(_fields[fieldName])) {
@@ -106,12 +143,46 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
     _setValidating(false)
   }
 
-  const trigger = async (name: FieldsKey) => {
-    await _validate(name)
+  const trigger = async (name?: FieldsKey) => {
+    await (isString(name) ? _validate(name) : _validateAllFields())
   }
 
-  const _onChange = async (name: FieldsKey) => {
+  const _onChange = async (name?: FieldsKey) => {
     await trigger(name)
+    _handleDirtyFields()
+    _handleIsValidFields()
+  }
+
+  const reset: UseFormReset<TFieldValues> = (values, keepStateOptions?) => {
+    if (!keepStateOptions) {
+      keepStateOptions = {} as any
+    }
+
+    if (!values) {
+      values = {} as DefaultValues<TFieldValues>
+    }
+
+    const setFormState = () => {
+      const dirtyFields = _getDirtyFields()
+
+      _setFormState({
+        isSubmitted: keepStateOptions!.keepIsSubmitted ? _formState.isSubmitted : false,
+        submitCount: keepStateOptions!.keepSubmitCount ? _formState.submitCount : 0,
+        errors: keepStateOptions!.keepErrors ? _formState.errors : {},
+        isDirty: keepStateOptions!.keepDirty ? _formState.isDirty : !isEmptyObject(dirtyFields),
+        dirtyFields: keepStateOptions!.keepDirty ? _formState.dirtyFields : dirtyFields,
+        isSubmitting: false,
+        isSubmitSuccessful: false,
+        isValid: keepStateOptions!.keepIsValid ? _formState.isValid : false,
+        isTouched: keepStateOptions?.keepTouched ? _formState.isTouched : false,
+      })
+    }
+
+    Object.entries(values).forEach(([key, val]) => {
+      _fields[key].inputValue.value = val
+    })
+
+    setFormState()
   }
 
   const register: UseFormRegister<TFieldValues, FieldsKey> = (fieldName, options) => {
@@ -119,20 +190,26 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
     const model = ref(defaultVal)
     const elRef = ref<HTMLElement>()
 
+    set(_defaultValues, fieldName as string, defaultVal)
     _setFields(fieldName, {
       inputValue: model,
       rule: options,
+      isDirty: false,
     })
 
     watch(model, async () => {
-      _handleDirtyFields()
       if (validationModeBeforeSubmit.isOnChange) {
         await _onChange(fieldName)
       }
     })
 
     watch(elRef, (newRef) => {
-      set(_fields, fieldName, { ..._fields[fieldName], el: getFormEl(newRef) })
+      const el = getFormEl(newRef)
+      set(_fields, fieldName, { ..._fields[fieldName], el })
+
+      if (isRadioInput(el)) {
+        set(_defaultValues, fieldName as string, !!defaultVal)
+      }
     })
 
     return [model, elRef as Ref<HTMLElement>]
@@ -148,7 +225,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
     })
     _formState.submitCount++
     return async (e) => {
-      await _validateAllFields()
+      await _onChange()
       if (!isEmptyObject(_formState.errors)) {
         if (isFunction(onError)) {
           await onError(_formState.errors, e)
@@ -184,12 +261,13 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
       trigger,
       unregister,
     },
+    formState: _formState,
     handleSubmit,
     createErrorHandler,
     createSubmitHandler,
     register,
     unregister,
-    formState: _formState,
+    reset,
   })
 }
 
