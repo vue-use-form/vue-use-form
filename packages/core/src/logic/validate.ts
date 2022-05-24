@@ -43,10 +43,6 @@ export async function validateField(
     valueAsNumber,
     valueAsDate,
     setValueAs,
-    shouldUnregister,
-    onChange,
-    onBlur,
-    disabled,
   } = field.rule
 
   const el = field.el
