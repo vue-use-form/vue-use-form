@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="81a696ad-c55d-42c6-a121-24a9c08c9956" name="Changes" comment=":bug: fix">
+    <list default="true" id="81a696ad-c55d-42c6-a121-24a9c08c9956" name="Changes" comment=":art: edit code style">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/core/src/logic/creatFormControl.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/src/logic/creatFormControl.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/core/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +51,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="npm.dev (1)">
+  <component name="RunManager" selected="npm.build">
     <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
@@ -83,9 +84,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="npm.build" />
         <item itemvalue="npm.dev (1)" />
         <item itemvalue="npm.dev" />
-        <item itemvalue="npm.build" />
       </list>
     </recent_temporary>
   </component>
@@ -101,7 +102,7 @@
       <workItem from="1653374495906" duration="13339000" />
       <workItem from="1653399872019" duration="1485000" />
       <workItem from="1653402653791" duration="719000" />
-      <workItem from="1653403404180" duration="1733000" />
+      <workItem from="1653403404180" duration="2129000" />
     </task>
     <task id="LOCAL-00001" summary=":fire: fix workspace">
       <created>1653361342663</created>
@@ -166,7 +167,14 @@
       <option name="project" value="LOCAL" />
       <updated>1653405030603</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary=":art: edit code style">
+      <created>1653405197096</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1653405197096</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -202,7 +210,8 @@
     <MESSAGE value=":clapper: playground exmaple" />
     <MESSAGE value=":clapper: playground example" />
     <MESSAGE value=":bug: fix" />
-    <option name="LAST_COMMIT_MESSAGE" value=":bug: fix" />
+    <MESSAGE value=":art: edit code style" />
+    <option name="LAST_COMMIT_MESSAGE" value=":art: edit code style" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

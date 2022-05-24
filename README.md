@@ -53,6 +53,8 @@ yarn add vue-use-form
     - [ ] 🎨other UI framework...
 
 
+## 🎁Try it online
+🎮[play with element-plus](https://stackblitz.com/edit/vitejs-vite-typsyz?file=src%2Fmain.ts,src%2FApp.vue,package.json&terminal=dev)
 
 ## Quick Start
 
