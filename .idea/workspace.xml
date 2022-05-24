@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="81a696ad-c55d-42c6-a121-24a9c08c9956" name="Changes" comment=":bug: fix">
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vue-use-form.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/playground/src/App.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/playground/src/components/HelloWorld.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/playground/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/.vscode/extensions.json" beforeDir="false" afterPath="$PROJECT_DIR$/playground/.vscode/extensions.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/playground/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/playground/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/playground/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/public/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/playground/public/favicon.ico" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/src/App.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/src/assets/logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/assets/logo.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/src/env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/env.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/src/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/main.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/playground/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/tsconfig.node.json" beforeDir="false" afterPath="$PROJECT_DIR$/playground/tsconfig.node.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/playground/vite.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/core/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/package.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectId" id="29am2RW2hlHWMw2mConACYUoY0q" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;js.last.introduce.type&quot;: &quot;CONST&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.javascript.linters.eslint&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Dev\\vue-use-form\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager" selected="npm.dev (1)">
+    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="dev (1)" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/playground/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/examples/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.dev (1)" />
+        <item itemvalue="npm.dev" />
+        <item itemvalue="npm.build" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="81a696ad-c55d-42c6-a121-24a9c08c9956" name="Changes" comment="" />
+      <created>1653359365520</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1653359365520</updated>
+      <workItem from="1653359369977" duration="4821000" />
+      <workItem from="1653374495906" duration="13339000" />
+      <workItem from="1653399872019" duration="1485000" />
+      <workItem from="1653402653791" duration="719000" />
+      <workItem from="1653403404180" duration="1656000" />
+    </task>
+    <task id="LOCAL-00001" summary=":fire: fix workspace">
+      <created>1653361342663</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1653361342663</updated>
+    </task>
+    <task id="LOCAL-00002" summary=":fire: delete useless code">
+      <created>1653362267119</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1653362267119</updated>
+    </task>
+    <task id="LOCAL-00003" summary=":construction: new example">
+      <created>1653362308419</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1653362308419</updated>
+    </task>
+    <task id="LOCAL-00004" summary=":hammer: full ability of useForm">
+      <created>1653384723089</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1653384723089</updated>
+    </task>
+    <task id="LOCAL-00005" summary=":bug: complete all props of control">
+      <created>1653384861323</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1653384861323</updated>
+    </task>
+    <task id="LOCAL-00006" summary=":memo: update doc">
+      <created>1653387868494</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1653387868494</updated>
+    </task>
+    <task id="LOCAL-00007" summary=":wastebasket: delete useless code">
+      <created>1653387894539</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1653387894539</updated>
+    </task>
+    <task id="LOCAL-00008" summary=":wrench: edit workspace">
+      <created>1653404851059</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1653404851059</updated>
+    </task>
+    <task id="LOCAL-00009" summary=":bug: fix">
+      <created>1653405030603</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1653405030603</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/packages/core/__test__/useForm.spec.js" />
+        <option value="$PROJECT_DIR$/packages/core/__test__/utils.test.js" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value=":fire: fix workspace" />
+    <MESSAGE value=":construction: new example" />
+    <MESSAGE value=":hammer: full ability of useForm" />
+    <MESSAGE value=":bug: fux tge" />
+    <MESSAGE value=":bug: complete all props of control" />
+    <MESSAGE value=":memo: update doc" />
+    <MESSAGE value=":wastebasket: delete useless code" />
+    <MESSAGE value=":wrench: edit workspace" />
+    <MESSAGE value=":fire: delete useless code" />
+    <MESSAGE value=":clapper: playground exmaple" />
+    <MESSAGE value=":clapper: playground example" />
+    <MESSAGE value=":bug: fix" />
+    <option name="LAST_COMMIT_MESSAGE" value=":bug: fix" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
