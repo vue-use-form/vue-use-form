@@ -57,12 +57,14 @@ export async function validateField(
   let error: FieldError = {}
 
   try {
-    if (valueAsNumber) {
-      set(field, 'inputValue', (el as HTMLInputElement).valueAsNumber)
-    } else if (valueAsDate) {
-      set(field, 'inputValue', (el as HTMLInputElement).valueAsDate)
-    } else if (setValueAs) {
-      set(field, 'inputValue', setValueAs(unrefInputVal))
+    if (isFieldElement(el)) {
+      if (valueAsNumber) {
+        set(field, 'inputValue', (el as HTMLInputElement).valueAsNumber)
+      } else if (valueAsDate) {
+        set(field, 'inputValue', (el as HTMLInputElement).valueAsDate)
+      } else if (setValueAs) {
+        set(field, 'inputValue', setValueAs(unrefInputVal))
+      }
     }
 
     if (required && !isRadioOrCheckBox) {
