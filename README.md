@@ -1,5 +1,5 @@
 <h1 align="center">
-vue-use-form
+vue-use-form(WIP)
 </h1>
 
 <p align="center">
@@ -25,45 +25,36 @@ pnpm i vue-use-form
 yarn add vue-use-form
 ```
 
-## LOG
-### 2022/5/19
-I'm trying to support the directive `v-form` to bind `register` function like this
-```vue
-<input v-form="register("username", {
- required: 'Username is required!'
-})" />
-```
-But as for now, we can't make it work because of the mechanism of vue, i found another way to realize it by compiler
-```vue
-<script setup>
-const { register } = useForm()
-</script>
-<template>
-    <input v-form="register("username", {
-     required: 'Username is required!'
-    })" />
-</template>
-```
-It will be transformed to
-```vue
-<script setup>
-const { register, useRegister } = useForm()
+## 🚀Features
+- 🦾 Type Strong: Written in TypeScript
+- 🏆 No Component: No need to import any components to use, you can use it in all UI framework
+- 😍 Easy to use: Just 3 main hooks: useForm, useFormState, useFieldArray
 
-const [_usernameField, _usernameRef] = useRegister()
-</script>
-<template>
-    <input ref="_usernameRef" v-model="_usernameField()" />
-</template>
-```
-But it will cost much time, So i decide to develop the form first.
+## TODO
+
+- [ ] 🐵Main features
+    - [x] 🍉`useForm`
+    - [ ] 🍊`useFormState`
+    - [ ] 🍋`useFieldArray`
+    - [ ] 🥝directive: `v-form`
+    - [ ] 🍍schema
+    - [ ] 🍎resolver
+- [ ] Security
+    - [ ] 🐯Unit test
+- [ ] 🐼 Community(WIP...)
+  - [ ] 🎋中文文档
+  - [ ] 📖Documentation
+- [ ] 🦊Compatible UI framework(A way to get `input/select/textarea` dom)
+    - [ ] 🍤element-plus
+    - [ ] 🍗ant-design-vue
+    - [ ] 🥩vuetify
+    - [ ] 🥓quasar
+    - [ ] 🌮provide a function to let the user to get the dom
+    - [ ] 🎨other UI framework...
 
 
-## Online Example
-[stackblitz](https://stackblitz.com/edit/vitejs-vite-ztou8m?file=src%2FApp.vue,src%2Fmain.ts&terminal=dev)
 
-## Basic Example
-
-Notice: The lib is still under development, so some API cannot get from `vue-use-form` package, you can clone this repo to your local, then you can use the latest feature.
+## Quick Start
 
 ```vue
 <script setup lang="ts">
@@ -76,53 +67,77 @@ interface Inputs {
 }
 
 const {
-  formState: { errors },
+  formState,
+  register,
   createSubmitHandler,
   createErrorHandler,
+  reset,
   handleSubmit,
-  register,
-  useRegister
-  useField,
+  setError,
+  clearErrors,
+  setValue,
+  setFocus,
+  getValues,
+  triggerValidate,
+  getFieldState,
+  unregister,
 } = useForm<Inputs>({
   mode: 'onChange',
+  shouldFocusError: true,
+})
+
+const [usernameField, usernameRef] = register('username', {
+  required: 'Username is required!',
+  minLength: { value: 3, message: 'Username must be at least 3 characters' },
+  maxLength: { value: 10, message: 'Username must be at most 10 characters' },
+  validate: (value) => {
+    if (value === 'admin') {
+      return 'Username is reserved!'
+    }
+  },
+})
+
+const [passwordField, passwordRef] = register('password', {
+  required: 'Password is required!',
+  minLength: { value: 8, message: 'Password must be at least 8 characters' },
+  maxLength: { value: 20, message: 'Password must be at most 20 characters' },
+  validate: {
+    isContainLowercase: (value) => {
+      if (!/[a-z]/.test(value)) {
+        return 'Password must contain at least one lowercase letter'
+      }
+    },
+    isContainUppercase: (value) => {
+      if (!/[A-Z]/.test(value)) {
+        return 'Password must contain at least one uppercase letter'
+      }
+    },
+  },
+})
+
+const [ageField, ageRef] = register('age', {
+  required: 'Age is required!',
+  min: { value: 18, message: 'Age must be at least 18' },
+  max: { value: 10000, message: '?' },
+  valueAsNumber: true,
 })
 
 const onSubmit = createSubmitHandler((data) => {
-  console.log(data)
+  console.log('validate success', data)
 })
 
-const onError = createErrorHandler((error) => {
-  console.log(error)
+const onError = createErrorHandler((errors) => {
+  console.log('validate error', errors)
 })
-
-const [passwordField, passwordRef] = useRegister('password', {
-  required: { value: true, message: 'Password is required' },
-  minLength: { value: 6, message: 'Password must be at least 6 characters' },
-  maxLength: { value: 20, message: 'Password must be at most 20 characters' },
-  validate: value => value.match(/^[a-zA-Z0-9]+$/),
-})
-
-
 </script>
 
 <template>
-  <form>
-    <!-- v-form is still in WIP, we will make a plugin to support this feature -->
-    <input
-      v-form="register('username', {
-      required: 'Username is required!',
-      minLength: { value: 6, message: 'Username must be at least 6 characters' },
-      maxLength: { value: 20, message: 'Username must be at most 20 characters' },
-      validate: {
-        isStartWithAt: (val) => val.startsWith('@'),
-        isContainSharp: (val) => val.includes('#')
-      },
-    })"
-    >
-    <input v-model="passwordField" ref="passwordField">
-    <button type="submit" @click="handleSubmit(onSubmit, onError)()">
-      Submit
-    </button>
+  <form @submit.prevent="handleSubmit(onSubmit, onError)()">
+    <input ref="usernameRef" v-model="usernameField" name="username">
+    <input ref="passwordRef" v-model="passwordField" name="password">
+    <input ref="ageRef" v-model="ageField" type="number" name="age">
+    <button type="submit" v-text="'Submit'" />
   </form>
 </template>
 ```
+
