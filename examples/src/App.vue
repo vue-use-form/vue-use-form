@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch, watchEffect } from 'vue'
+import { computed, nextTick, onMounted, watch, watchEffect } from 'vue'
 import { useForm } from '../../packages/core/src/index'
 
 interface Inputs {
@@ -16,8 +16,16 @@ const {
   createErrorHandler,
   reset,
   handleSubmit,
+  setError,
+  clearErrors,
+  setValue,
+  setFocus,
+  getValues,
+  triggerValidate,
+  getFieldState,
+  unregister,
 } = useForm<Inputs>({
-  mode: 'onSubmit',
+  mode: 'onChange',
   shouldFocusError: true,
 })
 
@@ -63,6 +71,38 @@ function resetField() {
   })
 }
 
+function addError() {
+  setError('username', { type: 'validate', message: 'Username is required' })
+}
+
+function clearFieldError() {
+  clearErrors()
+}
+
+// setFocus
+onMounted(() => {
+  setFocus('username')
+})
+
+function handleFocus() {
+  setFocus('username')
+}
+
+function handleGetValues() {
+  console.log(getValues('username'))
+}
+
+function handleTrigger() {
+  triggerValidate('username')
+}
+
+function handleGetFieldState() {
+  console.log(getFieldState('username'))
+}
+
+function handleUnregister() {
+  unregister('username')
+}
 </script>
 
 <template>
@@ -78,8 +118,16 @@ function resetField() {
   <template v-if="showEmailField">
     <el-input ref="emailRef" v-model="emailField" />
   </template>
+
   <el-button type="primary" @click="handleSubmit(onSubmit, onErrors)()" v-text="'Submit'" />
   <el-button type="primary" @click="resetField" v-text="'resetField'" />
+  <el-button type="primary" @click="addError" v-text="'setError'" />
+  <el-button type="primary" @click="clearFieldError" v-text="'clearError'" />
+  <el-button type="primary" @click="handleFocus" v-text="'setFocus'" />
+  <el-button type="primary" @click="handleGetValues" v-text="'getValues'" />
+  <el-button type="primary" @click="handleTrigger" v-text="'trigger'" />
+  <el-button type="primary" @click="handleGetFieldState" v-text="'getFieldState'" />
+  <el-button type="primary" @click="handleUnregister" v-text="'unRegister'" />
 </template>
 
 <style>

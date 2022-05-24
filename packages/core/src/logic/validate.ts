@@ -1,25 +1,26 @@
 import { unref } from 'vue'
 import type { FieldError } from '../types/errors'
 import {
-  isCheckBoxInput,
+
   isEmpty, isEmptyObject,
   isFunction,
   isNullOrUndefined,
-  isObject, isRadioInput,
+  isObject,
   isRegex,
   isString,
 } from '../utils'
 import type { Field, FieldElement } from '../types/filed'
+import { isCheckBoxInput, isRadioInput } from '../utils/fieldElement'
 import { getValueAndMessage } from '../utils/transformMessage'
 import { getValidatorError } from '../utils/getValidatorError'
 import { set } from '../utils/object'
 import { isFieldElement } from '../utils/isFieldElement'
 
-function handleDeferError(error: FieldError, shouldError: boolean, el: FieldElement) {
+export function handleValidateError(error: FieldError, shouldFocusOnError: boolean, el?: FieldElement) {
   if (!isFieldElement(el)) {
     return
   }
-  if (!isEmptyObject(error) && shouldError) {
+  if (!isEmptyObject(error) && shouldFocusOnError) {
     el.focus()
   }
 }
@@ -174,7 +175,7 @@ export async function validateField(
       }
     }
   } finally {
-    handleDeferError(error, shouldFocusOnError, el)
+    handleValidateError(error, shouldFocusOnError, el)
   }
 
   return error

@@ -1,7 +1,3 @@
-import type { FieldElement } from '../types/filed'
-
-export const deleteProperty = <T extends object>(obj: T, prop: keyof T) => delete obj[prop]
-
 export const isFunction = (val: unknown): val is Function =>
   typeof val === 'function'
 
@@ -25,10 +21,6 @@ export const isNullOrUndefined = (val: unknown) =>
   isNull(val) || isUndefined(val)
 
 export const isHTMLElement = (val: unknown): val is HTMLElement => val instanceof HTMLElement
-
-export const isRadioInput = (el?: FieldElement): el is HTMLInputElement => el?.type === 'radio'
-
-export const isCheckBoxInput = (el?: FieldElement): el is HTMLInputElement => el?.type === 'checkbox'
 
 export const isEmpty = (val: unknown) => val === '' || val === null || val === undefined
 

@@ -10,9 +10,8 @@ export interface Field {
   inputValue: Ref
   el: FieldElement
   rule: RegisterOptions
-  resetVal: any
-  resetCount: number
   isDirty: boolean
+  isUnregistered: boolean
 }
 
 export interface FieldState {
