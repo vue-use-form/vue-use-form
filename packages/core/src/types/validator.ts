@@ -1,4 +1,3 @@
-import type { Ref } from 'vue'
 import type { FieldValues } from './filed'
 import type { FieldPathValue } from './utils'
 
@@ -54,6 +53,6 @@ export type RegisterOptions<
     disabled: boolean
     isRadio: boolean
     isCheckBox: boolean
-    elRef: Ref<HTMLElement>
+    shouldBindRef: boolean
   }>
 

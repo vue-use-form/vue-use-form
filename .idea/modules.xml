@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/vue-hook-form.iml" filepath="$PROJECT_DIR$/.idea/vue-hook-form.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/vue-use-form.iml" filepath="$PROJECT_DIR$/.idea/vue-use-form.iml" />
     </modules>
   </component>
 </project>
