@@ -2,27 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="81a696ad-c55d-42c6-a121-24a9c08c9956" name="Changes" comment=":bug: fix">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vue-use-form.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/playground/src/App.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/playground/src/components/HelloWorld.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/playground/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/.vscode/extensions.json" beforeDir="false" afterPath="$PROJECT_DIR$/playground/.vscode/extensions.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/playground/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/playground/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/playground/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/public/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/playground/public/favicon.ico" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/src/App.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/src/assets/logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/assets/logo.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/src/env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/env.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/src/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/main.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/playground/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/tsconfig.node.json" beforeDir="false" afterPath="$PROJECT_DIR$/playground/tsconfig.node.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/playground/vite.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/core/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/core/src/logic/creatFormControl.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/src/logic/creatFormControl.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -120,7 +101,7 @@
       <workItem from="1653374495906" duration="13339000" />
       <workItem from="1653399872019" duration="1485000" />
       <workItem from="1653402653791" duration="719000" />
-      <workItem from="1653403404180" duration="1656000" />
+      <workItem from="1653403404180" duration="1733000" />
     </task>
     <task id="LOCAL-00001" summary=":fire: fix workspace">
       <created>1653361342663</created>
