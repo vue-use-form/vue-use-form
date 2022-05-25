@@ -35,6 +35,7 @@ const [activeNameField, activeNameRef] = register('activeName', {
     value: 3,
     message: 'Active name must be more than 3 characters!',
   },
+
 })
 
 const [regionField, regionRef] = register('region', {
