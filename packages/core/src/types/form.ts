@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+import type { Resolver } from './resolver'
 import type { DeepMap, DeepPartial, DefaultValues, UnpackNestedValue } from './utils'
 import type { FieldError, FieldErrors } from './errors'
 import type { FieldValues } from './filed'
@@ -11,16 +12,15 @@ export type CriteriaMode = 'firstError' | 'all'
 export type TFiledValue = Record<string, any>
 
 export type FieldNamesMarkedBoolean<TFieldValues extends FieldValues> = DeepMap<
-  DeepPartial<TFieldValues>,
-  boolean
-  >
+DeepPartial<TFieldValues>,
+boolean
+>
 
-export interface UseFormProps<TFieldValues, TContext> {
+export interface UseFormProps<TFieldValues extends object> {
   mode: Mode
   reValidateMode: Exclude<Mode, 'onTouched' | 'all'>
   defaultValues: DefaultValues<TFieldValues>
-  // resolver: Resolver<TFieldValues, TContext>
-  context: TContext
+  resolver: Resolver<TFieldValues>
   shouldFocusError: boolean
   shouldUnregister: boolean
   shouldUseNativeValidation: boolean
@@ -95,16 +95,16 @@ export type UseFormReset<TFieldValues extends FieldValues> = (
 export type UseFormUnregister<TFieldValues extends FieldValues> = (
   name?: keyof TFieldValues,
   options?: Omit<
-    KeepStateOptions,
-    | 'keepIsSubmitted'
-    | 'keepSubmitCount'
-    | 'keepValues'
-    | 'keepDefaultValues'
-    | 'keepErrors'
-    | 'keepIsValid'
-    | 'keepDirtyValues'
+  KeepStateOptions,
+  | 'keepIsSubmitted'
+  | 'keepSubmitCount'
+  | 'keepValues'
+  | 'keepDefaultValues'
+  | 'keepErrors'
+  | 'keepIsValid'
+  | 'keepDirtyValues'
 
-    > & { keepValue?: boolean; keepError?: boolean },
+  > & { keepValue?: boolean; keepError?: boolean },
 ) => void
 
 export type UseFormRegisterReturn<T> = [Ref<T>, Ref<HTMLElement>]

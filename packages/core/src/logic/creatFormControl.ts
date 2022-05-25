@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
 import { nextTick, reactive, ref, unref, watch } from 'vue'
-import type { Field, FieldElement, FieldValues } from '../types/filed'
+import type { Field, FieldElement, FieldValues, Fields } from '../types/filed'
 import type {
   FieldNamesMarkedBoolean,
   FormState, GetValuesReturn,
@@ -43,16 +43,14 @@ import { getFormEl } from '../utils/getFormEl'
 import { deepEqual } from '../utils/deepEqual'
 import { handleValidateError, validateField } from './validate'
 
-export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
-  TContext = any,
->(
-  _options: Partial<UseFormProps<TFieldValues, TContext>>,
+export function creatFormControl<TFieldValues extends FieldValues = FieldValues>(
+  _options: Partial<UseFormProps<TFieldValues>>,
 ) {
   type FieldsKey = keyof TFieldValues
   type TFormState = FormState<TFieldValues>
   type TFormStateKey = keyof TFormState
 
-  const _fields = {} as Record<FieldsKey, Field>
+  const _fields = {} as Fields<TFieldValues, FieldsKey>
 
   const _formState = reactive<TFormState>({
     isDirty: false,
@@ -168,10 +166,21 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
 
     const setValidating = (payload: boolean) => !isValidateAllFields && _setValidating(payload)
 
+    const resolver = _options.resolver
+
     setValidating(true)
-    const res = await validateField(_fields[fieldName], unref(_options.shouldFocusError!), shouldDisplayAllAssociatedErrors)
+    let res: FieldError = {}
+    if (isFunction(resolver)) {
+      const values = Object.fromEntries(Object.entries(_fields).map(([key, val]) => [key, val.inputValue.value]))
+      const errors = await resolver(values as Record<keyof TFieldValues, any>)
+      if (!isEmptyObject(errors)) {
+        res = errors[fieldName] as FieldError
+      }
+    } else {
+      res = await validateField(_fields[fieldName], unref(_options.shouldFocusError!), shouldDisplayAllAssociatedErrors)
+    }
     setValidating(false)
-    if (Object.keys(res).length) {
+    if (Object.keys(res || {}).length) {
       _setFormStateError(fieldName, res)
     } else {
       _removeFormStateError(fieldName)
@@ -361,6 +370,10 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
   }
 
   const register: UseFormRegister<TFieldValues, FieldsKey> = (fieldName, options) => {
+    if (isUndefined(options)) {
+      options = {}
+    }
+
     const defaultVal = get(_defaultValues, fieldName as string) || options?.value || ''
     const model = ref(defaultVal)
     const elRef = ref<HTMLElement>()
@@ -398,7 +411,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
       if (isFieldElement(el)) {
         if (validationModeBeforeSubmit.isOnBlur) {
           el.addEventListener('blur', async () => {
-            await _validate(fieldName)
+            await _onChange(fieldName)
           })
         } else if (validationModeBeforeSubmit.isOnTouch) {
           el.addEventListener('click', async () => {
@@ -434,6 +447,8 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
     _fields[fieldName as string].isUnregistered = true
   }
 
+  const isExistInErrors = (fieldName: keyof TFieldValues) => Object.keys(_formState.errors).includes(fieldName as string)
+
   return reactive({
     control: {
       _fields,
@@ -466,5 +481,6 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues,
     getValues,
     getFieldState,
     triggerValidate,
+    isExistInErrors,
   })
 }

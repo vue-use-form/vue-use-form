@@ -20,3 +20,5 @@ export interface FieldState {
   invalid: boolean
   error?: FieldError
 }
+
+export type Fields<FieldValues extends object, FieldKeys extends keyof FieldValues> = Record<FieldKeys, Field>
