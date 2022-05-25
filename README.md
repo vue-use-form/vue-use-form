@@ -59,6 +59,16 @@ yarn add vue-use-form
 ## 🎁Try it online
 🎮[play with element-plus](https://stackblitz.com/edit/vitejs-vite-typsyz?file=src%2Fmain.ts,src%2FApp.vue,package.json&terminal=dev)
 
+## 🚣playground
+you can fork/download this repo, and then just 3 steps can make playground run
+```bash
+# 1. open this repo folder in your local
+# 2. init dependencies
+pnpm i
+# 3. open the playground folder and run `dev` script or
+pnpm run dev
+```
+
 ## Quick Start
 
 ```vue
