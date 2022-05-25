@@ -1,10 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="81a696ad-c55d-42c6-a121-24a9c08c9956" name="Changes" comment=":art: edit code style">
+    <list default="true" id="81a696ad-c55d-42c6-a121-24a9c08c9956" name="Changes" comment=":clapper: add class-validator demo">
+      <change afterPath="$PROJECT_DIR$/packages/core/src/types/resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/resolver-class-validator/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/resolver-class-validator/src/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/playground/src/pages/class-validator/use-validator.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/playground/src/router/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/playground/src/service/api/user.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/playground/src/shared/decorators/IsContain.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/playground/src/shared/decorators/IsNotContain.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/playground/src/shared/decorators/IsUserAlreadyExist.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.eslintrc" beforeDir="false" afterPath="$PROJECT_DIR$/.eslintrc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/core/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/core/src/logic/creatFormControl.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/src/logic/creatFormControl.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/core/src/types/filed.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/src/types/filed.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/core/src/types/form.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/src/types/form.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/playground/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/main.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/pages/Normal.vue" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/pages/Normal.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/pages/class-validator.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/pages/class-validator.vue" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/pages/class-validator/class-validator.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/playground/vite.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -14,6 +34,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Vue Single File Component" />
         <option value="TypeScript File" />
       </list>
     </option>
@@ -51,7 +72,12 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="npm.build">
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Dev\vue-use-form\playground\src\pages\class-validator" />
+    </key>
+  </component>
+  <component name="RunManager" selected="npm.dev (1)">
     <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
@@ -84,8 +110,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="npm.build" />
         <item itemvalue="npm.dev (1)" />
+        <item itemvalue="npm.build" />
         <item itemvalue="npm.dev" />
       </list>
     </recent_temporary>
@@ -102,7 +128,9 @@
       <workItem from="1653374495906" duration="13339000" />
       <workItem from="1653399872019" duration="1485000" />
       <workItem from="1653402653791" duration="719000" />
-      <workItem from="1653403404180" duration="2129000" />
+      <workItem from="1653403404180" duration="2365000" />
+      <workItem from="1653444334103" duration="7286000" />
+      <workItem from="1653472098052" duration="9498000" />
     </task>
     <task id="LOCAL-00001" summary=":fire: fix workspace">
       <created>1653361342663</created>
@@ -174,7 +202,21 @@
       <option name="project" value="LOCAL" />
       <updated>1653405197096</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary=":memo: update doc">
+      <created>1653405761091</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1653405761091</updated>
+    </task>
+    <task id="LOCAL-00012" summary=":clapper: add class-validator demo">
+      <created>1653456571294</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1653456571294</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -203,7 +245,6 @@
     <MESSAGE value=":hammer: full ability of useForm" />
     <MESSAGE value=":bug: fux tge" />
     <MESSAGE value=":bug: complete all props of control" />
-    <MESSAGE value=":memo: update doc" />
     <MESSAGE value=":wastebasket: delete useless code" />
     <MESSAGE value=":wrench: edit workspace" />
     <MESSAGE value=":fire: delete useless code" />
@@ -211,7 +252,9 @@
     <MESSAGE value=":clapper: playground example" />
     <MESSAGE value=":bug: fix" />
     <MESSAGE value=":art: edit code style" />
-    <option name="LAST_COMMIT_MESSAGE" value=":art: edit code style" />
+    <MESSAGE value=":memo: update doc" />
+    <MESSAGE value=":clapper: add class-validator demo" />
+    <option name="LAST_COMMIT_MESSAGE" value=":clapper: add class-validator demo" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
