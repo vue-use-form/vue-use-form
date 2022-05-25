@@ -33,3 +33,5 @@ export const isPrimitive = (val: unknown) =>
 
 export const isDateObject = (val: unknown): val is Date => val instanceof Date
 
+export * from './createHandler'
+export * from './object'

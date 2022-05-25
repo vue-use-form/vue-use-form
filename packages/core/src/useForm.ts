@@ -3,16 +3,13 @@ import type { FieldValues } from './types/filed'
 
 import { creatFormControl } from './logic/creatFormControl'
 
-export function useForm<
-  TFieldValues extends FieldValues = FieldValues,
-  TContext = any,
-  >(
-  props: Partial<UseFormProps<TFieldValues, TContext>> = {},
+export function useForm<TFieldValues extends FieldValues = FieldValues>(
+  props: Partial<UseFormProps<TFieldValues>> = {},
 ) {
   props = {
     mode: 'onSubmit',
     reValidateMode: 'onChange',
-    defaultValues: {} as UseFormProps<TFieldValues, TContext>['defaultValues'],
+    defaultValues: {} as UseFormProps<TFieldValues>['defaultValues'],
     criteriaMode: 'firstError',
     shouldFocusError: true,
     shouldUnregister: false,
@@ -21,6 +18,6 @@ export function useForm<
     ...props,
   }
   return {
-    ...creatFormControl<TFieldValues, TContext>(props as UseFormProps<TFieldValues, TContext>),
+    ...creatFormControl<TFieldValues>(props as UseFormProps<TFieldValues>),
   }
 }
