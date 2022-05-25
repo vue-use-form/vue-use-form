@@ -37,8 +37,11 @@ yarn add vue-use-form
     - [ ] 🍊`useFormState`
     - [ ] 🍋`useFieldArray`
     - [ ] 🥝directive: `v-form`
-    - [ ] 🍍schema
-    - [ ] 🍎resolver
+    - [ ] 🍎schema
+        - [x] 🍵 class-validator
+        - [ ] 🍶 Yup
+        - [ ] 🍷 Zod
+        - [ ] 🍸 Vest
 - [ ] Security
     - [ ] 🐯Unit test
 - [ ] 🐼 Community(WIP...)
