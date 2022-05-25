@@ -3,12 +3,15 @@
 ## 📦Install
 ```bash
 # npm
-npm i @vue-use-form/class-validator
+npm i @vue-use-form/class-validator class-validator class-transformef
 # yarn
-yarn add @vue-use-form/class-validator
+yarn add @vue-use-form/class-validator class-validator class-transformef
 #pnpm
-pnpm i @vue-use-form/class-validator
+pnpm i @vue-use-form/class-validator class-validator class-transformef
 ```
+
+## Try it online
+🎮[play](https://stackblitz.com/edit/vitejs-vite-foumka?file=src%2FApp.vue,vite.config.ts,src%2Fmain.ts,package.json,src%2Fenv.d.ts&terminal=dev)
 
 > ⚠️ Remember to add these options to your `tsconfig.json`!
 
