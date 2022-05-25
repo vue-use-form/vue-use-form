@@ -21,7 +21,7 @@ async function getErrors(
 }
 
 export function useClassValidator(
-  ClassResolver: new () => any,
+  ClassResolver: new (...args: any[]) => any,
   resolverOptions: ValidatorOptions = {},
 ) {
   return async (
@@ -34,3 +34,4 @@ export function useClassValidator(
     return errors || {}
   }
 }
+
