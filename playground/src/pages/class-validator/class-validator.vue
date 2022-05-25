@@ -8,8 +8,6 @@ const {
   onError,
   onSubmit,
   isExistInErrors,
-  onLogin,
-  formValidation,
 } = useValidator()
 
 const [usernameField] = register('username')
@@ -19,11 +17,10 @@ const [emailField] = register('email')
 </script>
 
 <template>
-  {{ errors }}
   <div class="w-[400px]">
     <q-form
       class="q-gutter-md"
-      @submit.prevent="handleSubmit(onLogin, onError)()"
+      @submit.prevent="handleSubmit(onSubmit, onError)()"
     >
       <q-input
         v-model="usernameField"

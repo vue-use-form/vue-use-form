@@ -1,5 +1,5 @@
-import { IsEmail, IsEmpty, MaxLength, MinLength } from 'class-validator'
-import { useQuasar } from 'quasar'
+import { IsEmail, MaxLength, MinLength } from 'class-validator'
+import { ElMessage } from 'element-plus'
 
 import { useForm } from '../../../../packages/core/src/useForm'
 import { useClassValidator } from '../../../../packages/resolver-class-validator/src'
@@ -34,8 +34,6 @@ class LoginForm {
 export function useValidator() {
   const resolver = useClassValidator(LoginForm)
 
-  const $q = useQuasar()
-
   const {
     register,
     handleSubmit,
@@ -55,20 +53,18 @@ export function useValidator() {
   }
 
   const onSubmit = createSubmitHandler((data) => {
-    $q.notify({
-      type: 'positive',
-      message: 'Login success.',
+    ElMessage({
+      type: 'success',
+      message: 'Successfully!',
     })
   })
 
   const onError = createErrorHandler((errors) => {
-    $q.notify({
-      type: 'negative',
+    ElMessage({
+      type: 'error',
       message: 'Please make sure that you have correctly filled all fields!',
     })
   })
-
-  const onLogin = () => handleSubmit(onSubmit, onError)
 
   return {
     handleSubmit,
@@ -77,7 +73,6 @@ export function useValidator() {
     onSubmit,
     register,
     isExistInErrors,
-    onLogin,
     formValidation,
   }
 }
