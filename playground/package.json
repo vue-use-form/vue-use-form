@@ -8,8 +8,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "class-validator": "^0.13.2",
     "element-plus": "^2.2.2",
     "vue": "^3.2.25",
+    "vue-router": "4",
     "vue-use-form": "^0.0.4"
   },
   "devDependencies": {
