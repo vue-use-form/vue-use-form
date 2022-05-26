@@ -22,3 +22,4 @@ export interface FieldState {
 }
 
 export type Fields<FieldValues extends object, FieldKeys extends keyof FieldValues> = Record<FieldKeys, Field>
+
