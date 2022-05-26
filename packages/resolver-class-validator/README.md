@@ -3,11 +3,11 @@
 ## 📦Install
 ```bash
 # npm
-npm i @vue-use-form/class-validator class-validator class-transformef
+npm i @vue-use-form/class-validator class-validator class-transformer
 # yarn
-yarn add @vue-use-form/class-validator class-validator class-transformef
+yarn add @vue-use-form/class-validator class-validator class-transformer
 #pnpm
-pnpm i @vue-use-form/class-validator class-validator class-transformef
+pnpm i @vue-use-form/class-validator class-validator class-transformer
 ```
 
 ## Try it online
