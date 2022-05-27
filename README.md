@@ -182,7 +182,7 @@ class LoginForm {
   email: string
 }
 
-const resolver = useClassValidator()
+const resolver = useClassValidator(LoginForm)
 
 const { register, createSubmitHandler, createErrorHandler } = useForm<LoginForm>({
   resolver,
