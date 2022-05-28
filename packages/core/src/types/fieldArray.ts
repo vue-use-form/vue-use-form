@@ -1,19 +1,20 @@
-import type { Field } from './filed'
 import type { UseFormControl } from './form'
+import type { RegisterOptions } from './validator'
 
-export type UseFieldArrayField = {
-  id: number
-} & Field
+export type UseFieldArrayField<TFieldValues> = {
+  index: number
+  name: keyof TFieldValues
+} & {
+  [FieldName in keyof TFieldValues]: RegisterOptions<TFieldValues, FieldName extends string ? FieldName : never>
+}
 
 export interface UseFieldArrayProps<FieldValues> {
   control: UseFormControl<FieldValues>
 }
 
-export type FieldPayload<FieldValues> = {
-  [K in keyof FieldValues]: FieldValues[K]
-}
+export type FieldPayload<FieldValues> = Omit<UseFieldArrayField<FieldValues>, 'index' | 'name'>
 
-export type UseFieldArrayInsert<FieldValues> = (index: number, field: FieldPayload<FieldValues>) => void
+export type UseFieldArrayInsert<FieldValues> = (startIndex: number, field: FieldPayload<FieldValues>) => void
 
 export type UseFieldArrayAppend<FieldValues> = (obj: FieldPayload<FieldValues>) => void
 
@@ -32,5 +33,5 @@ export interface UseFieldArrayReturn<FieldValues> {
   prepend: UseFieldArrayPrepend<FieldValues>
   append: UseFieldArrayAppend<FieldValues>
   swap: UseFieldArraySwap
-  fields: UseFieldArrayField
+  fields: UseFieldArrayField<FieldValues>[]
 }

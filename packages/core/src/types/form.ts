@@ -110,7 +110,7 @@ export type UseFormSetFocus<FieldValues> = (name: keyof FieldValues) => void
 export type UseFormIsExistInErrors<FieldValues> = (name: keyof FieldValues) => boolean
 
 export interface UseFormHandlers<
-  TFieldValues extends FieldValues,
+  TFieldValues,
   FieldName = keyof TFieldValues,
   > {
   getValues: UseFormGetValues<TFieldValues, FieldName>

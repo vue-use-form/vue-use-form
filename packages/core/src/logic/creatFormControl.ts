@@ -3,14 +3,15 @@ import { nextTick, reactive, ref, unref, watch } from 'vue'
 import type { Field, FieldElement, FieldValues, Fields } from '../types/filed'
 import type {
   FieldNamesMarkedBoolean,
-  FormState, GetValuesReturn,
-  SubmitErrorHandler,
+  FormState,
+  GetValuesReturn, SubmitErrorHandler,
   SubmitHandler,
-  UseFormClearErrors, UseFormGetFieldState, UseFormGetValues,
-  UseFormHandleSubmit,
+  UseFormClearErrors,
+  UseFormGetFieldState, UseFormGetValues, UseFormHandleSubmit,
   UseFormProps,
   UseFormRegister,
   UseFormReset,
+  UseFormReturn,
   UseFormSetError,
   UseFormSetFocus,
   UseFormSetValue,
@@ -45,7 +46,7 @@ import { handleValidateError, validateField } from './validate'
 
 export function creatFormControl<TFieldValues extends FieldValues = FieldValues>(
   _options: Partial<UseFormProps<TFieldValues>>,
-) {
+): UseFormReturn<TFieldValues> {
   type FieldsKey = keyof TFieldValues
   type TFormState = FormState<TFieldValues>
   type TFormStateKey = keyof TFormState
@@ -482,5 +483,5 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     getFieldState,
     triggerValidate,
     isExistInErrors,
-  })
+  }) as unknown as UseFormReturn<TFieldValues>
 }

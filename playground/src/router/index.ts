@@ -2,6 +2,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import ElementPlus from '../pages/element-plus.vue'
 import ClassValidator from '../pages/class-validator/class-validator.vue'
+import UseFieldArray from '../pages/useFieldArray/use-fieldArray.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -17,6 +18,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/class-validator',
     component: ClassValidator,
     name: 'class-validator',
+  },
+  {
+    path: '/useFieldArray',
+    component: UseFieldArray,
+    name: 'useFieldArray',
   },
 ]
 
