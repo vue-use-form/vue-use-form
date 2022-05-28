@@ -6,9 +6,6 @@ const router = useRouter()
 
 const currentRoute = ref(router.currentRoute.value.name)
 
-watchEffect(() => {
-  console.log(currentRoute)
-})
 </script>
 
 <template>
@@ -23,6 +20,7 @@ watchEffect(() => {
     >
       <q-tab name="element-plus" label="element-plus" @click="() => router.push('/element-plus')" />
       <q-tab name="class-validator" label="class-validator" @click="() => router.push('/class-validator')" />
+      <q-tab name="useFieldArray" label="useFieldArray" @click="() => router.push('/useFieldArray')" />
     </q-tabs>
 
     <div class="flex justify-center mt-5">
