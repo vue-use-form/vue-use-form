@@ -8,7 +8,7 @@
   "license": "MIT",
   "author": "snowingfox",
   "repository": {
-    "url": "https://github.com/vue-use-form/vue-use-form"
+    "url": "https://github.com/vue-use-form/vue-use-form/packages/resolver-class-validator"
   },
   "exports": {
     ".": {
