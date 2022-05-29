@@ -1,6 +1,7 @@
 import type { ValidationError, ValidatorOptions } from 'class-validator'
 import { validate } from 'class-validator'
 import { plainToClass } from 'class-transformer'
+import type { FieldError } from 'vue-use-form/src/types/errors'
 
 async function getErrors(
   instance: object,
@@ -26,7 +27,7 @@ export function useClassValidator(
 ) {
   return async (
     values: Record<string, any>,
-  ) => {
+  ): Promise<FieldError> => {
     const schema = plainToClass(ClassResolver, values)
 
     const errors = await getErrors(schema, resolverOptions)
