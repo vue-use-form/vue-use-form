@@ -24,7 +24,7 @@ export function createFieldArray<TFieldsValues extends FieldValues = FieldValues
 
   const _fields = reactive([]) as TFields[]
 
-  const _createFields = (fieldName: string, options: Partial<ArrayFieldRegisterOptions<TFieldsValues, IsString<keyof TFieldsValues>>>) => {
+  const _createFields = (fieldName: string, options: Partial<ArrayFieldRegisterOptions<TFieldsValues, IsString<keyof TFieldsValues>>> = {}) => {
     const registeredItem = register(fieldName, options)
 
     return {
