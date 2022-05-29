@@ -1,18 +1,30 @@
+import type { FieldValues } from './filed'
 import type { UseFormControl } from './form'
+import type { IsString } from './utils'
 import type { RegisterOptions } from './validator'
 
-export type UseFieldArrayField<TFieldValues> = {
+export type ArrayFieldRegisterOptions<
+  TFieldValues extends FieldValues = FieldValues,
+  FieldNames extends string = IsString<keyof TFieldValues>,
+  > = RegisterOptions<TFieldValues, FieldNames> & { type: string }
+
+export interface UseFieldArrayField<
+  TFieldValues extends FieldValues = FieldValues,
+  > {
   index: number
   name: keyof TFieldValues
-} & {
-  [FieldName in keyof TFieldValues]: RegisterOptions<TFieldValues, FieldName extends string ? FieldName : never>
 }
 
 export interface UseFieldArrayProps<FieldValues> {
   control: UseFormControl<FieldValues>
 }
 
-export type FieldPayload<FieldValues> = Omit<UseFieldArrayField<FieldValues>, 'index' | 'name'>
+export type FieldPayload<
+  TFieldValues extends FieldValues = FieldValues,
+  FieldNames extends string = IsString<keyof TFieldValues>,
+  > = {
+    [K in FieldNames]?: ArrayFieldRegisterOptions<TFieldValues, FieldNames>
+  }
 
 export type UseFieldArrayInsert<FieldValues> = (startIndex: number, field: FieldPayload<FieldValues>) => void
 
