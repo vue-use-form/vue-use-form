@@ -1,34 +1,61 @@
 <script lang="ts" setup>
 
-import { computed, isReactive, watch, watchEffect } from 'vue'
+import { computed, isReactive, ref, watch, watchEffect } from 'vue'
 import { useFieldArray, useForm } from '../../../../packages/core/src'
 
 interface Inputs {
   username: string
+  password: string
+  email: string
 }
 
-const { control, register, formState } = useForm<Inputs>()
+const { control, register, formState: { errors } } = useForm<Inputs>({
+  mode: 'onChange',
+})
 
-const { fields, registeredFields, append, prepend, remove } = useFieldArray<Inputs>({
+const { fields, append, prepend, remove } = useFieldArray<Inputs>({
   control: control as any,
 })
 
-const fieldsMap = computed(() => {
-  return fields.map(field => register(field.name))
-})
+const fieldName = ref<keyof Inputs>('' as keyof Inputs)
 
-const addField = () => {
+function appendFirst() {
   append({
     username: {
       required: 'Username is required',
+    },
+    password: {
+      required: 'Password is required',
+      type: 'password',
+    },
+  })
+}
+
+function prependForm() {
+  prepend({
+    email: {
+      required: 'Email is required',
+      type: 'email',
     },
   })
 }
 </script>
 <template>
   <q-form class="w-[50vw] mx-auto flex justify-center flex-col">
-    {{ registeredFields }} {{ fields }}
-    <q-btn class="mt-5" label="addField" color="primary" @click="addField" />
+    {{ fields }}
+    <q-input
+      v-for="field in fields"
+      :ref="field.ref"
+      :key="field.name"
+      v-model="field.model"
+      filled
+      lazy-rules
+      :type="field.type"
+      :label="`Your ${field.name} *`"
+    />
+    <q-btn class="mt-5" label="appendFirst" color="primary" @click="appendFirst" />
+    <q-btn class="mt-5" label="prepend" color="primary" @click="prependForm" />
+    {{ errors }}
   </q-form>
 </template>
 
