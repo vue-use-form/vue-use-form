@@ -11,7 +11,11 @@ const {
 } = useValidator()
 
 const [usernameField] = register('username')
-const [passwordField] = register('password')
+const [passwordField] = register('password', {
+  validate: (value: string) => {
+    return value.startsWith('@') || 'Password must start with @'
+  },
+})
 const [emailField] = register('email')
 
 </script>

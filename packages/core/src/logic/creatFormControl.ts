@@ -180,6 +180,11 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     } else {
       res = await validateField(_fields[fieldName], unref(_options.shouldFocusError!), shouldDisplayAllAssociatedErrors)
     }
+
+    // Additional validation when using resolver
+    if (isFunction(resolver) && isEmptyObject(res) && !isEmptyObject(_fields[fieldName].rule)) {
+      res = await validateField(_fields[fieldName], unref(_options.shouldFocusError!), shouldDisplayAllAssociatedErrors)
+    }
     setValidating(false)
     if (Object.keys(res || {}).length) {
       _setFormStateError(fieldName, res)
