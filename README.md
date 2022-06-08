@@ -12,7 +12,7 @@ vue-use-form(WIP)
 ## Why hasn't it been updated these days?
 I'm sorry I haven't updated these days, because my school has some heavy tasks, I really can't spare myself to continue to do it. However, I promise to continue to improve this library during the summer vacation. I love the usage of `react-hook-form`, and I will transplant the convenience it brings to Vue.
 
-2022/6/28
+2022/6/08
 
 ## 🎉Thanks [logaretm](https://github.com/logaretm) for giving us the name of lib
 
