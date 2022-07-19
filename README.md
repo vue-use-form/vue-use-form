@@ -40,7 +40,7 @@ yarn add vue-use-form
     - [ ] 🥝directive: `v-form`
     - [ ] 🍎schema
         - [x] 🍵 class-validator
-        - [ ] 🍶 Yup
+        - [x] 🍶 Yup
         - [ ] 🍷 Zod
         - [ ] 🍸 Vest
 - [ ] Security
@@ -158,6 +158,44 @@ const onError = createErrorHandler((errors) => {
   </form>
 </template>
 ```
+
+# Start with yup
+
+```vue
+<script lang="ts" setup>
+import { useForm } from 'vue-use-form'
+import * as yup from 'yup'
+import { useYupResolver } from '../../../../packages/resolver-yup/src'
+
+const schema = yup.object().shape({
+  name: yup.string().required(),
+  age: yup.number().required().positive().integer(),
+  email: yup.string().email(),
+  website: yup.string().url(),
+  createdOn: yup.date().default(() => {
+    return new Date()
+  }),
+})
+
+const resolver = useYupResolver(schema)
+
+const {
+  register,
+  formState: { errors },
+} = useForm({
+  resolver,
+  mode: 'onChange',
+})
+
+const [emailField] = register('email')
+</script>
+
+<template>
+  <input v-model="emailField">
+</template>
+
+```
+
 
 # Start with class-validator
 > ⚠️ Remember to add these options to your `tsconfig.json`!
