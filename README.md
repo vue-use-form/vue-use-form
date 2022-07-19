@@ -165,7 +165,7 @@ const onError = createErrorHandler((errors) => {
 <script lang="ts" setup>
 import { useForm } from 'vue-use-form'
 import * as yup from 'yup'
-import { useYupResolver } from '../../../../packages/resolver-yup/src'
+import { useYupResolver } from '@vue-use-form/yup'
 
 const schema = yup.object().shape({
   name: yup.string().required(),
