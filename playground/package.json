@@ -14,7 +14,7 @@
     "quasar": "^2.7.1",
     "vue": "^3.2.25",
     "vue-router": "4",
-    "vue-use-form": "^0.0.4"
+    "vue-use-form": "workspace:*"
   },
   "devDependencies": {
     "@quasar/vite-plugin": "^1.0.10",

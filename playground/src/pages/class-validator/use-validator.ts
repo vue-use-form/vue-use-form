@@ -1,6 +1,5 @@
 import { IsEmail, MaxLength, MinLength } from 'class-validator'
 import { ElMessage } from 'element-plus'
-
 import { useForm } from '../../../../packages/core/src/useForm'
 import { useClassValidator } from '../../../../packages/resolver-class-validator/src'
 import { IsUserAlreadyExist } from '../../shared/decorators/IsUserAlreadyExist'
