@@ -1,28 +1,13 @@
-# unplugin-starter
+# @vue-use-form/v-form
 
-[![NPM version](https://img.shields.io/npm/v/unplugin-starter?color=a1b858&label=)](https://www.npmjs.com/package/unplugin-starter)
+[![NPM version](https://img.shields.io/npm/v/@vue-use-form/v-form?color=a1b858&label=)](https://www.npmjs.com/package/@vue-use-form/v-form)
 
-Starter template for [unplugin](https://github.com/unjs/unplugin).
-
-## Template Usage
-
-To use this template, clone it down using:
-
-```bash
-npx degit antfu/unplugin-starter my-unplugin
-```
-
-And do a global replace of `unplugin-starter` with your plugin name.
-
-Then you can start developing your unplugin 🔥
-
-To test your plugin, run: `pnpm run dev`
-To release a new version, run: `pnpm run release`
+Directive for [vue-use-form](https://github.com/vue-use-form/vue-use-form)
 
 ## Install
 
 ```bash
-npm i unplugin-starter
+npm i @vue-use-form/v-form -D
 ```
 
 <details>
@@ -30,16 +15,15 @@ npm i unplugin-starter
 
 ```ts
 // vite.config.ts
-import Starter from 'unplugin-starter/vite'
+import VForm from '@vue-use-form/v-form'
 
 export default defineConfig({
   plugins: [
-    Starter({ /* options */ }),
+    VForm({ /* options */ }),
   ],
 })
 ```
 
-Example: [`playground/`](./playground/)
 
 <br></details>
 
@@ -48,11 +32,11 @@ Example: [`playground/`](./playground/)
 
 ```ts
 // rollup.config.js
-import Starter from 'unplugin-starter/rollup'
+import VForm from '@vue-use-form/v-form'
 
 export default {
   plugins: [
-    Starter({ /* options */ }),
+    VForm({}),
   ],
 }
 ```
@@ -68,7 +52,7 @@ export default {
 module.exports = {
   /* ... */
   plugins: [
-    require('unplugin-starter/webpack')({ /* options */ })
+    require('@vue-use-form/v-form/webpack')({ /* options */ })
   ]
 }
 ```
@@ -82,7 +66,7 @@ module.exports = {
 // nuxt.config.js
 export default {
   buildModules: [
-    ['unplugin-starter/nuxt', { /* options */ }],
+    ['@vue-use-form/v-form/nuxt', { /* options */ }],
   ],
 }
 ```
@@ -99,10 +83,86 @@ export default {
 module.exports = {
   configureWebpack: {
     plugins: [
-      require('unplugin-starter/webpack')({ /* options */ }),
+      require('@vue-use-form/v-form/webpack')({ /* options */ }),
     ],
   },
 }
 ```
 
 <br></details>
+
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {useForm} from 'vue-use-form'
+
+const {
+  register,
+  formState: {errors},
+} = useForm<{
+  email: string
+  age: number
+}>({
+  mode: 'onChange',
+})
+
+</script>
+
+<template>
+  <input v-form="register('email', {
+    required: true
+  })">
+  <input v-form="register('age', {
+    required: true,
+  })">
+</template>
+```
+
+Will compiled to
+
+```vue
+<script setup lang="ts">
+import {useForm} from 'vue-use-form'
+
+const {
+  register,
+  formState: {errors},
+} = useForm<{
+  email: string
+  age: number
+}>({
+  mode: 'onChange',
+})
+
+const [emailField, emailRef] = register('email', {
+  required: true
+})
+const [ageField, ageRef] = register('age', {
+  required: true,
+})
+</script>
+
+<template>
+  <input v-model="emailField" ref="emailRef">
+  <input v-model="ageField" ref="ageRef">
+</template>
+```
+
+> ⚠️ please make sure use `v-form` in static, it can't do dynamic analysis.
+
+```vue
+<template v-for="field in ['age', 'email']">
+  <input v-form="register(field)" />  <!--⚠️⚠️⚠️ can't be analysed-->
+</template>
+```
+
+
+```vue
+<input v-form="register('email')" />
+<input v-form="register('age')" /> <!--can be analysed-->
+```
+
+
+

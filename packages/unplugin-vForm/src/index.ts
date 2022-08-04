@@ -1,12 +1,20 @@
+import MagicString from 'magic-string'
 import { createUnplugin } from 'unplugin'
+import { transform } from './core/transform'
 import type { Options } from './types'
 
-export default createUnplugin<Options>(options => ({
+const VForm = createUnplugin<Options>(() => ({
   name: 'unplugin-starter',
   transformInclude(id) {
-    return id.endsWith('main.ts')
+    return id.endsWith('.vue')
   },
-  transform(code) {
-    return code.replace('__UNPLUGIN__', `Hello Unplugin! ${options}`)
+  transform(code, id) {
+    const magicString = new MagicString(code)
+
+    transform(magicString, id)
+
+    return magicString.toString()
   },
 }))
+
+export default VForm
