@@ -1,6 +1,7 @@
 import { set } from 'vue-use-form'
-import type { FieldError, FieldErrors } from 'vue-use-form/src/types/errors'
+import type { FieldErrors } from 'vue-use-form/src/types/errors'
 import type { FieldValues } from 'vue-use-form/src/types/filed'
+import type { Resolver } from 'vue-use-form/src/types/resolver'
 import type { AnyObjectSchema, ValidationError } from 'yup'
 import type { ValidateOptions } from 'yup/es/types'
 
@@ -10,7 +11,7 @@ async function parseYupSchema<T extends FieldValues>(
   schema: AnyObjectSchema,
   values: TValues<T>,
   options: ValidateOptions,
-): Promise<FieldError> {
+) {
   const errors: FieldErrors<T> = {}
   try {
     await schema.validate(values, options)
@@ -26,10 +27,10 @@ async function parseYupSchema<T extends FieldValues>(
 export function useYupResolver<T extends FieldValues>(
   schema: AnyObjectSchema,
   options: ValidateOptions = {},
-) {
+): Resolver<T> {
   return async (
     values: TValues<T>,
   ): Promise<FieldErrors<T>> => {
-    return await parseYupSchema(schema, values, { abortEarly: false, ...options }) as FieldErrors<T>
+    return parseYupSchema(schema, values, { abortEarly: false, ...options })
   }
 }
