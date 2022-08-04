@@ -116,12 +116,6 @@ const [passwordField, passwordRef] = register('password', {
   },
 })
 
-const [ageField, ageRef] = register('age', {
-  required: 'Age is required!',
-  min: { value: 18, message: 'Age must be at least 18' },
-  max: { value: 10000, message: '?' },
-  valueAsNumber: true,
-})
 
 const onSubmit = createSubmitHandler((data) => {
   console.log('validate success', data)
@@ -136,7 +130,15 @@ const onError = createErrorHandler((errors) => {
   <form @submit.prevent="handleSubmit(onSubmit, onError)()">
     <input ref="usernameRef" v-model="usernameField" name="username">
     <input ref="passwordRef" v-model="passwordField" name="password">
-    <input ref="ageRef" v-model="ageField" type="number" name="age">
+    <input 
+        v-form="register('age', {
+          required: 'Age is required!',
+          min: { value: 18, message: 'Age must be at least 18' },
+          max: { value: 10000, message: '?' },
+          valueAsNumber: true,
+        })" 
+        type="number" 
+        name="age">
     <button type="submit" v-text="'Submit'" />
   </form>
 </template>
