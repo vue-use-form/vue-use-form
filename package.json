@@ -1,5 +1,5 @@
 {
-  "name": "vue-composable-form",
+  "name": "main",
   "version": "0.0.0",
   "description": "Some composables form validator for vue",
   "main": "index.js",
@@ -12,11 +12,16 @@
     "vue": "^3.2.0"
   },
   "dependencies": {
-    "vue": "^3.2.0"
+    "magic-string": "^0.26.2",
+    "vue": "^3.2.0",
+    "unplugin": "^0.6.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.21.1",
     "@vitejs/plugin-vue": "^3.0.1",
+    "@vue-use-form/class-validator": "workspace:*",
+    "@vue-use-form/yup": "workspace:*",
+    "@vue-use-form/v-form": "workspace:*",
     "@vue/test-utils": "^2.0.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
@@ -28,6 +33,18 @@
     "vite": "^3.0.4",
     "vitest": "^0.20.3",
     "vue-use-form": "workspace:*",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "@types/jest": "^27.4.1",
+    "@types/node": "^17.0.23",
+    "bumpp": "^7.1.1",
+    "eslint-plugin-jest": "^26.1.4",
+    "esno": "^0.14.1",
+    "fast-glob": "^3.2.11",
+    "jest": "^27.5.1",
+    "nodemon": "^2.0.15",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^27.1.4",
+    "tsup": "^5.12.5",
+    "webpack": "^5.72.0"
   }
 }
