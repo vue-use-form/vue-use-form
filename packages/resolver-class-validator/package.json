@@ -2,19 +2,19 @@
   "name": "@vue-use-form/class-validator",
   "version": "0.0.1",
   "description": "class-validator resolver for vue-use-form",
-  "main": "dist/index.cjs",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "license": "MIT",
   "author": "snowingfox",
   "repository": {
     "url": "https://github.com/vue-use-form/vue-use-form/packages/resolver-class-validator"
   },
+  "homepage": "https://github.com/vue-use-form/vue-use-form/tree/master/packages/resolver-class-validator#readme",
   "exports": {
     ".": {
-      "import": "./dist/index.esm.js",
       "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/index.mjs"
     }
   },
   "files": [
@@ -24,6 +24,10 @@
   "peerDependencies": {
     "class-transformer": "^0.4.0",
     "class-validator": "^0.12.0",
-    "vue-use-form": ">=0.0.5"
+    "vue-use-form": "workspace:*"
+  },
+  "scripts": {
+    "build": "unbuild",
+    "stub": "unbuild --stub"
   }
 }
