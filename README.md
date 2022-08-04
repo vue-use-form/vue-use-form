@@ -37,7 +37,7 @@ yarn add vue-use-form
     - [x] 🍉`useForm`
     - [ ] 🍊`useFormState`
     - [ ] 🍋`useFieldArray`
-    - [ ] 🥝directive: `v-form`
+    - [x] 🥝directive: `v-form`
     - [ ] 🍎schema
         - [x] 🍵 class-validator
         - [x] 🍶 Yup
@@ -47,14 +47,7 @@ yarn add vue-use-form
     - [ ] 🐯Unit test
 - [ ] 🐼 Community(WIP...)
   - [ ] 🎋中文文档
-  - [ ] 📖Documentation
-- [ ] 🦊Compatible UI framework(A way to get `input/select/textarea` dom)
-    - [ ] 🍤element-plus
-    - [ ] 🍗ant-design-vue
-    - [ ] 🥩vuetify
-    - [ ] 🥓quasar
-    - [ ] 🌮provide a function to let the user to get the dom
-    - [ ] 🎨other UI framework...
+  - [ ] 📖Documentation .
 
 
 ## 🎁Try it online
@@ -89,16 +82,6 @@ const {
   register,
   createSubmitHandler,
   createErrorHandler,
-  reset,
-  handleSubmit,
-  setError,
-  clearErrors,
-  setValue,
-  setFocus,
-  getValues,
-  triggerValidate,
-  getFieldState,
-  unregister,
 } = useForm<Inputs>({
   mode: 'onChange',
   shouldFocusError: true,
