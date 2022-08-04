@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useForm } from 'vue-use-form'
 import * as yup from 'yup'
-import { useYupResolver } from '../../../../packages/resolver-yup/src'
+import { useYupResolver } from '@vue-use-form/yup'
 
 const schema = yup.object().shape({
   name: yup.string().required(),
@@ -15,26 +15,20 @@ const schema = yup.object().shape({
 
 const resolver = useYupResolver(schema)
 
-interface Inputs {
-  email: string
-}
-
 const {
   register,
   formState: { errors },
-} = useForm<Inputs>({
+} = useForm<{
+  email: string
+  age: number
+}>({
   resolver,
   mode: 'onChange',
 })
 
-const [emailField] = register('email')
 </script>
 
 <template>
-  {{ errors }}
-  <input v-model="emailField">
+  <input v-form="register('email')">
+  <input v-form="register('age')">
 </template>
-
-<style lang="scss" scoped>
-
-</style>
