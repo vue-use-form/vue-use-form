@@ -3,7 +3,7 @@ vue-use-form(WIP)
 </h1>
 
 <p align="center">
- <a href="https://vue-form-docs.netlify.app/">Documentation</a>(🔨WIP...)
+ <a href="https://vue-use-form.netlify.app/">Documentation</a>(🔨WIP...)
 </p>
 <p align="center">
  <a href="https://vue-form-cn.netlify.app/">中文文档</a>(🔨施工中...)
