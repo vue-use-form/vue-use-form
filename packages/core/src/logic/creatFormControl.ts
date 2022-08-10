@@ -20,16 +20,18 @@ import type {
 } from '../types/form'
 import type { FieldError, FieldErrors } from '../types/errors'
 import {
+  get,
   isArray,
   isEmptyObject,
   isFunction,
   isNullOrUndefined,
   isString,
   isUndefined,
+  set,
+  unset,
 } from '../utils'
 import { isRadioOrCheckboxInput } from '../utils/fieldElement'
 import { isFieldElement } from '../utils/isFieldElement'
-import { get, set, unset } from '../utils/object'
 import type { DefaultValues, UnpackNestedValue } from '../types/utils'
 import { getValidationMode } from '../utils/getValidationMode'
 
