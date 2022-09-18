@@ -2,13 +2,6 @@
 vue-use-form(WIP)
 </h1>
 
-<p align="center">
- <a href="https://vue-use-form.netlify.app/">Documentation</a>(🔨WIP...)
-</p>
-<p align="center">
- <a href="https://vue-form-cn.netlify.app/">中文文档</a>(🔨施工中...)
-</p>
-
 ## I'm ready work for this project again! 2022/7/15 
 
 ## 🎉Thanks [logaretm](https://github.com/logaretm) for giving us the name of lib
