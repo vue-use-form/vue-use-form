@@ -3,11 +3,11 @@ vue-use-form(WIP)
 </h1>
 
 
-## 🎉Thanks [logaretm](https://github.com/logaretm) for giving us the name of lib
+## 🎉Thanks [logaretm](https://github.com/logaretm) for giving the package name
 
 ## Document
 
-The usage is almost the same as that of the react book form. you can go [react-hook-form](https://react-hook-form.com/) to check.
+The usage is almost the same as that of the react-hook-form. you can go [react-hook-form](https://react-hook-form.com/) to check.
 
 ## Install
 
