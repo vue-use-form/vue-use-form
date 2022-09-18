@@ -2,8 +2,7 @@
 vue-use-form(WIP)
 </h1>
 
-
-## 🎉Thanks [logaretm](https://github.com/logaretm) for giving the package name
+Inspired by [react-hook-form](https://react-hook-form.com/)
 
 ## Document
 
