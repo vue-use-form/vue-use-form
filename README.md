@@ -2,9 +2,12 @@
 vue-use-form(WIP)
 </h1>
 
-## I'm ready work for this project again! 2022/7/15 
 
 ## 🎉Thanks [logaretm](https://github.com/logaretm) for giving us the name of lib
+
+## Document
+
+The usage is almost the same as that of the react book form. you can go [react-hook-form](https://react-hook-form.com/) to check.
 
 ## Install
 
@@ -34,9 +37,7 @@ yarn add vue-use-form
     - [ ] 🍎schema
         - [x] 🍵 class-validator
         - [x] 🍶 Yup
-        - [ ] 🍷 Zod
-        - [ ] 🍸 Vest
-- [ ] Security
+- [ ] Test
     - [ ] 🐯Unit test
 - [ ] 🐼 Community(WIP...)
   - [ ] 🎋中文文档
@@ -137,90 +138,34 @@ const onError = createErrorHandler((errors) => {
 </template>
 ```
 
-# Start with yup
+## use with schema
+- [@vue-use-form/class-validator](https://github.com/vue-use-form/vue-use-form/tree/master/packages/resolver-class-validator)
+- [@vue-use-form/yup](https://github.com/vue-use-form/vue-use-form/tree/master/packages/resolver-yup)
 
+## use with unplugin-vForm
+- [@vue-use-form/v-form](https://github.com/vue-use-form/vue-use-form/tree/master/packages/unplugin-vForm)
 ```vue
-<script lang="ts" setup>
-import { useForm } from 'vue-use-form'
-import * as yup from 'yup'
-import { useYupResolver } from '@vue-use-form/yup'
-
-const schema = yup.object().shape({
-  name: yup.string().required(),
-  age: yup.number().required().positive().integer(),
-  email: yup.string().email(),
-  website: yup.string().url(),
-  createdOn: yup.date().default(() => {
-    return new Date()
-  }),
-})
-
-const resolver = useYupResolver(schema)
+<script setup lang="ts">
+import {useForm} from 'vue-use-form'
 
 const {
   register,
-  formState: { errors },
-} = useForm({
-  resolver,
-  mode: 'onChange',
-})
-
-const [emailField] = register('email')
-</script>
-
-<template>
-  <input v-model="emailField">
-</template>
-
-```
-
-
-# Start with class-validator
-> ⚠️ Remember to add these options to your `tsconfig.json`!
-
-```
-"strictPropertyInitialization": false,
-"experimentalDecorators": true
-```
-
-```vue
-
-<script lang="ts" setup>
-import { IsString, Length, IsEmail } from 'class-validator'
-import { useClassValidator } from '@vue-use-form/class-validator'
-import { useForm } from 'vue-use-form'
-
-class LoginForm {
-  @IsString()
-  @Length(3, 10)
-  username: string
-
-  @IsEmail()
+  formState: {errors},
+} = useForm<{
   email: string
-}
-
-const resolver = useClassValidator(LoginForm)
-
-const { register, createSubmitHandler, createErrorHandler } = useForm<LoginForm>({
-  resolver,
+  age: number
+}>({
   mode: 'onChange',
 })
 
-const [usernameField] = register('username')
-const [emailField] = register('email')
-
-const onSubmit = createSubmitHandler((data) => {
-  console.log(data)
-})
-const onError = createErrorHandler((errors) => {
-  console.log(errors)
-})
 </script>
 
 <template>
-  <form @submit.prevent="handleSubmit(onSubmit, onError)()">
-    <input v-model="usernameField" />
-    <input v-model="emailField" />
-  </form>
+  <input v-form="register('email', {
+    required: true
+  })">
+  <input v-form="register('age', {
+    required: true,
+  })">
 </template>
 ```
