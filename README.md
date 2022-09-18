@@ -2,7 +2,7 @@
 vue-use-form(WIP)
 </h1>
 
-Inspired by [react-hook-form](https://react-hook-form.com/)
+Inspired by [react-hook-form](https://react-hook-form.com/), if you love react-hook-form usage, come on and try it!
 
 ## Document
 
