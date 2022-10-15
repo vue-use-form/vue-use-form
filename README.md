@@ -29,7 +29,8 @@ yarn add vue-use-form
 ## TODO
 
 - [ ] 🐵Main features
-    - [x] 🍉`useForm`
+    - [ ] 🍉`useForm`
+      - [ ] 🍎 register -> disabled -> setValueAsDate
     - [ ] 🍊`useFormState`
     - [ ] 🍋`useFieldArray`
     - [x] 🥝directive: `v-form`
