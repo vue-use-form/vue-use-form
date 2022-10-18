@@ -1,4 +1,3 @@
-import type { Ref } from 'vue'
 import { nextTick, reactive, ref, unref } from 'vue'
 import type { Field, FieldElement, FieldValues, Fields } from '../types/filed'
 import type {
@@ -109,7 +108,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
   }
 
   const _getFieldDom = (name: FieldsKey) => {
-    return _getFieldProp(name, 'el') as Ref<FieldElement> | undefined
+    return _getFieldProp(name, 'el') as FieldElement | undefined
   }
 
   const _getDirtyFields = () => {
@@ -305,7 +304,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     _setFormStateError(fieldName, error)
 
     if (config.shouldFocusError) {
-      handleValidateError(error, true, _getFieldDom(fieldName)?.value)
+      handleValidateError(error, true, _getFieldDom(fieldName))
     }
   }
 
@@ -345,7 +344,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
   }
 
   const setFocus: UseFormSetFocus<TFieldValues> = name => nextTick(() => {
-    const el = unref(_getFieldDom(name))
+    const el = _getFieldDom(name)
 
     if (el) {
       el.focus()
@@ -403,7 +402,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     }
 
     function addEventListenerToElement() {
-      if (!isFieldElement(field.el.value)) {
+      if (!isFieldElement(field.el)) {
         if (_fields[fieldName].isUnregistered) {
           return
         }
@@ -431,8 +430,8 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     }
 
     return {
-      value: field.inputValue.value,
       ref: field.el,
+      value: field.inputValue.value,
       onInput: async (e: InputEvent) => {
         if (_fields[fieldName].isUnregistered) {
           return
