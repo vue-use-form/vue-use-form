@@ -33,7 +33,6 @@ yarn add vue-use-form
       - [ ] 🍎 register -> disabled -> setValueAsDate
     - [ ] 🍊`useFormState`
     - [ ] 🍋`useFieldArray`
-    - [x] 🥝directive: `v-form`
     - [ ] 🍎schema
         - [x] 🍵 class-validator
         - [x] 🍶 Yup
@@ -66,8 +65,6 @@ pnpm run dev
 import { useForm } from 'vue-use-form'
 
 interface Inputs {
-  username: string
-  password: string
   age: number
 }
 
@@ -79,35 +76,6 @@ const {
 } = useForm<Inputs>({
   mode: 'onChange',
   shouldFocusError: true,
-})
-
-const [usernameField, usernameRef] = register('username', {
-  required: 'Username is required!',
-  minLength: { value: 3, message: 'Username must be at least 3 characters' },
-  maxLength: { value: 10, message: 'Username must be at most 10 characters' },
-  validate: (value) => {
-    if (value === 'admin') {
-      return 'Username is reserved!'
-    }
-  },
-})
-
-const [passwordField, passwordRef] = register('password', {
-  required: 'Password is required!',
-  minLength: { value: 8, message: 'Password must be at least 8 characters' },
-  maxLength: { value: 20, message: 'Password must be at most 20 characters' },
-  validate: {
-    isContainLowercase: (value) => {
-      if (!/[a-z]/.test(value)) {
-        return 'Password must contain at least one lowercase letter'
-      }
-    },
-    isContainUppercase: (value) => {
-      if (!/[A-Z]/.test(value)) {
-        return 'Password must contain at least one uppercase letter'
-      }
-    },
-  },
 })
 
 
@@ -122,10 +90,8 @@ const onError = createErrorHandler((errors) => {
 
 <template>
   <form @submit.prevent="handleSubmit(onSubmit, onError)()">
-    <input ref="usernameRef" v-model="usernameField" name="username">
-    <input ref="passwordRef" v-model="passwordField" name="password">
     <input 
-        v-form="register('age', {
+        :="register('age', {
           required: 'Age is required!',
           min: { value: 18, message: 'Age must be at least 18' },
           max: { value: 10000, message: '?' },
@@ -141,31 +107,3 @@ const onError = createErrorHandler((errors) => {
 ## use with schema
 - [@vue-use-form/class-validator](https://github.com/vue-use-form/vue-use-form/tree/master/packages/resolver-class-validator)
 - [@vue-use-form/yup](https://github.com/vue-use-form/vue-use-form/tree/master/packages/resolver-yup)
-
-## use with unplugin-vForm
-- [@vue-use-form/v-form](https://github.com/vue-use-form/vue-use-form/tree/master/packages/unplugin-vForm)
-```vue
-<script setup lang="ts">
-import {useForm} from 'vue-use-form'
-
-const {
-  register,
-  formState: {errors},
-} = useForm<{
-  email: string
-  age: number
-}>({
-  mode: 'onChange',
-})
-
-</script>
-
-<template>
-  <input v-form="register('email', {
-    required: true
-  })">
-  <input v-form="register('age', {
-    required: true,
-  })">
-</template>
-```
