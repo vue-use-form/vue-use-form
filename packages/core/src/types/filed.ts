@@ -8,7 +8,7 @@ export type FieldElement = HTMLInputElement| HTMLSelectElement | HTMLTextAreaEle
 
 export interface Field {
   inputValue: Ref
-  el: FieldElement
+  el: Ref<FieldElement>
   rule: RegisterOptions
   isDirty: boolean
   isUnregistered: boolean

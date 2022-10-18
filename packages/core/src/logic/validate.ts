@@ -7,12 +7,13 @@ import {
   isObject,
   isRegex,
   isString,
+  set,
 } from '../utils'
 import type { Field, FieldElement } from '../types/filed'
 import { isCheckBoxInput, isRadioInput } from '../utils/fieldElement'
 import { getValueAndMessage } from '../utils/transformMessage'
 import { getValidatorError } from '../utils/getValidatorError'
-import { set } from '../utils/object'
+
 import { isFieldElement } from '../utils/isFieldElement'
 
 export function handleValidateError(error: FieldError, shouldFocusOnError: boolean, el?: FieldElement) {
@@ -44,7 +45,7 @@ export async function validateField(
     setValueAs,
   } = field.rule
 
-  const el = field.el
+  const el = unref(field.el)
 
   const isRadio = isRadioInput(el)
   const isCheckbox = isCheckBoxInput(el)
