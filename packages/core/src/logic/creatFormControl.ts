@@ -1,4 +1,7 @@
 import { nextTick, reactive, ref, unref } from 'vue'
+
+import { VALIDATION_MODE } from '../shared/constant'
+import type { FieldError, FieldErrors } from '../types/errors'
 import type { Field, FieldElement, FieldValues, Fields } from '../types/filed'
 import type {
   FieldNamesMarkedBoolean,
@@ -20,32 +23,19 @@ import type {
   UseFormTriggerValidate,
   UseFormUnregister,
 } from '../types/form'
-import type { FieldError, FieldErrors } from '../types/errors'
-import {
-  get,
-  isArray,
-  isEmptyObject,
-  isFunction,
-  isNullOrUndefined,
-  isString,
-  isUndefined,
-  set,
-  unset,
-} from '../utils'
-import { isRadioOrCheckboxInput } from '../utils/fieldElement'
-import { isFieldElement } from '../utils/isFieldElement'
 import type { DefaultValues, UnpackNestedValue } from '../types/utils'
-import { getValidationMode } from '../utils/getValidationMode'
+import { get, isArray, isEmptyObject, isFunction, isNullOrUndefined, isString, isUndefined, set, unset } from '../utils'
 
 import {
   createErrorHandler as createErrorHandlerUtil,
   createSubmitHandler as createSubmitHandlerUtil,
 } from '../utils/createHandler'
 
-import { VALIDATION_MODE } from '../shared/constant'
-import { getFormEl } from '../utils/getFormEl'
-
 import { deepEqual } from '../utils/deepEqual'
+import { isRadioOrCheckboxInput } from '../utils/fieldElement'
+import { getFormEl } from '../utils/getFormEl'
+import { getValidationMode } from '../utils/getValidationMode'
+import { isFieldElement } from '../utils/isFieldElement'
 import { handleValidateError, validateField } from './validate'
 
 export function creatFormControl<TFieldValues extends FieldValues = FieldValues>(
@@ -401,7 +391,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
       field = get(_fields, fieldName)
     }
 
-    function addEventListenerToElement() {
+    const addEventListenerToElement = () => {
       if (isFieldElement(field.el) || _fields[fieldName].isUnregistered) {
         return
       }
@@ -427,8 +417,19 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
       }
     }
 
+    const handleValueChange = async (input: InputEvent | any) => {
+      field.inputValue.value = (input?.target as any)?.value || input || ''
+
+      _handleAllDirtyFieldsOperate(fieldName)
+      if (validationModeBeforeSubmit.isOnChange) {
+        await _onChange(fieldName)
+      }
+    }
+
     return {
+      // avoid rebinding ref
       ...(!isFieldElement(field.el) && { ref: _fields[fieldName].el }),
+
       value: field.inputValue.value,
       onInput: async (e: InputEvent) => {
         if (_fields[fieldName].isUnregistered) {
@@ -440,30 +441,20 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
         // make sure that only trigger onInput or onUpdate:modelValue
         queueMicrotask(async () => {
           if (!isModelValue) {
-            field.inputValue.value = (e?.target as any)?.value || ''
-
-            _handleAllDirtyFieldsOperate(fieldName)
-            if (validationModeBeforeSubmit.isOnChange) {
-              await _onChange(fieldName)
-            }
+            await handleValueChange(e)
           }
         })
       },
+
       'modelValue': field.inputValue.value,
       'onUpdate:modelValue': async (input: any) => {
         if (_fields[fieldName].isUnregistered) {
           return
         }
 
-        addEventListenerToElement()
-
         isModelValue = true
-        field.inputValue.value = input
-
-        _handleAllDirtyFieldsOperate(fieldName)
-        if (validationModeBeforeSubmit.isOnChange) {
-          await _onChange(fieldName)
-        }
+        addEventListenerToElement()
+        await handleValueChange(input)
       },
     }
   }
