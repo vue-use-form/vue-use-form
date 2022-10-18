@@ -23,13 +23,13 @@ const {
   mode: 'onChange',
 })
 
-const onSubmit = createSubmitHandler((data) => {
+const onSubmit = createSubmitHandler<Inputs>((data) => {
   ElMessage({
     type: 'success',
     message: 'Create activity successfully!',
   })
 })
-const onError = createErrorHandler((errors) => {
+const onError = createErrorHandler<Inputs>((errors) => {
   ElMessage({
     type: 'error',
     message: 'Failed to create activity!',
