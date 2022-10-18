@@ -402,29 +402,27 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     }
 
     function addEventListenerToElement() {
-      if (!isFieldElement(field.el)) {
-        if (_fields[fieldName].isUnregistered) {
-          return
-        }
-        const el = getFormEl(field.el)
-        _setFields(fieldName, { ..._fields[fieldName], el })
+      if (isFieldElement(field.el) || _fields[fieldName].isUnregistered) {
+        return
+      }
+      const el = getFormEl(field.el)
+      _setFields(fieldName, { ..._fields[fieldName], el })
 
-        if (isRadioOrCheckboxInput(el)) {
-          set(_defaultValues, fieldName as string, !!defaultVal)
-        }
-        set(_defaultValues, fieldName as string, defaultVal)
+      if (isRadioOrCheckboxInput(el)) {
+        set(_defaultValues, fieldName as string, !!defaultVal)
+      }
+      set(_defaultValues, fieldName as string, defaultVal)
 
-        // bind validate mode
-        if (isFieldElement(el)) {
-          if (validationModeBeforeSubmit.isOnBlur) {
-            el.addEventListener('blur', async () => {
-              await _onChange(fieldName)
-            })
-          } else if (validationModeBeforeSubmit.isOnTouch) {
-            el.addEventListener('click', async () => {
-              await _onChange(fieldName)
-            })
-          }
+      // bind validate mode
+      if (isFieldElement(el)) {
+        if (validationModeBeforeSubmit.isOnBlur) {
+          el.addEventListener('blur', async () => {
+            await _onChange(fieldName)
+          })
+        } else if (validationModeBeforeSubmit.isOnTouch) {
+          el.addEventListener('click', async () => {
+            await _onChange(fieldName)
+          })
         }
       }
     }
