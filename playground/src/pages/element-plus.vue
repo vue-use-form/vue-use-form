@@ -114,9 +114,9 @@ const onError = createErrorHandler<Inputs>((errors) => {
     <el-form-item label="Activity" prop="type" :error="errors.type?.message">
       <el-checkbox-group
         :="register('type', {
-  required: 'Type is required!',
-  value: ['Promotion activities'],
-})"
+          required: 'Type is required!',
+          value: ['Promotion activities'],
+        })"
       >
         <el-checkbox label="Online activities" name="type" />
         <el-checkbox label="Promotion activities" name="type" />
@@ -127,9 +127,9 @@ const onError = createErrorHandler<Inputs>((errors) => {
     <el-form-item label="Resources" :error="errors.resource?.message">
       <el-radio-group
         :="register('resource', {
-  required: 'Resource is required!',
-  value: 'Sponsor',
-})"
+          required: 'Resource is required!',
+          value: 'Sponsor',
+        })"
       >
         <el-radio label="Sponsor" />
         <el-radio label="Venue" />
@@ -138,12 +138,13 @@ const onError = createErrorHandler<Inputs>((errors) => {
     <el-form-item label="Activity form" :error="errors.desc?.message">
       <el-input
         :="register('desc', {
-  required: 'Desc is required!',
-  maxLength: {
-    value: 100,
-    message: 'Desc must be less than 100 characters!',
-  },
-})" type="textarea"
+          required: 'Desc is required!',
+          maxLength: {
+            value: 100,
+            message: 'Desc must be less than 100 characters!',
+          },
+        })"
+        type="textarea"
       />
     </el-form-item>
     <el-form-item>
