@@ -1,13 +1,16 @@
 import type { Ref } from 'vue'
-import { nextTick, reactive, ref, unref, watch } from 'vue'
+import { nextTick, reactive, ref, unref } from 'vue'
 import type { Field, FieldElement, FieldValues, Fields } from '../types/filed'
 import type {
   FieldNamesMarkedBoolean,
   FormState,
-  GetValuesReturn, SubmitErrorHandler,
+  GetValuesReturn,
+  SubmitErrorHandler,
   SubmitHandler,
   UseFormClearErrors,
-  UseFormGetFieldState, UseFormGetValues, UseFormHandleSubmit,
+  UseFormGetFieldState,
+  UseFormGetValues,
+  UseFormHandleSubmit,
   UseFormProps,
   UseFormRegister,
   UseFormReset,
@@ -106,7 +109,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
   }
 
   const _getFieldDom = (name: FieldsKey) => {
-    return _getFieldProp(name, 'el') as FieldElement | undefined
+    return _getFieldProp(name, 'el') as Ref<FieldElement> | undefined
   }
 
   const _getDirtyFields = () => {
@@ -302,7 +305,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     _setFormStateError(fieldName, error)
 
     if (config.shouldFocusError) {
-      handleValidateError(error, true, _getFieldDom(fieldName))
+      handleValidateError(error, true, _getFieldDom(fieldName)?.value)
     }
   }
 
@@ -342,7 +345,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
   }
 
   const setFocus: UseFormSetFocus<TFieldValues> = name => nextTick(() => {
-    const el = _getFieldDom(name)
+    const el = unref(_getFieldDom(name))
 
     if (el) {
       el.focus()
@@ -382,54 +385,90 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
       options = {}
     }
 
-    const defaultVal = get(_defaultValues, fieldName as string) || options?.value || ''
-    const model = ref(defaultVal)
-    const elRef = ref<HTMLElement>()
+    let isModelValue = false
+    let field = get(_fields, fieldName)
 
-    _setFields(fieldName, {
-      inputValue: model,
-      rule: options,
-      isDirty: false,
-      isUnregistered: false,
-    })
+    const defaultVal = options?.value || get(_defaultValues, fieldName as string) || ''
 
-    watch(model, async () => {
-      if (_fields[fieldName].isUnregistered) {
-        return
-      }
-      _handleAllDirtyFieldsOperate(fieldName)
-      if (validationModeBeforeSubmit.isOnChange) {
-        await _onChange(fieldName)
-      }
-    })
+    if (!field) {
+      _setFields(fieldName, {
+        inputValue: ref(defaultVal),
+        rule: options,
+        isDirty: false,
+        isUnregistered: false,
+        el: ref(null),
+      })
 
-    watch(elRef, (newRef) => {
-      if (_fields[fieldName].isUnregistered) {
-        return
-      }
-      const el = getFormEl(newRef)
-      set(_fields, fieldName, { ..._fields[fieldName], el })
+      field = get(_fields, fieldName)
+    }
 
-      if (isRadioOrCheckboxInput(el)) {
-        set(_defaultValues, fieldName as string, !!defaultVal)
-      }
-      set(_defaultValues, fieldName as string, defaultVal)
+    function addEventListenerToElement() {
+      if (!isFieldElement(field.el.value)) {
+        if (_fields[fieldName].isUnregistered) {
+          return
+        }
+        const el = getFormEl(field.el)
+        _setFields(fieldName, { ..._fields[fieldName], el })
 
-      // bind validate mode
-      if (isFieldElement(el)) {
-        if (validationModeBeforeSubmit.isOnBlur) {
-          el.addEventListener('blur', async () => {
-            await _onChange(fieldName)
-          })
-        } else if (validationModeBeforeSubmit.isOnTouch) {
-          el.addEventListener('click', async () => {
-            await _onChange(fieldName)
-          })
+        if (isRadioOrCheckboxInput(el)) {
+          set(_defaultValues, fieldName as string, !!defaultVal)
+        }
+        set(_defaultValues, fieldName as string, defaultVal)
+
+        // bind validate mode
+        if (isFieldElement(el)) {
+          if (validationModeBeforeSubmit.isOnBlur) {
+            el.addEventListener('blur', async () => {
+              await _onChange(fieldName)
+            })
+          } else if (validationModeBeforeSubmit.isOnTouch) {
+            el.addEventListener('click', async () => {
+              await _onChange(fieldName)
+            })
+          }
         }
       }
-    })
+    }
 
-    return [model, elRef as Ref<HTMLElement>]
+    return {
+      value: field.inputValue.value,
+      ref: field.el,
+      onInput: async (e: InputEvent) => {
+        if (_fields[fieldName].isUnregistered) {
+          return
+        }
+
+        addEventListenerToElement()
+
+        // make sure that only trigger onInput or onUpdate:modelValue
+        queueMicrotask(async () => {
+          if (!isModelValue) {
+            field.inputValue.value = (e?.target as any)?.value || ''
+
+            _handleAllDirtyFieldsOperate(fieldName)
+            if (validationModeBeforeSubmit.isOnChange) {
+              await _onChange(fieldName)
+            }
+          }
+        })
+      },
+      'modelValue': field.inputValue.value,
+      'onUpdate:modelValue': async (input: any) => {
+        if (_fields[fieldName].isUnregistered) {
+          return
+        }
+
+        addEventListenerToElement()
+
+        isModelValue = true
+        field.inputValue.value = input
+
+        _handleAllDirtyFieldsOperate(fieldName)
+        if (validationModeBeforeSubmit.isOnChange) {
+          await _onChange(fieldName)
+        }
+      },
+    }
   }
 
   const unregister: UseFormUnregister<TFieldValues> = (fieldName, options) => {

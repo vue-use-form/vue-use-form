@@ -1,4 +1,3 @@
-import type { Ref } from 'vue'
 import type { FieldValues, Fields } from './filed'
 import type { Resolver } from './resolver'
 import type { DeepMap, DeepPartial, DefaultValues, UnpackNestedValue } from './utils'
@@ -9,10 +8,7 @@ export type Mode = 'onSubmit' | 'onBlur' | 'onChange' | 'onTouched' | 'all'
 
 export type CriteriaMode = 'firstError' | 'all'
 
-export type FieldNamesMarkedBoolean<TFieldValues extends FieldValues> = DeepMap<
-DeepPartial<TFieldValues>,
-boolean
->
+export type FieldNamesMarkedBoolean<TFieldValues extends FieldValues> = DeepMap<DeepPartial<TFieldValues>, boolean>
 
 export interface UseFormProps<TFieldValues extends object> {
   mode: Mode
@@ -101,7 +97,12 @@ export type UseFormUnregister<TFieldValues extends FieldValues> = (
   > & { keepValue?: boolean; keepError?: boolean },
 ) => void
 
-export type UseFormRegisterReturn<T> = [Ref<T>, Ref<HTMLElement>]
+export interface UseFormRegisterReturn<T, BaseType = string | Date | number | T> {
+  value: BaseType
+  onInput: (e: InputEvent) => Promise<void>
+  modelValue: BaseType
+  'onUpdate:modelValue': (input: any) => Promise<void>
+}
 
 export type UseFormRegister<T extends FieldValues, K extends keyof T> = (name: K, options?: RegisterOptions) => UseFormRegisterReturn<T[K]>
 
