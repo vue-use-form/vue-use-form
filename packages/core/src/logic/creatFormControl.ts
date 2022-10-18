@@ -428,7 +428,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     }
 
     return {
-      ref: field.el,
+      ...(!isFieldElement(field.el) && { ref: _fields[fieldName].el }),
       value: field.inputValue.value,
       onInput: async (e: InputEvent) => {
         if (_fields[fieldName].isUnregistered) {
