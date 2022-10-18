@@ -9,15 +9,6 @@ const {
   onSubmit,
   isExistInErrors,
 } = useValidator()
-
-const [usernameField] = register('username')
-const [passwordField] = register('password', {
-  validate: (value: string) => {
-    return value.startsWith('@') || 'Password must start with @'
-  },
-})
-const [emailField] = register('email')
-
 </script>
 
 <template>
@@ -27,7 +18,7 @@ const [emailField] = register('email')
       @submit.prevent="handleSubmit(onSubmit, onError)()"
     >
       <q-input
-        v-model="usernameField"
+        :="register('username')"
         filled
         label="Your name *"
         hint="Name and surname"
@@ -37,7 +28,11 @@ const [emailField] = register('email')
       />
 
       <q-input
-        v-model="passwordField"
+        :="register('password', {
+          validate: (value: string) => {
+            return value.startsWith('@') || 'Password must start with @'
+          },
+        })"
         filled
         lazy-rules
         type="password"
@@ -47,7 +42,7 @@ const [emailField] = register('email')
       />
 
       <q-input
-        v-model="emailField"
+        :="register('email')"
         filled
         type="email"
         label="Your email *"

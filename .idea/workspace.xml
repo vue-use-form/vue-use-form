@@ -1,14 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="81a696ad-c55d-42c6-a121-24a9c08c9956" name="Changes" comment=":fire: fix type err">
-      <change afterPath="$PROJECT_DIR$/playground/src/pages/yup/yup.vue" afterDir="false" />
+    <list default="true" id="81a696ad-c55d-42c6-a121-24a9c08c9956" name="Changes" comment=":sparkles: reduce useless code">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/resolver-yup/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/resolver-yup/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/playground/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/playground/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/core/src/utils/getFormEl.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/src/utils/getFormEl.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/nuxt.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/rollup.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/scripts/postbuild.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/src/core/transform.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/src/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/src/nuxt.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/src/rollup.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/src/types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/src/vite.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/src/webpack.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/tsup.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/types.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/vite.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/webpack.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/pages/class-validator/class-validator.vue" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/pages/class-validator/class-validator.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/playground/src/pages/class-validator/use-validator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/pages/class-validator/use-validator.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/pages/element-plus.vue" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/pages/element-plus.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/pages/useFieldArray/use-fieldArray.vue" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/pages/useFieldArray/use-fieldArray.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/pages/yup/yup.vue" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/pages/yup/yup.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/playground/src/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/router/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/playground/vite.config.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,31 +59,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Project.color&quot;: &quot;4b5244&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;js.last.introduce.type&quot;: &quot;CONST&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.statistic.project.settings&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;D:\\Dev\\vue-use-form\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Project.color": "4b5244",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "js.last.introduce.type": "CONST",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.standard": "",
+    "nodejs_package_manager_path": "pnpm",
+    "settings.editor.selected.configurable": "reference.settings.project.statistic.project.settings",
+    "ts.external.directory.path": "D:\\Dev\\fork\\vue-use-form\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Dev\vue-use-form\playground\src\pages\class-validator" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.dev (1)">
-    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/package.json" />
+  <component name="RunManager" selected="npm.build">
+    <configuration name="build (3)" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/packages/resolver-yup/package.json" />
       <command value="run" />
       <scripts>
         <script value="build" />
@@ -73,7 +92,27 @@
       <envs />
       <method v="2" />
     </configuration>
-    <configuration name="dev (1)" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+    <configuration name="build (4)" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/packages/unplugin-vForm/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/packages/core/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/playground/package.json" />
       <command value="run" />
       <scripts>
@@ -83,11 +122,11 @@
       <envs />
       <method v="2" />
     </configuration>
-    <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/examples/package.json" />
+    <configuration name="stub" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/packages/core/package.json" />
       <command value="run" />
       <scripts>
-        <script value="dev" />
+        <script value="stub" />
       </scripts>
       <node-interpreter value="project" />
       <envs />
@@ -95,9 +134,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="npm.dev (1)" />
-        <item itemvalue="npm.build" />
         <item itemvalue="npm.dev" />
+        <item itemvalue="npm.build" />
+        <item itemvalue="npm.stub" />
+        <item itemvalue="npm.build (4)" />
+        <item itemvalue="npm.build (3)" />
       </list>
     </recent_temporary>
   </component>
@@ -132,6 +173,9 @@
       <workItem from="1654400886107" duration="19000" />
       <workItem from="1657861566166" duration="253000" />
       <workItem from="1658200152626" duration="3163000" />
+      <workItem from="1665818852197" duration="16000" />
+      <workItem from="1665842326720" duration="1252000" />
+      <workItem from="1666086490344" duration="12945000" />
     </task>
     <task id="LOCAL-00001" summary=":fire: fix workspace">
       <created>1653361342663</created>
@@ -378,7 +422,49 @@
       <option name="project" value="LOCAL" />
       <updated>1657861743471</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary=":sparkles: make sure to get real dom">
+      <created>1666097217128</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1666097217128</updated>
+    </task>
+    <task id="LOCAL-00037" summary=":recycle: change register usage">
+      <created>1666097404927</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1666097404927</updated>
+    </task>
+    <task id="LOCAL-00038" summary=":fire: remove Ref type">
+      <created>1666098371224</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1666098371224</updated>
+    </task>
+    <task id="LOCAL-00039" summary=":art: format code">
+      <created>1666098728033</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1666098728033</updated>
+    </task>
+    <task id="LOCAL-00040" summary=":fire: avoid rebinding ref">
+      <created>1666098863345</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1666098863345</updated>
+    </task>
+    <task id="LOCAL-00041" summary=":sparkles: reduce useless code">
+      <created>1666099126148</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1666099126148</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -402,13 +488,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value=":clapper: playground exmaple" />
-    <MESSAGE value=":clapper: playground example" />
-    <MESSAGE value=":bug: fix" />
-    <MESSAGE value=":art: edit code style" />
-    <MESSAGE value=":clapper: add class-validator demo" />
-    <MESSAGE value=":new: resolver-class-validator" />
-    <MESSAGE value=":clapper: class-validator demo" />
     <MESSAGE value=":wrench:" />
     <MESSAGE value=":clapper: better experience for playground" />
     <MESSAGE value=":memo: update doc" />
@@ -427,7 +506,14 @@
     <MESSAGE value=":sparkles: setup tsconfig" />
     <MESSAGE value=":racehorse: better type support" />
     <MESSAGE value=":fire: fix type err" />
-    <option name="LAST_COMMIT_MESSAGE" value=":fire: fix type err" />
+    <MESSAGE value=":sparkles: make sure to get real dom" />
+    <MESSAGE value=":sparkles: change register usage" />
+    <MESSAGE value=":recycle: change register usage" />
+    <MESSAGE value=":fire: remove Ref type" />
+    <MESSAGE value=":art: format code" />
+    <MESSAGE value=":fire: avoid rebinding ref" />
+    <MESSAGE value=":sparkles: reduce useless code" />
+    <option name="LAST_COMMIT_MESSAGE" value=":sparkles: reduce useless code" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

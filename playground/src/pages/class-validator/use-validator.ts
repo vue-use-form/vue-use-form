@@ -1,7 +1,7 @@
 import { IsEmail, MaxLength, MinLength } from 'class-validator'
 import { ElMessage } from 'element-plus'
-import { useForm } from '../../../../packages/core/src/useForm'
-import { useClassValidator } from '../../../../packages/resolver-class-validator/src'
+import { useForm } from 'vue-use-form'
+import { useClassValidator } from '@vue-use-form/class-validator'
 import { IsUserAlreadyExist } from '../../shared/decorators/IsUserAlreadyExist'
 
 class LoginForm {
@@ -37,8 +37,6 @@ export function useValidator() {
     register,
     handleSubmit,
     formState: { errors },
-    createSubmitHandler,
-    createErrorHandler,
     isExistInErrors,
   } = useForm<LoginForm>({
     resolver,
@@ -51,19 +49,19 @@ export function useValidator() {
     email: register('email'),
   }
 
-  const onSubmit = createSubmitHandler((data) => {
+  const onSubmit = () => {
     ElMessage({
       type: 'success',
       message: 'Successfully!',
     })
-  })
+  }
 
-  const onError = createErrorHandler((errors) => {
+  const onError = () => {
     ElMessage({
       type: 'error',
       message: 'Please make sure that you have correctly filled all fields!',
     })
-  })
+  }
 
   return {
     handleSubmit,

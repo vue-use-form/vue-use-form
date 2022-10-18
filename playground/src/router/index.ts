@@ -7,10 +7,6 @@ import Yup from '../pages/yup/yup.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
-    redirect: '/element-plus',
-  },
-  {
     path: '/element-plus',
     component: ElementPlus,
     name: 'element-plus',

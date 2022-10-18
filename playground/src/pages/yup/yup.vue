@@ -29,6 +29,6 @@ const {
 </script>
 
 <template>
-  <input v-form="register('email')">
-  <input v-form="register('age')">
+  <input :="register('email')">
+  <input :="register('age')">
 </template>

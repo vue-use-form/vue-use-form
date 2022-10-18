@@ -45,9 +45,8 @@ function prependForm() {
     {{ fields }}
     <q-input
       v-for="field in fields"
-      :ref="field.ref"
       :key="field.name"
-      v-model="field.model"
+      :="field"
       filled
       lazy-rules
       :type="field.type"
