@@ -31,6 +31,7 @@ yarn add vue-use-form
 - [ ] 🐵Main features
     - [ ] 🍉`useForm`
       - [ ] 🍎 register -> disabled -> setValueAsDate
+      - [ ] register -> support custom modelValue like `v-model:checked`
     - [ ] 🍊`useFormState`
     - [ ] 🍋`useFieldArray`
     - [ ] 🍎schema
