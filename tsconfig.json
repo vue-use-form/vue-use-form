@@ -5,5 +5,10 @@
     "moduleResolution": "node",
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true
+  },
+  "paths": {
+    "vue-use-form": ["./packages/core/src/index.ts"],
+    "@vue-use-form/yup": ["./packages/resolver-yup/src/index.ts"],
+    "@vue-use-form/class-validator": ["./packages/resolver-class-validator/src/index.ts"]
   }
 }
