@@ -1,6 +1,8 @@
 export const isFunction = (val: unknown): val is Function =>
   typeof val === 'function'
 
+export const isNumber = (val: unknown): val is number => typeof val === 'number' && !isNaN(val)
+
 export const isString = (val: unknown): val is string => typeof val === 'string'
 
 export const isBoolean = (val: unknown): val is Boolean => typeof val === 'boolean'

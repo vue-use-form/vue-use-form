@@ -1,5 +1,4 @@
 import { nextTick, reactive, ref, unref } from 'vue'
-
 import { VALIDATION_MODE } from '../shared/constant'
 import type { FieldError, FieldErrors } from '../types/errors'
 import type { Field, FieldElement, FieldValues, Fields } from '../types/filed'
@@ -24,7 +23,7 @@ import type {
   UseFormUnregister,
 } from '../types/form'
 import type { DefaultValues, UnpackNestedValue } from '../types/utils'
-import { get, isArray, isEmptyObject, isFunction, isNullOrUndefined, isString, isUndefined, set, unset } from '../utils'
+import { get, isArray, isEmptyObject, isFunction, isNullOrUndefined, isNumber, isString, isUndefined, set, unset } from '../utils'
 
 import {
   createErrorHandler as createErrorHandlerUtil,
@@ -60,6 +59,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
   }) as FormState<TFieldValues>
 
   const _defaultValues = _options.defaultValues || {} as DefaultValues<TFieldValues>
+  const _fieldArrayDefaultValues = {} as DefaultValues<TFieldValues>
 
   const validationModeBeforeSubmit = getValidationMode(_options.mode!)
   const shouldDisplayAllAssociatedErrors
@@ -377,7 +377,10 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     let isModelValue = false
     let field = get(_fields, fieldName)
 
-    const defaultVal = options?.value || get(_defaultValues, fieldName as string) || ''
+    const defaultVal = options?.value
+                    || get(_defaultValues, fieldName as string)
+                    || get(_fieldArrayDefaultValues, (fieldName as string).split('.').find(item => isNumber(parseInt(item))))
+                      || ''
 
     if (!field) {
       _setFields(fieldName, {
@@ -431,7 +434,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
       ...(!isFieldElement(field.el) && { ref: _fields[fieldName].el }),
 
       value: field.inputValue.value,
-      onInput: async (e: InputEvent) => {
+      onInput: (e: InputEvent) => {
         if (_fields[fieldName].isUnregistered) {
           return
         }
@@ -447,14 +450,14 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
       },
 
       'modelValue': field.inputValue.value,
-      'onUpdate:modelValue': async (input: any) => {
+      'onUpdate:modelValue': (input: any) => {
         if (_fields[fieldName].isUnregistered) {
           return
         }
 
         isModelValue = true
         addEventListenerToElement()
-        await handleValueChange(input)
+        handleValueChange(input)
       },
     }
   }
@@ -488,6 +491,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     control: {
       _fields,
       _formState,
+      _fieldArrayDefaultValues,
       handleSubmit,
       createErrorHandler,
       createSubmitHandler,

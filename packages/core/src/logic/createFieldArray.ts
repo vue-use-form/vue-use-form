@@ -1,6 +1,5 @@
 import { reactive } from 'vue'
 import type {
-  ArrayFieldRegisterOptions,
   UseFieldArrayAppend,
   UseFieldArrayField,
   UseFieldArrayInsert,
@@ -10,57 +9,64 @@ import type {
   UseFieldArraySwap,
 } from '../types/fieldArray'
 import type { FieldValues } from '../types/filed'
-import type { IsString } from '../types/utils'
-import { isArray } from '../utils'
+import { isArray, set } from '../utils'
 
 export function createFieldArray<TFieldsValues extends FieldValues = FieldValues>(
   _options: UseFieldArrayProps<TFieldsValues>,
 ) {
   type TFields = UseFieldArrayField<TFieldsValues>
+  type TArrayField = TFieldsValues[typeof name] extends [infer R] ? R extends FieldValues ? R[] : FieldValues[] : FieldValues[]
 
-  const { control } = _options
-
-  const { register } = control
+  const { name, control } = _options
 
   const _fields = reactive([]) as TFields[]
 
-  const _createFields = (fieldName: string, options: Partial<ArrayFieldRegisterOptions<TFieldsValues, IsString<keyof TFieldsValues>>> = {}) => {
-    const registeredItem = register(fieldName, options)
+  let fieldIndex = 0
+
+  const _createFields = (
+    fieldName: string,
+    defaultVal: unknown,
+  ) => {
+    let index = fieldIndex
+    fieldIndex++
+
+    set(control._fieldArrayDefaultValues, index, defaultVal)
 
     return {
-      index: _fields.length,
+      index,
       name: fieldName,
-      model: registeredItem[0],
-      ref: registeredItem[1],
-      type: options.type || 'text',
     } as TFields
   }
 
-  const append: UseFieldArrayAppend<TFieldsValues> = (fields) => {
-    Object.entries(fields).forEach(([fieldName, options]) => {
-      _fields.push(_createFields(fieldName, options))
+  const append: UseFieldArrayAppend<TArrayField> = (fields) => {
+    Object.entries(fields).forEach(([fieldName, defaultVal]) => {
+      _fields.push(_createFields(fieldName, defaultVal))
     })
   }
 
-  const prepend: UseFieldArrayPrepend<TFieldsValues> = (fields) => {
-    Object.entries(fields).forEach(([fieldName, options]) => {
-      _fields.unshift(_createFields(fieldName, options))
+  const prepend: UseFieldArrayPrepend<TArrayField> = (fields) => {
+    Object.entries(fields).forEach(([fieldName, defaultVal]) => {
+      _fields.unshift(_createFields(fieldName, defaultVal))
     })
   }
 
-  const remove: UseFieldArrayRemove = (index) => {
-    if (!isArray(index)) {
-      index = [index]
+  const remove: UseFieldArrayRemove = (indexes) => {
+    if (!isArray(indexes)) {
+      indexes = [indexes]
     }
-    index.forEach((item, index) => {
-      _fields.splice(item - index, 1)
-    })
+    for (const index of indexes) {
+      const targetIndex = _fields.findIndex(field => field.index === index)
+
+      if (targetIndex >= 0) {
+        _fields.splice(targetIndex, 1)
+      }
+    }
   }
 
-  const insert: UseFieldArrayInsert<TFieldsValues> = (startIndex, fields) => {
-    Object.entries(fields).forEach(([fieldName, options], index) => {
-      _fields.splice(startIndex + index, 0, _createFields(fieldName, options))
-    })
+  const insert: UseFieldArrayInsert<TArrayField> = (startIndex, fields) => {
+    const fieldsMap = Object.entries(fields).map(([fieldName, options]) => _createFields(fieldName, options))
+
+    _fields.splice(startIndex, 0, ...fieldsMap)
   }
 
   const swap: UseFieldArraySwap = (from, to) => {

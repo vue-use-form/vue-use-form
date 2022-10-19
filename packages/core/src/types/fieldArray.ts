@@ -1,12 +1,5 @@
 import type { FieldValues } from './filed'
 import type { UseFormControl } from './form'
-import type { IsString } from './utils'
-import type { RegisterOptions } from './validator'
-
-export type ArrayFieldRegisterOptions<
-  TFieldValues extends FieldValues = FieldValues,
-  FieldNames extends string = IsString<keyof TFieldValues>,
-  > = RegisterOptions<TFieldValues, FieldNames> & { type: string }
 
 export interface UseFieldArrayField<
   TFieldValues extends FieldValues = FieldValues,
@@ -15,35 +8,33 @@ export interface UseFieldArrayField<
   name: keyof TFieldValues
 }
 
-export interface UseFieldArrayProps<FieldValues> {
-  control: UseFormControl<FieldValues>
+export interface UseFieldArrayProps<TFieldValues extends FieldValues> {
+  control: UseFormControl<TFieldValues>
+  name: keyof TFieldValues
 }
 
 export type FieldPayload<
-  TFieldValues extends FieldValues = FieldValues,
-  FieldNames extends string = IsString<keyof TFieldValues>,
+  TFieldValues extends FieldValues[] = FieldValues[],
+  FieldNames extends string = TFieldValues extends (infer R)[] ? keyof R : '',
   > = {
-    [K in FieldNames]?: ArrayFieldRegisterOptions<TFieldValues, FieldNames>
+    [K in FieldNames]?: TFieldValues extends (infer R)[] ? R[keyof R]: never
   }
 
-export type UseFieldArrayInsert<FieldValues> = (startIndex: number, field: FieldPayload<FieldValues>) => void
+export type UseFieldArrayInsert<TFieldValues extends FieldValues[]> = (startIndex: number, field: FieldPayload<TFieldValues>) => void
 
-export type UseFieldArrayAppend<FieldValues> = (obj: FieldPayload<FieldValues>) => void
+export type UseFieldArrayAppend<TFieldValues extends FieldValues[]> = (field: FieldPayload<TFieldValues>) => void
 
-export type UseFieldArrayPrepend<FieldValues> = (obj: FieldPayload<FieldValues>) => void
+export type UseFieldArrayPrepend<TFieldValues extends FieldValues[]> = (field: FieldPayload<TFieldValues>) => void
 
 export type UseFieldArrayRemove = (id: number | number[]) => void
-
-export type UseFieldArrayMove = (from: number, to: number) => void
 
 export type UseFieldArraySwap = (from: number, to: number) => void
 
 export interface UseFieldArrayReturn<FieldValues> {
-  move: UseFieldArrayMove
-  insert: UseFieldArrayInsert<FieldValues>
+  insert: UseFieldArrayInsert<FieldValues[]>
   remove: UseFieldArrayRemove
-  prepend: UseFieldArrayPrepend<FieldValues>
-  append: UseFieldArrayAppend<FieldValues>
+  prepend: UseFieldArrayPrepend<FieldValues[]>
+  append: UseFieldArrayAppend<FieldValues[]>
   swap: UseFieldArraySwap
   fields: UseFieldArrayField<FieldValues>[]
 }
