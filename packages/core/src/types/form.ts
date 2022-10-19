@@ -99,9 +99,9 @@ export type UseFormUnregister<TFieldValues extends FieldValues> = (
 
 export interface UseFormRegisterReturn<T, BaseType = string | Date | number | T> {
   value: BaseType
-  onInput: (e: InputEvent) => Promise<void>
+  onInput: (e: InputEvent) => void
   modelValue: BaseType
-  'onUpdate:modelValue': (input: any) => Promise<void>
+  'onUpdate:modelValue': (input: any) => void
 }
 
 export type UseFormRegister<T extends FieldValues, K extends keyof T> = (name: K, options?: RegisterOptions) => UseFormRegisterReturn<T[K]>
@@ -128,8 +128,11 @@ export interface UseFormHandlers<
   isExistInErrors: UseFormIsExistInErrors<TFieldValues>
 }
 
+export type FieldArrayDefaultValues = Record<number, any>
+
 export type UseFormControl<TFieldValues extends FieldValues> = {
   _formState: FormState<TFieldValues>
+  _fieldArrayDefaultValues: FieldArrayDefaultValues
   _fields: Fields<TFieldValues, keyof TFieldValues>
 } & UseFormHandlers<TFieldValues>
 
