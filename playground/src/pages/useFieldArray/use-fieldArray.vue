@@ -1,61 +1,62 @@
 <script lang="ts" setup>
-
-import { computed, isReactive, ref, watch, watchEffect } from 'vue'
-import { useFieldArray, useForm } from '../../../../packages/core/src'
+import { useFieldArray, useForm } from 'vue-use-form'
 
 interface Inputs {
-  username: string
-  password: string
-  email: string
+  data: { firstName: string; lastName: string }[]
 }
 
 const { control, register, formState: { errors } } = useForm<Inputs>({
   mode: 'onChange',
 })
 
-const { fields, append, prepend, remove } = useFieldArray<Inputs>({
-  control: control as any,
+const { fields, append, prepend, remove, swap, insert } = useFieldArray({
+  control, // control props comes from useForm (optional: if you are using FormContext)
+  name: 'data',
 })
 
-const fieldName = ref<keyof Inputs>('' as keyof Inputs)
-
-function appendFirst() {
-  append({
-    username: {
-      required: 'Username is required',
-    },
-    password: {
-      required: 'Password is required',
-      type: 'password',
-    },
-  })
-}
-
-function prependForm() {
-  prepend({
-    email: {
-      required: 'Email is required',
-      type: 'email',
-    },
-  })
-}
 </script>
 <template>
-  <q-form class="w-[50vw] mx-auto flex justify-center flex-col">
-    {{ fields }}
-    <q-input
-      v-for="field in fields"
-      :key="field.name"
-      :="field"
-      filled
-      lazy-rules
-      :type="field.type"
-      :label="`Your ${field.name} *`"
-    />
-    <q-btn class="mt-5" label="appendFirst" color="primary" @click="appendFirst" />
-    <q-btn class="mt-5" label="prepend" color="primary" @click="prependForm" />
-    {{ errors }}
-  </q-form>
+  {{ errors }}
+  <div>
+    <div w-50vw />
+    <q-form class="w-[50vw] mx-auto flex justify-center flex-col">
+      <template v-for="field in fields" :key="field.index">
+        {{ field }}
+        <q-input
+          :="register(`data.${field.name}.${field.index}`, {
+            required: true
+          })"
+        />
+      </template>
+      <div grid gap2>
+        <q-btn
+          class="mt-5" label="appendFirst" color="primary" @click="() => {
+            prepend({ firstName: '2',lastName: '2' })
+          }"
+        />
+        <q-btn
+          class="mt-5" label="remove" color="primary" @click="() => {
+            remove(1)
+          }"
+        />
+        <q-btn
+          class="mt-5" label="swap" color="primary" @click="() => {
+            swap(0, 1)
+          }"
+        />
+        <q-btn
+          class="mt-5" label="append" color="primary" @click="() => {
+            append({ firstName: 'snowing' })
+          }"
+        />
+        <q-btn
+          class="mt-5" label="insert" color="primary" @click="() => {
+            insert(1, { lastName: 'fox' })
+          }"
+        />
+      </div>
+    </q-form>
+  </div>
 </template>
 
 <style lang="scss" scoped>

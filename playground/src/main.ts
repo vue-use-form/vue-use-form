@@ -4,6 +4,7 @@ import { Quasar } from 'quasar'
 import 'element-plus/dist/index.css'
 import App from './App.vue'
 import router from './router'
+import 'uno.css'
 
 // Import icon libraries
 import '@quasar/extras/material-icons/material-icons.css'
