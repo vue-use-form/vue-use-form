@@ -47,6 +47,7 @@ export type RegisterOptions<
     valueAsDate: boolean
     value: FieldPathValue<TFieldValues, TFieldName>
     setValueAs: (value: any) => any
+    vModelBinding?: string
     disabled?: boolean
     shouldUnregister?: boolean
     onChange?: (event: any) => void
