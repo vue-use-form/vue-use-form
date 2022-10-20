@@ -8,7 +8,7 @@
   "scripts": {
     "lint": "eslint --cache .",
     "core:build": "cd packages/core && npm run build",
-    "play:build": "cd playground && npm run build",
+    "play:build": "pnpm i && npm run core:build && cd playground && npm run build",
     "play:dev": "npm run core:build && cd playground && npm run dev"
   },
   "peerDependencies": {
