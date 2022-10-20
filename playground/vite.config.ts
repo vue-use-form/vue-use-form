@@ -40,7 +40,7 @@ function copyVuePlugin(): Plugin {
 
       copyFile('node_modules/vue/dist/vue.runtime.esm-browser.js')
       copyFile('node_modules/vue/server-renderer/index.mjs', 'server-renderer.esm-browser.js')
-      copyFile('node_modules/vue-use-form/dist/index.mjs', 'vue-use-form.js')
+      copyFile('../packages/core/dist/index.mjs', 'vue-use-form.js')
     },
   }
 }

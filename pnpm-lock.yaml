@@ -84,13 +84,11 @@ importers:
       jszip: ^3.6.0
       vite: 2.9.14
       vue: 3.2.38
-      vue-use-form: workspace:*
     dependencies:
       '@vue/repl': 1.3.2_vue@3.2.38
       file-saver: 2.0.5
       jszip: 3.10.1
       vue: 3.2.38
-      vue-use-form: link:../packages/core
     devDependencies:
       '@vitejs/plugin-vue': 1.10.2_vite@2.9.14
       vite: 2.9.14
