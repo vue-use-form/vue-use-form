@@ -6,10 +6,10 @@
   "author": "Snowingfox",
   "main": "index.js",
   "scripts": {
-    "build": "rollup -c",
     "lint": "eslint --cache .",
+    "core:build": "cd packages/core && npm run build",
     "play:build": "cd playground && npm run build",
-    "play:dev": "cd playground && npm run dev"
+    "play:dev": "npm run core:build && cd playground && npm run dev"
   },
   "peerDependencies": {
     "vue": "^3.2.0"

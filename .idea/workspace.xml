@@ -57,7 +57,7 @@
       <recent name="D:\Dev\vue-use-form\playground\src\pages\class-validator" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.play:build">
+  <component name="RunManager" selected="npm.core:build">
     <configuration name="build (1)" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/playground/package.json" />
       <command value="run" />
@@ -68,11 +68,21 @@
       <envs />
       <method v="2" />
     </configuration>
-    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/packages/core/package.json" />
+    <configuration name="build (2)" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
       <scripts>
         <script value="build" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="core:build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="core:build" />
       </scripts>
       <node-interpreter value="project" />
       <envs />
@@ -98,23 +108,13 @@
       <envs />
       <method v="2" />
     </configuration>
-    <configuration name="serve" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/playground/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="serve" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="npm.core:build" />
+        <item itemvalue="npm.build (2)" />
         <item itemvalue="npm.play:build" />
         <item itemvalue="npm.dev" />
         <item itemvalue="npm.build (1)" />
-        <item itemvalue="npm.serve" />
-        <item itemvalue="npm.build" />
       </list>
     </recent_temporary>
   </component>
@@ -155,7 +155,7 @@
       <workItem from="1666161782743" duration="6483000" />
       <workItem from="1666190386686" duration="934000" />
       <workItem from="1666255048260" duration="2064000" />
-      <workItem from="1666257317226" duration="3583000" />
+      <workItem from="1666257317226" duration="4109000" />
     </task>
     <task id="LOCAL-00005" summary=":bug: complete all props of control">
       <created>1653384861323</created>
