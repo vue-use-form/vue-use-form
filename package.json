@@ -7,7 +7,9 @@
   "main": "index.js",
   "scripts": {
     "build": "rollup -c",
-    "lint": "eslint --cache ."
+    "lint": "eslint --cache .",
+    "play:build": "cd playground && npm run build",
+    "play:dev": "cd playground && npm run dev"
   },
   "peerDependencies": {
     "vue": "^3.2.0"
