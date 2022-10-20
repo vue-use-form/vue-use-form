@@ -104,7 +104,11 @@ export interface UseFormRegisterReturn<T, BaseType = string | Date | number | T>
   'onUpdate:modelValue': (input: any) => void
 }
 
-export type UseFormRegister<T extends FieldValues, K extends keyof T> = (name: K, options?: RegisterOptions) => UseFormRegisterReturn<T[K]>
+// TODO solve register returnType problem
+export interface UseFormRegister<T extends FieldValues> {
+  (name: keyof T, options?: RegisterOptions): any // UseFormRegisterReturn<T[K]>
+  (name: string, options?: RegisterOptions): any // UseFormRegisterReturn<T[K]>
+}
 
 export type UseFormSetFocus<FieldValues> = (name: keyof FieldValues) => void
 
@@ -123,7 +127,7 @@ export interface UseFormHandlers<
   reset: UseFormReset<TFieldValues>
   handleSubmit: UseFormHandleSubmit<TFieldValues>
   unregister: UseFormUnregister<TFieldValues>
-  register: UseFormRegister<TFieldValues, keyof TFieldValues>
+  register: UseFormRegister<TFieldValues>
   setFocus: UseFormSetFocus<TFieldValues>
   isExistInErrors: UseFormIsExistInErrors<TFieldValues>
 }

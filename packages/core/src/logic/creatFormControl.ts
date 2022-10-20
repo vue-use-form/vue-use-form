@@ -369,7 +369,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     }
   }
 
-  const register: UseFormRegister<TFieldValues, FieldsKey> = (fieldName, options) => {
+  const register: UseFormRegister<TFieldValues> = (fieldName, options) => {
     if (isUndefined(options)) {
       options = {}
     }
@@ -378,8 +378,8 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     let field = get(_fields, fieldName)
 
     const defaultVal = options?.value
-                    || get(_defaultValues, fieldName as string)
-                    || get(_fieldArrayDefaultValues, (fieldName as string).split('.').find(item => isNumber(parseInt(item))))
+                      || get(_defaultValues, fieldName as string)
+                      || get(_fieldArrayDefaultValues, (fieldName as string).split('.').find(item => isNumber(parseInt(item))))
                       || ''
 
     if (!field) {
