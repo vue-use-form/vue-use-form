@@ -155,7 +155,14 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
   }
 
   const _validate = async (fieldName: FieldsKey, isValidateAllFields = false) => {
-    if (isEmptyObject(_fields) || isNullOrUndefined(_fields[fieldName])) {
+    const field = _fields[fieldName]
+
+    if (isEmptyObject(_fields) || isNullOrUndefined(field)) {
+      return
+    }
+
+    if (field.rule.disabled) {
+      field.inputValue.value = ''
       return
     }
 
@@ -172,12 +179,12 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
         res = errors[fieldName] as FieldError
       }
     } else {
-      res = await validateField(_fields[fieldName], unref(_options.shouldFocusError!), shouldDisplayAllAssociatedErrors)
+      res = await validateField(field, unref(_options.shouldFocusError!), shouldDisplayAllAssociatedErrors)
     }
 
     // Additional validation when using resolver
     if (isFunction(resolver) && isEmptyObject(res) && !isEmptyObject(_fields[fieldName].rule)) {
-      res = await validateField(_fields[fieldName], unref(_options.shouldFocusError!), shouldDisplayAllAssociatedErrors)
+      res = await validateField(field, unref(_options.shouldFocusError!), shouldDisplayAllAssociatedErrors)
     }
     setValidating(false)
     if (Object.keys(res || {}).length) {

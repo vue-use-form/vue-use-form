@@ -24,7 +24,7 @@ const { fields, append, prepend, remove, swap, insert } = useFieldArray({
         {{ field }}
         <q-input
           :="register(`data.${field.index}.${field.name}`, {
-            required: true
+            disabled: true
           })"
         />
       </template>
