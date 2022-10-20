@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="81a696ad-c55d-42c6-a121-24a9c08c9956" name="Changes" comment=":fire: fix the error of get target value">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/playground/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -155,7 +154,7 @@
       <workItem from="1666161782743" duration="6483000" />
       <workItem from="1666190386686" duration="934000" />
       <workItem from="1666255048260" duration="2064000" />
-      <workItem from="1666257317226" duration="4109000" />
+      <workItem from="1666257317226" duration="4260000" />
     </task>
     <task id="LOCAL-00005" summary=":bug: complete all props of control">
       <created>1653384861323</created>
