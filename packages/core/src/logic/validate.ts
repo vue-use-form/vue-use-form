@@ -43,6 +43,7 @@ export async function validateField(
     valueAsNumber,
     valueAsDate,
     setValueAs,
+    disabled = false,
   } = field.rule
 
   const el = unref(field.el)
@@ -145,6 +146,12 @@ export async function validateField(
         if (!validateAllFieldCriteria)
           return error
       }
+    }
+
+    if (disabled && isFieldElement(el)) {
+      el.setAttribute('disabled', '')
+    } else if (!disabled && isFieldElement(el)) {
+      el.removeAttribute('disabled')
     }
 
     if (validate) {
