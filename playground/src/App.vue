@@ -23,8 +23,10 @@ if (hash.startsWith('__SSR__')) {
   useSSRMode.value = true
 }
 
+const serializedState = location.hash.slice(1)
+
 const store = new ReplStore({
-  serializedState: hash,
+  serializedState,
   defaultVueRuntimeURL: import.meta.env.PROD
     ? `${location.origin}/vue.runtime.esm-browser.js`
     : `${location.origin}/src/vue-dev-proxy`,
@@ -36,15 +38,17 @@ const store = new ReplStore({
 store.setImportMap({
   imports: {
     'vue-use-form': import.meta.env.PROD
-        ? `${location.origin}/vue-use-form.js`
-        : `${location.origin}/src/vue-use-form-dev-proxy`,
+      ? `${location.origin}/vue-use-form.js`
+      : `${location.origin}/src/vue-use-form-dev-proxy`,
   },
 })
 
-store.setFiles({
-  'import-map.json': store.getFiles()['import-map.json'],
-  'App.vue': AppCode,
-})
+if (!serializedState) {
+  store.setFiles({
+    'import-map.json': store.getFiles()['import-map.json'],
+    'App.vue': AppCode,
+  })
+}
 
 // enable experimental features
 const sfcOptions = {
