@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="81a696ad-c55d-42c6-a121-24a9c08c9956" name="Changes" comment=":sparkles: reduce useless code">
+    <list default="true" id="81a696ad-c55d-42c6-a121-24a9c08c9956" name="Changes" comment=":fire: fix the error of get target value">
+      <change afterPath="$PROJECT_DIR$/playground/src/code.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/playground/src/vue-use-form-dev-proxy.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/core/src/utils/getFormEl.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/src/utils/getFormEl.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/index.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/nuxt.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/rollup.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/scripts/postbuild.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/src/core/transform.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/src/index.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/src/nuxt.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/src/rollup.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/src/types.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/src/vite.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/src/webpack.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/tsup.config.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/types.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/vite.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/unplugin-vForm/webpack.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/playground/src/pages/class-validator/class-validator.vue" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/pages/class-validator/class-validator.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/playground/src/pages/class-validator/use-validator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/pages/class-validator/use-validator.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/playground/src/pages/element-plus.vue" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/pages/element-plus.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/playground/src/pages/useFieldArray/use-fieldArray.vue" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/pages/useFieldArray/use-fieldArray.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/playground/src/pages/yup/yup.vue" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/pages/yup/yup.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/playground/src/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/router/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/playground/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/playground/vite.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/.vscode/extensions.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/public/favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/App.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/assets/logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/env.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/main.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/pages/class-validator/class-validator.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/pages/class-validator/use-validator.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/pages/element-plus.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/pages/useFieldArray/use-fieldArray.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/pages/yup/yup.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/router/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/service/api/user.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/shared/decorators/IsContain.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/shared/decorators/IsNotContain.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/shared/decorators/IsUserAlreadyExist.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/tsconfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/tsconfig.node.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/vite.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,8 +39,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="TypeScript File" />
         <option value="Vue Single File Component" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
@@ -71,7 +73,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.standard": "",
     "nodejs_package_manager_path": "pnpm",
-    "settings.editor.selected.configurable": "reference.settings.project.statistic.project.settings",
+    "settings.editor.selected.configurable": "editing.templates",
     "ts.external.directory.path": "D:\\Dev\\fork\\vue-use-form\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
@@ -81,19 +83,9 @@
       <recent name="D:\Dev\vue-use-form\playground\src\pages\class-validator" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.build">
-    <configuration name="build (3)" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/packages/resolver-yup/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="build" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
-      <method v="2" />
-    </configuration>
-    <configuration name="build (4)" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/packages/unplugin-vForm/package.json" />
+  <component name="RunManager" selected="npm.serve">
+    <configuration name="build (1)" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/playground/package.json" />
       <command value="run" />
       <scripts>
         <script value="build" />
@@ -122,6 +114,16 @@
       <envs />
       <method v="2" />
     </configuration>
+    <configuration name="serve" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/playground/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="serve" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
     <configuration name="stub" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/packages/core/package.json" />
       <command value="run" />
@@ -135,10 +137,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="npm.dev" />
+        <item itemvalue="npm.build (1)" />
+        <item itemvalue="npm.serve" />
         <item itemvalue="npm.build" />
         <item itemvalue="npm.stub" />
-        <item itemvalue="npm.build (4)" />
-        <item itemvalue="npm.build (3)" />
       </list>
     </recent_temporary>
   </component>
@@ -175,35 +177,11 @@
       <workItem from="1658200152626" duration="3163000" />
       <workItem from="1665818852197" duration="16000" />
       <workItem from="1665842326720" duration="1252000" />
-      <workItem from="1666086490344" duration="12945000" />
-    </task>
-    <task id="LOCAL-00001" summary=":fire: fix workspace">
-      <created>1653361342663</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1653361342663</updated>
-    </task>
-    <task id="LOCAL-00002" summary=":fire: delete useless code">
-      <created>1653362267119</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1653362267119</updated>
-    </task>
-    <task id="LOCAL-00003" summary=":construction: new example">
-      <created>1653362308419</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1653362308419</updated>
-    </task>
-    <task id="LOCAL-00004" summary=":hammer: full ability of useForm">
-      <created>1653384723089</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1653384723089</updated>
+      <workItem from="1666086490344" duration="13489000" />
+      <workItem from="1666161782743" duration="6483000" />
+      <workItem from="1666190386686" duration="934000" />
+      <workItem from="1666255048260" duration="2064000" />
+      <workItem from="1666257317226" duration="3411000" />
     </task>
     <task id="LOCAL-00005" summary=":bug: complete all props of control">
       <created>1653384861323</created>
@@ -464,17 +442,95 @@
       <option name="project" value="LOCAL" />
       <updated>1666099126148</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary=":fire: ensure elRef is Object before get keys">
+      <created>1666099880511</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1666099880511</updated>
+    </task>
+    <task id="LOCAL-00043" summary=":sparkles: playground">
+      <created>1666099909304</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1666099909304</updated>
+    </task>
+    <task id="LOCAL-00044" summary=":memo: update doc">
+      <created>1666100028942</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1666100028942</updated>
+    </task>
+    <task id="LOCAL-00045" summary=":sparkles: add generic">
+      <created>1666100210336</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1666100210336</updated>
+    </task>
+    <task id="LOCAL-00046" summary=":wrench: config path">
+      <created>1666163324884</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1666163324884</updated>
+    </task>
+    <task id="LOCAL-00047" summary=":fire: remove promise">
+      <created>1666191249251</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1666191249251</updated>
+    </task>
+    <task id="LOCAL-00048" summary=":sparkles: make sure when using append, prepend, insert can use defaultValue">
+      <created>1666191376382</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1666191376382</updated>
+    </task>
+    <task id="LOCAL-00049" summary=":sparkles: playground">
+      <created>1666191392991</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1666191392991</updated>
+    </task>
+    <task id="LOCAL-00050" summary=":memo: add todo">
+      <created>1666191444150</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1666191444150</updated>
+    </task>
+    <task id="LOCAL-00051" summary=":sparkles: support custom vModelBinding">
+      <created>1666255110389</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1666255110389</updated>
+    </task>
+    <task id="LOCAL-00052" summary=":sparkles: support custom vModelBinding">
+      <created>1666255119749</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1666255119749</updated>
+    </task>
+    <task id="LOCAL-00053" summary=":fire: fix the error of get target value">
+      <created>1666260602463</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1666260602463</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-    <option name="exactExcludedFiles">
-      <list>
-        <option value="$PROJECT_DIR$/packages/core/__test__/useForm.spec.js" />
-        <option value="$PROJECT_DIR$/packages/core/__test__/utils.test.js" />
-      </list>
-    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -488,16 +544,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value=":wrench:" />
-    <MESSAGE value=":clapper: better experience for playground" />
-    <MESSAGE value=":memo: update doc" />
-    <MESSAGE value=":memo: add class-validator doc" />
-    <MESSAGE value=":sparkles: publish @vue-use-form/class-validator" />
-    <MESSAGE value=":sparkles: build" />
-    <MESSAGE value=":memo: doc" />
-    <MESSAGE value=":sparkles: setup useFieldArray" />
-    <MESSAGE value=":clapper: add demo" />
-    <MESSAGE value=":sparkles: normal commit for useFieldArray" />
     <MESSAGE value=":sparkles: daily commit for useFieldArray" />
     <MESSAGE value=":clapper: demo for useFieldArray" />
     <MESSAGE value=":sparkles: Additional validation when using resolver" />
@@ -513,7 +559,17 @@
     <MESSAGE value=":art: format code" />
     <MESSAGE value=":fire: avoid rebinding ref" />
     <MESSAGE value=":sparkles: reduce useless code" />
-    <option name="LAST_COMMIT_MESSAGE" value=":sparkles: reduce useless code" />
+    <MESSAGE value=":fire: ensure elRef is Object before get keys" />
+    <MESSAGE value=":memo: update doc" />
+    <MESSAGE value=":sparkles: add generic" />
+    <MESSAGE value=":wrench: config path" />
+    <MESSAGE value=":fire: remove promise" />
+    <MESSAGE value=":sparkles: make sure when using append, prepend, insert can use defaultValue" />
+    <MESSAGE value=":sparkles: playground" />
+    <MESSAGE value=":memo: add todo" />
+    <MESSAGE value=":sparkles: support custom vModelBinding" />
+    <MESSAGE value=":fire: fix the error of get target value" />
+    <option name="LAST_COMMIT_MESSAGE" value=":fire: fix the error of get target value" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

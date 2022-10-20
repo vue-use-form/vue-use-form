@@ -1,34 +1,123 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue'
-import { useRouter } from 'vue-router'
+import { Repl, ReplStore } from '@vue/repl'
+import { ref, watchEffect } from 'vue'
+import { AppCode } from './code'
+import Header from './Header.vue'
 
-const router = useRouter()
+const setVH = () => {
+  document.documentElement.style.setProperty('--vh', `${window.innerHeight}px`)
+}
+window.addEventListener('resize', setVH)
+setVH()
 
-const currentRoute = ref(router.currentRoute.value.name)
+const useDevMode = ref(false)
+const useSSRMode = ref(false)
 
+let hash = location.hash.slice(1)
+if (hash.startsWith('__DEV__')) {
+  hash = hash.slice(7)
+  useDevMode.value = true
+}
+if (hash.startsWith('__SSR__')) {
+  hash = hash.slice(7)
+  useSSRMode.value = true
+}
+
+const store = new ReplStore({
+  serializedState: hash,
+  defaultVueRuntimeURL: import.meta.env.PROD
+    ? `${location.origin}/vue.runtime.esm-browser.js`
+    : `${location.origin}/src/vue-dev-proxy`,
+  defaultVueServerRendererURL: import.meta.env.PROD
+    ? `${location.origin}/server-renderer.esm-browser.js`
+    : `${location.origin}/src/vue-server-renderer-dev-proxy`,
+})
+
+store.setImportMap({
+  imports: {
+    'vue-use-form': import.meta.env.PROD
+        ? `${location.origin}/vue-use-form.js`
+        : `${location.origin}/src/vue-use-form-dev-proxy`,
+  },
+})
+
+store.setFiles({
+  'import-map.json': store.getFiles()['import-map.json'],
+  'App.vue': AppCode,
+})
+
+// enable experimental features
+const sfcOptions = {
+  script: {
+    inlineTemplate: !useDevMode.value,
+    reactivityTransform: true,
+  },
+}
+
+// persist state
+watchEffect(() => {
+  const newHash = store
+    .serialize()
+    .replace(/^#/, useSSRMode.value ? '#__SSR__' : '#')
+    .replace(/^#/, useDevMode.value ? '#__DEV__' : '#')
+  history.replaceState({}, '', newHash)
+})
+
+function toggleDevMode() {
+  const dev = (useDevMode.value = !useDevMode.value)
+  sfcOptions.script.inlineTemplate = !dev
+  store.setFiles(store.getFiles())
+}
+
+function toggleSSR() {
+  useSSRMode.value = !useSSRMode.value
+  store.setFiles(store.getFiles())
+}
 </script>
 
 <template>
-  <div class="w-screen">
-    <q-tabs
-      v-model="currentRoute"
-      dense
-      class="text-grey"
-      active-color="primary"
-      indicator-color="primary"
-      align="justify"
-    >
-      <q-tab name="element-plus" label="element-plus" @click="() => router.push('/element-plus')" />
-      <q-tab name="class-validator" label="class-validator" @click="() => router.push('/class-validator')" />
-      <q-tab name="useFieldArray" label="useFieldArray" @click="() => router.push('/useFieldArray')" />
-    </q-tabs>
-
-    <div class="flex justify-center mt-5">
-      <router-view v-slot="{ Component }">
-        <keep-alive>
-          <component :is="Component" />
-        </keep-alive>
-      </router-view>
-    </div>
-  </div>
+  <Header
+    :store="store"
+    :dev="useDevMode"
+    :ssr="useSSRMode"
+    @toggle-dev="toggleDevMode"
+    @toggle-ssr="toggleSSR"
+  />
+  <Repl
+    :ssr="useSSRMode"
+    :store="store"
+    :show-compile-output="true"
+    :auto-resize="true"
+    :sfc-options="sfcOptions"
+    :clear-console="false"
+    @keydown.ctrl.s.prevent
+    @keydown.meta.s.prevent
+  />
 </template>
+
+<style>
+.dark {
+  color-scheme: dark;
+}
+
+body {
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  margin: 0;
+  --base: #444;
+  --nav-height: 50px;
+}
+
+.vue-repl {
+  height: calc(var(--vh) - var(--nav-height));
+}
+
+button {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  margin: 0;
+  background-color: transparent;
+}
+</style>
