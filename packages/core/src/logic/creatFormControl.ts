@@ -35,6 +35,7 @@ import { isRadioOrCheckboxInput } from '../utils/fieldElement'
 import { getFormEl } from '../utils/getFormEl'
 import { getValidationMode } from '../utils/getValidationMode'
 import { isFieldElement } from '../utils/isFieldElement'
+import type { RegisterOptions } from '../types/validator'
 import { handleValidateError, validateField } from './validate'
 
 export function creatFormControl<TFieldValues extends FieldValues = FieldValues>(
@@ -376,13 +377,17 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     }
   }
 
-  const register: UseFormRegister<TFieldValues> = (fieldName, options) => {
+  const register: UseFormRegister<TFieldValues> = (fieldName, options?: RegisterOptions) => {
     if (isUndefined(options)) {
       options = {}
     }
 
     let isModelValue = false
     let field = get(_fields, fieldName)
+
+    const {
+      vModelBinding = 'modelValue',
+    } = options
 
     const defaultVal = options?.value
                       || get(_defaultValues, fieldName as string)
@@ -438,26 +443,26 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
 
     return {
       // avoid rebinding ref
-      ...(!isFieldElement(field.el) && { ref: _fields[fieldName].el }),
+      ...!isFieldElement(field.el) && { ref: _fields[fieldName].el },
 
-      value: field.inputValue.value,
-      onInput: (e: InputEvent) => {
-        if (_fields[fieldName].isUnregistered) {
-          return
-        }
-
-        addEventListenerToElement()
-
-        // make sure that only trigger onInput or onUpdate:modelValue
-        queueMicrotask(async () => {
-          if (!isModelValue) {
-            await handleValueChange(e)
+      ...vModelBinding === 'modelValue'
+      && {
+        value: field.inputValue.value,
+        onInput: (e) => {
+          if (_fields[fieldName].isUnregistered) {
+            return
           }
-        })
+          addEventListenerToElement()
+          queueMicrotask(async () => {
+            if (!isModelValue) {
+              await handleValueChange(e)
+            }
+          })
+        },
       },
 
-      'modelValue': field.inputValue.value,
-      'onUpdate:modelValue': (input: any) => {
+      [vModelBinding]: field.inputValue.value,
+      [`onUpdate:${vModelBinding}`]: (input: any) => {
         if (_fields[fieldName].isUnregistered) {
           return
         }
