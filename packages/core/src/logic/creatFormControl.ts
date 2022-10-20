@@ -455,7 +455,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
           addEventListenerToElement()
           queueMicrotask(async () => {
             if (!isModelValue) {
-              await handleValueChange(e)
+              await handleValueChange(e.target?.value)
             }
           })
         },
