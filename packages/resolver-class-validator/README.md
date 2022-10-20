@@ -21,19 +21,18 @@ pnpm i @vue-use-form/class-validator class-validator class-transformer
 ```
 
 ```vue
-
 <script lang="ts" setup>
-import { IsString, Length, IsEmail } from 'class-validator'
+import { IsEmail, IsString, Length } from 'class-validator'
 import { useClassValidator } from '@vue-use-form/class-validator'
 import { useForm } from 'vue-use-form'
 
 class LoginForm {
   @IsString()
   @Length(3, 10)
-  username: string
+    username: string
 
   @IsEmail()
-  email: string
+    email: string
 }
 
 const resolver = useClassValidator()
@@ -56,8 +55,8 @@ const onError = createErrorHandler((errors) => {
 
 <template>
   <form @submit.prevent="handleSubmit(onSubmit, onError)()">
-    <input v-model="usernameField" />
-    <input v-model="emailField" />
+    <input v-model="usernameField">
+    <input v-model="emailField">
   </form>
 </template>
 ```

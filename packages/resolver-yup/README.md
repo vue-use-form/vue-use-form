@@ -15,12 +15,6 @@ import { useYupResolver } from '@vue-use-form/yup'
 
 const schema = yup.object().shape({
   name: yup.string().required(),
-  age: yup.number().required().positive().integer(),
-  email: yup.string().email(),
-  website: yup.string().url(),
-  createdOn: yup.date().default(() => {
-    return new Date()
-  }),
 })
 
 const resolver = useYupResolver(schema)
@@ -32,16 +26,10 @@ const {
   resolver,
   mode: 'onChange',
 })
-
-const [emailField] = register('email')
 </script>
 
 <template>
-  <input v-model="emailField" />
-  <input v-model="age" />
-  <input v-model="email" />
-  <input v-model="website" />
-  <input v-model="createdOn" />
+  <input :="register('name')">
 </template>
 
 ```

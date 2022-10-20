@@ -2,12 +2,16 @@
   "name": "@vue-use-form/yup",
   "version": "0.0.1",
   "description": "yup resolver for vue-use-form",
+  "keywords": ["yup", "vue-use-form", "vue-hook-form", "vue-use-form-resolver"],
   "license": "MIT",
   "author": "snowingfox",
   "repository": {
     "url": "https://github.com/vue-use-form/vue-use-form/packages/resolver-yup"
   },
   "homepage": "https://github.com/vue-use-form/vue-use-form/tree/master/packages/resolver-yup#readme",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "require": "./dist/index.cjs",
@@ -17,19 +21,15 @@
   "bugs": {
     "url": "https://github.com/vue-use-form/vue-use-form/issues"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "keywords": ["yup", "vue-use-form", "vue-hook-form", "vue-use-form-resolver"],
-  "peerDependencies": {
-    "yup": ">=0.32.11",
-    "vue-use-form": "workspace:*"
-  },
   "scripts": {
     "build": "unbuild",
     "stub": "unbuild --stub"
+  },
+  "peerDependencies": {
+    "vue-use-form": "workspace:*",
+    "yup": ">=0.32.11"
   }
 }

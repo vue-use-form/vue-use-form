@@ -24,14 +24,14 @@
       "import": "./dist/index.mjs"
     }
   },
-  "peerDependencies": {
-    "vue": ">=3.0.0"
-  },
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "unbuild",
     "stub": "unbuild --stub"
+  },
+  "peerDependencies": {
+    "vue": ">=3.0.0"
   }
 }

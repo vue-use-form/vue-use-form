@@ -2,49 +2,58 @@
   "name": "main",
   "version": "0.0.0",
   "description": "Some composables form validator for vue",
+  "license": "MIT",
+  "author": "Snowingfox",
   "main": "index.js",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "lint": "eslint --cache ."
   },
-  "author": "Snowingfox",
-  "license": "MIT",
   "peerDependencies": {
     "vue": "^3.2.0"
   },
   "dependencies": {
     "magic-string": "^0.26.2",
-    "vue": "^3.2.0",
-    "unplugin": "^0.6.1"
+    "unplugin": "^0.6.1",
+    "vue": "^3.2.0"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.21.1",
+    "@types/jest": "^27.4.1",
+    "@types/node": "^17.0.23",
     "@vitejs/plugin-vue": "^3.0.1",
     "@vue-use-form/class-validator": "workspace:*",
-    "@vue-use-form/yup": "workspace:*",
     "@vue-use-form/v-form": "workspace:*",
+    "@vue-use-form/yup": "workspace:*",
     "@vue/test-utils": "^2.0.2",
+    "bumpp": "^7.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "eslint": "^8.16.0",
+    "eslint-plugin-jest": "^26.1.4",
+    "esno": "^0.14.1",
+    "fast-glob": "^3.2.11",
+    "jest": "^27.5.1",
     "jsdom": "^20.0.0",
+    "nodemon": "^2.0.15",
+    "rimraf": "^3.0.2",
     "rollup": "^2.70.2",
+    "ts-jest": "^27.1.4",
+    "tsup": "^5.12.5",
     "typescript": "^4.6.4",
     "unbuild": "^0.7.6",
     "vite": "^3.0.4",
     "vitest": "^0.20.3",
     "vue-use-form": "workspace:*",
-    "yup": "^0.32.11",
-    "@types/jest": "^27.4.1",
-    "@types/node": "^17.0.23",
-    "bumpp": "^7.1.1",
-    "eslint-plugin-jest": "^26.1.4",
-    "esno": "^0.14.1",
-    "fast-glob": "^3.2.11",
-    "jest": "^27.5.1",
-    "nodemon": "^2.0.15",
-    "rimraf": "^3.0.2",
-    "ts-jest": "^27.1.4",
-    "tsup": "^5.12.5",
-    "webpack": "^5.72.0"
+    "webpack": "^5.72.0",
+    "yup": "^0.32.11"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx,vue,md}": [
+      "eslint --cache --fix"
+    ]
   }
 }

@@ -13,17 +13,17 @@ const { fields, append, prepend, remove, swap, insert } = useFieldArray({
   control, // control props comes from useForm (optional: if you are using FormContext)
   name: 'data',
 })
-
 </script>
 <template>
-  {{ errors }}
   <div>
-    <div w-50vw />
+    <div w-50vw>
+      {{ fields }}
+    </div>
     <q-form class="w-[50vw] mx-auto flex justify-center flex-col">
       <template v-for="field in fields" :key="field.index">
         {{ field }}
         <q-input
-          :="register(`data.${field.name}.${field.index}`, {
+          :="register(`data.${field.index}.${field.name}`, {
             required: true
           })"
         />

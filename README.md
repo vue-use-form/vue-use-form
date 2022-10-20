@@ -79,7 +79,6 @@ const {
   shouldFocusError: true,
 })
 
-
 const onSubmit = createSubmitHandler((data) => {
   console.log('validate success', data)
 })
@@ -91,15 +90,16 @@ const onError = createErrorHandler((errors) => {
 
 <template>
   <form @submit.prevent="handleSubmit(onSubmit, onError)()">
-    <input 
-        :="register('age', {
+    <input
+      :="register('age', {
           required: 'Age is required!',
           min: { value: 18, message: 'Age must be at least 18' },
           max: { value: 10000, message: '?' },
           valueAsNumber: true,
-        })" 
-        type="number" 
-        name="age">
+        })"
+      type="number"
+      name="age"
+    >
     <button type="submit" v-text="'Submit'" />
   </form>
 </template>

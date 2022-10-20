@@ -30,5 +30,4 @@ const {
 
 <template>
   <input :="register('email')">
-  <input :="register('age')">
 </template>
