@@ -12,7 +12,6 @@ export function useForm<TFieldValues extends FieldValues = FieldValues>(
     defaultValues: {} as UseFormProps<TFieldValues>['defaultValues'],
     criteriaMode: 'firstError',
     shouldFocusError: true,
-    shouldUnregister: false,
     delayError: 0,
     ...props,
   }

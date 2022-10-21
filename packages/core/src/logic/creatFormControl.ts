@@ -1,4 +1,4 @@
-import { nextTick, onMounted, reactive, ref, unref } from 'vue'
+import { nextTick, reactive, ref, unref } from 'vue'
 import { VALIDATION_MODE } from '../shared/constant'
 import type { FieldError, FieldErrors } from '../types/errors'
 import type { Field, FieldElement, FieldValues, Fields } from '../types/filed'
@@ -36,6 +36,7 @@ import { getFormEl } from '../utils/getFormEl'
 import { getValidationMode } from '../utils/getValidationMode'
 import { isFieldElement } from '../utils/isFieldElement'
 import type { RegisterOptions } from '../types/validator'
+import { warn } from '../utils/warn'
 import { handleValidateError, validateField } from './validate'
 
 export function creatFormControl<TFieldValues extends FieldValues = FieldValues>(
@@ -65,14 +66,6 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
   const validationModeBeforeSubmit = getValidationMode(_options.mode!)
   const shouldDisplayAllAssociatedErrors
     = _options.criteriaMode === VALIDATION_MODE.all
-
-  if (_options.shouldUnregister) {
-    onMounted(() => {
-      Object.keys(_fields).forEach((key) => {
-        set(_fields[key], 'isUnregistered', true)
-      })
-    })
-  }
 
   const _setFormState = (props: { [K in TFormStateKey]?: TFormState[TFormStateKey] }) => {
     Object.entries(props).forEach(([key, val]) => {
@@ -123,6 +116,10 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
   }
 
   const _handleDirtyField = (fieldName: FieldsKey) => {
+    if (_fields[fieldName].isUnregistered) {
+      return
+    }
+
     const defaultVal = get(_defaultValues, fieldName as string)
     const val = _fields[fieldName].inputValue.value
 
@@ -490,12 +487,17 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     }
   }
 
-  const unregister: UseFormUnregister<TFieldValues> = (fieldName, options) => {
+  const unregister: UseFormUnregister<TFieldValues> = (fieldName, options = {}) => {
+    if (isNullOrUndefined(_fields[fieldName])) {
+      warn(`cannot unregister not exist field #${fieldName as string}`)
+      return
+    }
+
     options = {
       keepDirty: false,
       keepError: false,
       keepValue: false,
-      ...({} || options),
+      ...(options),
     }
 
     if (!options.keepDirty) {

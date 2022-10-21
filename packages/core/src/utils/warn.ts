@@ -1,3 +1,3 @@
 export function warn(msg: string) {
-  console.warn(`[Vue Composable Form] ${msg}`)
+  console.warn(`[Vue Use Form] ${msg}`)
 }
