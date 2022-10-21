@@ -69,7 +69,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
   if (_options.shouldUnregister) {
     onMounted(() => {
       Object.keys(_fields).forEach((key) => {
-        unset(_fields, key)
+        set(_fields[key], 'isUnregistered', true)
       })
     })
   }
