@@ -7,7 +7,7 @@ npm i @vue-use-form/yup yup
 ```
 
 
-```vue
+```html
 <script lang="ts" setup>
 import { useForm } from 'vue-use-form'
 import * as yup from 'yup'
