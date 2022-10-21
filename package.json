@@ -1,6 +1,6 @@
 {
   "name": "main",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Some composables form validator for vue",
   "license": "MIT",
   "author": "Snowingfox",

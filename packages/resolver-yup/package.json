@@ -1,6 +1,6 @@
 {
   "name": "@vue-use-form/yup",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "yup resolver for vue-use-form",
   "keywords": ["yup", "vue-use-form", "vue-hook-form", "vue-use-form-resolver"],
   "license": "MIT",

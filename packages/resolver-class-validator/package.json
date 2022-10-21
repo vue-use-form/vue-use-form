@@ -1,6 +1,6 @@
 {
   "name": "@vue-use-form/class-validator",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "class-validator resolver for vue-use-form",
   "keywords": ["class-validator", "vue-use-form", "vue-hook-form", "vue-use-form-resolver"],
   "license": "MIT",
