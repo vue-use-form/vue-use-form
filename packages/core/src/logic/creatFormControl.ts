@@ -63,6 +63,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     isSubmitting: false,
     isSubmitSuccessful: false,
     isValid: false,
+    defaultValues: _options.defaultValues || {},
     errors: {} as FieldErrors<TFieldValues>,
   }) as FormState<TFieldValues>
 
@@ -346,11 +347,16 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     _fields[name].inputValue.value = value
   }
 
-  const setValue: UseFormSetValue<TFieldValues, FieldsKey> = async (name, value, config) => {
+  const setValue: UseFormSetValue<TFieldValues, FieldsKey> = async (name, value, config = {}) => {
+    if (isNullOrUndefined(_fields[name])) {
+      warn(`setValue cannot set not exist field #${name as string}`)
+      return
+    }
+
     config = {
-      shouldValidate: false,
-      shouldDirty: false,
-      ...(config || {}),
+      shouldValidate: true,
+      shouldDirty: true,
+      ...config,
     }
 
     _setFieldsValue(name, value)

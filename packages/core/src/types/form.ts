@@ -153,5 +153,6 @@ export interface FormState<TFieldValues> {
   isSubmitting: boolean
   isValidating: boolean
   isValid: boolean
+  defaultValues: Partial<DefaultValues<TFieldValues>>
   errors: FieldErrors<TFieldValues>
 }
