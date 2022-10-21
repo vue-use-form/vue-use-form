@@ -1,4 +1,4 @@
-import { unref } from 'vue'
+import { ref, unref } from 'vue'
 import type { FieldError } from '../types/errors'
 import {
   isEmpty, isEmptyObject,
@@ -15,6 +15,7 @@ import { getValueAndMessage } from '../utils/transformMessage'
 import { getValidatorError } from '../utils/getValidatorError'
 
 import { isFieldElement } from '../utils/isFieldElement'
+import { InvalidDate } from '../utils/constant'
 
 export function handleValidateError(error: FieldError, shouldFocusOnError: boolean, el?: FieldElement) {
   if (!isFieldElement(el)) {
@@ -30,7 +31,7 @@ export async function validateField(
   shouldFocusOnError: boolean,
   validateAllFieldCriteria: boolean,
 ): Promise<FieldError> {
-  const inputValue = field.inputValue
+  const inputValue = unref(field.inputValue)
 
   const {
     required,
@@ -60,11 +61,12 @@ export async function validateField(
   try {
     if (isFieldElement(el)) {
       if (valueAsNumber) {
-        set(field, 'inputValue', (el as HTMLInputElement).valueAsNumber)
+        const elVal = (el as HTMLInputElement).value
+        set(field, 'inputValue', ref((el as HTMLInputElement).valueAsNumber || elVal === '' ? elVal : parseFloat(elVal)))
       } else if (valueAsDate) {
-        set(field, 'inputValue', (el as HTMLInputElement).valueAsDate)
+        set(field, 'inputValue', ref((el as HTMLInputElement).valueAsDate || InvalidDate))
       } else if (setValueAs) {
-        set(field, 'inputValue', setValueAs(unrefInputVal))
+        set(field, 'inputValue', ref(setValueAs(unrefInputVal)))
       }
     }
 

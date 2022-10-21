@@ -1,6 +1,6 @@
 import type { RegisterOptions } from '../types/validator'
 
-import { isBoolean, isString, isUndefined } from './index'
+import { isBoolean, isDateObject, isNumber, isString, isUndefined } from './index'
 
 export function getValueAndMessage(field: RegisterOptions[keyof RegisterOptions]) {
   if (isUndefined(field))
@@ -12,5 +12,11 @@ export function getValueAndMessage(field: RegisterOptions[keyof RegisterOptions]
   if (isBoolean(field))
     return { value: field, message: '' }
 
+  if (isNumber(field))
+    return { value: field, message: '' }
+
+  if (isDateObject(field)) {
+    return { value: field, message: '' }
+  }
   return field
 }

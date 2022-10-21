@@ -49,7 +49,13 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
   const _fields = {} as Fields<TFieldValues, FieldsKey>
 
   const _formState = reactive<TFormState>({
-    isDirty: false,
+    get isDirty() {
+      if (isEmptyObject(_formState.dirtyFields)) {
+        return false
+      }
+
+      return true
+    },
     isValidating: false,
     dirtyFields: {} as FieldNamesMarkedBoolean<TFieldValues>,
     isSubmitted: false,
@@ -134,7 +140,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     }
   }
 
-  // validate field the `isDirty` prop must via this function
+  // validate `isDirty` must via this function
   const _handleAllDirtyFieldsOperate = (fieldNames?: FieldsKey | FieldsKey[]) => {
     if (isUndefined(fieldNames)) {
       Object.keys(_fields).forEach((fieldName) => {
@@ -178,6 +184,8 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
 
     setValidating(true)
     let res: FieldError = {}
+
+    // resolver
     if (isFunction(resolver)) {
       const values = Object.fromEntries(Object.entries(_fields).map(([key, val]) => [key, val.inputValue.value]))
       const errors = await resolver(values as Record<keyof TFieldValues, any>)
@@ -193,6 +201,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
       res = await validateField(field, unref(_options.shouldFocusError!), shouldDisplayAllAssociatedErrors)
     }
     setValidating(false)
+
     // delayError
     if (_options.delayError && _options.delayError > 0) {
       await new Promise((resolve) => {
@@ -509,10 +518,10 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     }
 
     if (!options.keepValue) {
-      _setFieldsValue(fieldName as string, _defaultValues[fieldName as string])
+      _setFieldsValue(fieldName as string, _defaultValues[fieldName as string] || '')
     }
 
-    _fields[fieldName as string].isUnregistered = true
+    set(_fields[fieldName as string], 'isUnregistered', true)
   }
 
   const isExistInErrors = (fieldName: keyof TFieldValues) => Object.keys(_formState.errors).includes(fieldName as string)
