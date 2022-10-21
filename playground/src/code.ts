@@ -1,5 +1,5 @@
 export const AppCode = `<script setup>
-import {createErrorHandler, createSubmitHandler, useForm } from 'vue-use-form'
+import { createErrorHandler, createSubmitHandler, useForm } from 'vue-use-form'
 
 const { 
   register, 
@@ -16,7 +16,7 @@ const onSubmit = createSubmitHandler((data) => {
 
 const onError = createErrorHandler((errors) => {
   alert('submit failed')
-} )
+})
 </script>
 <template>
   {{ errors }}
