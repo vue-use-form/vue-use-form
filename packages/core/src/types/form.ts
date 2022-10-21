@@ -17,7 +17,6 @@ export interface UseFormProps<TFieldValues extends object> {
   resolver: Resolver<TFieldValues>
   shouldFocusError: boolean
   shouldUnregister: boolean
-  shouldUseNativeValidation: boolean
   criteriaMode: CriteriaMode
   delayError: number
 }

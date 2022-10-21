@@ -1,4 +1,4 @@
-import { nextTick, reactive, ref, unref } from 'vue'
+import { nextTick, onMounted, reactive, ref, unref } from 'vue'
 import { VALIDATION_MODE } from '../shared/constant'
 import type { FieldError, FieldErrors } from '../types/errors'
 import type { Field, FieldElement, FieldValues, Fields } from '../types/filed'
@@ -65,6 +65,14 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
   const validationModeBeforeSubmit = getValidationMode(_options.mode!)
   const shouldDisplayAllAssociatedErrors
     = _options.criteriaMode === VALIDATION_MODE.all
+
+  if (_options.shouldUnregister) {
+    onMounted(() => {
+      Object.keys(_fields).forEach((key) => {
+        unset(_fields, key)
+      })
+    })
+  }
 
   const _setFormState = (props: { [K in TFormStateKey]?: TFormState[TFormStateKey] }) => {
     Object.entries(props).forEach(([key, val]) => {
@@ -188,6 +196,14 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
       res = await validateField(field, unref(_options.shouldFocusError!), shouldDisplayAllAssociatedErrors)
     }
     setValidating(false)
+    // delayError
+    if (_options.delayError && _options.delayError > 0) {
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(true)
+        }, _options.delayError)
+      })
+    }
     if (Object.keys(res || {}).length) {
       _setFormStateError(fieldName, res)
     } else {

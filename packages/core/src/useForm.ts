@@ -13,8 +13,7 @@ export function useForm<TFieldValues extends FieldValues = FieldValues>(
     criteriaMode: 'firstError',
     shouldFocusError: true,
     shouldUnregister: false,
-    shouldUseNativeValidation: false,
-    delayError: undefined,
+    delayError: 0,
     ...props,
   }
   return {
