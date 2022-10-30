@@ -29,9 +29,17 @@
   ],
   "scripts": {
     "build": "unbuild",
-    "stub": "unbuild --stub"
+    "dev": "tsup --watch src"
   },
   "peerDependencies": {
     "vue": ">=3.0.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.186",
+    "@types/lodash.setwith": "^4.3.7",
+    "tsup": "^5.12.9"
+  },
+  "dependencies": {
+    "lodash.setwith": "^4.3.2"
   }
 }

@@ -1,4 +1,5 @@
 import { nextTick, reactive, ref, unref } from 'vue'
+import setWith from 'lodash.setwith'
 import { VALIDATION_MODE } from '../shared/constant'
 import type { FieldError, FieldErrors } from '../types/errors'
 import type { Field, FieldElement, FieldValues, Fields } from '../types/filed'
@@ -50,11 +51,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
 
   const _formState = reactive<TFormState>({
     get isDirty() {
-      if (isEmptyObject(_formState.dirtyFields)) {
-        return false
-      }
-
-      return true
+      return !isEmptyObject(_formState.dirtyFields)
     },
     isValidating: false,
     dirtyFields: {} as FieldNamesMarkedBoolean<TFieldValues>,
@@ -81,7 +78,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
   }
 
   const _setFormStateError = (fieldName: FieldsKey, error: FieldError) => {
-    set(_formState.errors, fieldName, error)
+    setWith(_formState.errors, fieldName, error)
   }
 
   const _getFormStateError = (fieldName?: FieldsKey) => fieldName ? get(_formState.errors, fieldName) : _formState.errors
@@ -418,9 +415,9 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     } = options
 
     const defaultVal = options?.value
-                      || get(_defaultValues, fieldName as string)
-                      || get(_fieldArrayDefaultValues, (fieldName as string).split('.').find(item => isNumber(parseInt(item))))
-                      || ''
+      || get(_defaultValues, fieldName as string)
+      || get(_fieldArrayDefaultValues, (fieldName as string).split('.').find(item => isNumber(parseInt(item))))
+      || ''
 
     if (!field) {
       _setFields(fieldName, {
@@ -460,12 +457,12 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
       }
     }
 
-    const handleValueChange = async (input: InputEvent | any) => {
+    const handleValueChange = (input: InputEvent | any) => {
       field.inputValue.value = (input?.target as any)?.value || input || ''
 
       _handleAllDirtyFieldsOperate(fieldName)
       if (validationModeBeforeSubmit.isOnChange) {
-        await _onChange(fieldName)
+        _onChange(fieldName)
       }
     }
 
