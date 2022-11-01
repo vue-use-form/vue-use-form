@@ -22,8 +22,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "unbuild",
-    "stub": "unbuild --stub"
+    "build": "tsup",
+    "dev": "tsup --watch src"
   },
   "peerDependencies": {
     "class-transformer": "^0.4.0",

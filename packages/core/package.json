@@ -28,7 +28,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "unbuild",
+    "build": "tsup",
     "dev": "tsup --watch src"
   },
   "peerDependencies": {
