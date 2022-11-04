@@ -1,6 +1,12 @@
+import type { ToRefs } from '@vue/reactivity'
 import type { FieldValues, Fields } from './filed'
 import type { Resolver } from './resolver'
-import type { DeepMap, DeepPartial, DefaultValues, UnpackNestedValue } from './utils'
+import type {
+  DeepMap,
+  DeepPartial,
+  DefaultValues,
+  UnpackNestedValue,
+} from './utils'
 import type { FieldError, FieldErrors } from './errors'
 import type { RegisterOptions } from './validator'
 
@@ -8,7 +14,10 @@ export type Mode = 'onSubmit' | 'onBlur' | 'onChange' | 'onTouched' | 'all'
 
 export type CriteriaMode = 'firstError' | 'all'
 
-export type FieldNamesMarkedBoolean<TFieldValues extends FieldValues> = DeepMap<DeepPartial<TFieldValues>, boolean>
+export type FieldNamesMarkedBoolean<TFieldValues extends FieldValues> = DeepMap<
+  DeepPartial<TFieldValues>,
+  boolean
+>
 
 export interface UseFormProps<TFieldValues extends object> {
   mode: Mode
@@ -34,26 +43,33 @@ export type KeepStateOptions = Partial<{
 
 export type SubmitHandler<TFieldValues extends FieldValues> = (
   data: UnpackNestedValue<TFieldValues>,
-  event?: Event,
+  event?: Event
 ) => any | Promise<any>
 
 export type SubmitErrorHandler<TFieldValues extends FieldValues> = (
   errors: FieldErrors<TFieldValues>,
-  event?: Event,
+  event?: Event
 ) => any | Promise<any>
 
 export type UseFormHandleSubmit<TFieldValues extends FieldValues> = (
   onValid: SubmitHandler<TFieldValues>,
-  onInvalid?: SubmitErrorHandler<TFieldValues>,
+  onInvalid?: SubmitErrorHandler<TFieldValues>
 ) => (e?: Event) => Promise<void>
 
-export type UseFormClearErrors<FieldName> = (fieldName?: FieldName | FieldName[]) => void
+export type UseFormClearErrors<FieldName> = (
+  fieldName?: FieldName | FieldName[]
+) => void
 
-export type GetValuesReturn<FieldValues, FieldVal = FieldValues[keyof FieldValues]> = {
+export type GetValuesReturn<
+  FieldValues,
+  FieldVal = FieldValues[keyof FieldValues]
+> = {
   [K in keyof FieldValues]: FieldVal
 }
 
-export type UseFormGetValues<FieldValues, FieldKeys> = (fieldNames?: FieldKeys | FieldKeys[]) => GetValuesReturn<FieldValues>
+export type UseFormGetValues<FieldValues, FieldKeys> = (
+  fieldNames?: FieldKeys | FieldKeys[]
+) => GetValuesReturn<FieldValues>
 
 export interface GetFieldStateReturn {
   isDirty: boolean
@@ -61,11 +77,21 @@ export interface GetFieldStateReturn {
   error?: FieldError
 }
 
-export type UseFormGetFieldState<FieldKeys> = (fieldName: FieldKeys) => GetFieldStateReturn
+export type UseFormGetFieldState<FieldKeys> = (
+  fieldName: FieldKeys
+) => GetFieldStateReturn
 
-export type UseFormSetError<FieldName> = (name: FieldName, error: FieldError, config?: { shouldFocusError: boolean }) => void
+export type UseFormSetError<FieldName> = (
+  name: FieldName,
+  error: FieldError,
+  config?: { shouldFocusError: boolean }
+) => void
 
-export type UseFormSetValue<FieldValues, FieldName extends keyof FieldValues, Value = FieldValues[FieldName]> = (
+export type UseFormSetValue<
+  FieldValues,
+  FieldName extends keyof FieldValues,
+  Value = FieldValues[FieldName]
+> = (
   name: FieldName,
   value: Value,
   config?: {
@@ -74,29 +100,36 @@ export type UseFormSetValue<FieldValues, FieldName extends keyof FieldValues, Va
   }
 ) => Promise<void>
 
-export type UseFormTriggerValidate<FieldKeys> = (fieldNames?: FieldKeys | FieldKeys[]) => Promise<void>
+export type UseFormTriggerValidate<FieldKeys> = (
+  fieldNames?: FieldKeys | FieldKeys[]
+) => Promise<void>
 
 export type UseFormReset<TFieldValues extends FieldValues> = (
-  values?: DefaultValues<TFieldValues> | UnpackNestedValue<TFieldValues> | 'all',
-  keepStateOptions?: KeepStateOptions,
+  values?:
+    | DefaultValues<TFieldValues>
+    | UnpackNestedValue<TFieldValues>
+    | 'all',
+  keepStateOptions?: KeepStateOptions
 ) => void
 
 export type UseFormUnregister<TFieldValues extends FieldValues> = (
   name?: keyof TFieldValues,
   options?: Omit<
-  KeepStateOptions,
-  | 'keepIsSubmitted'
-  | 'keepSubmitCount'
-  | 'keepValues'
-  | 'keepDefaultValues'
-  | 'keepErrors'
-  | 'keepIsValid'
-  | 'keepDirtyValues'
-
-  > & { keepValue?: boolean; keepError?: boolean },
+    KeepStateOptions,
+    | 'keepIsSubmitted'
+    | 'keepSubmitCount'
+    | 'keepValues'
+    | 'keepDefaultValues'
+    | 'keepErrors'
+    | 'keepIsValid'
+    | 'keepDirtyValues'
+  > & { keepValue?: boolean; keepError?: boolean }
 ) => void
 
-export interface UseFormRegisterReturn<T, BaseType = string | Date | number | T> {
+export interface UseFormRegisterReturn<
+  T,
+  BaseType = string | Date | number | T
+> {
   value: BaseType
   onInput: (e: InputEvent) => void
   modelValue: BaseType
@@ -111,12 +144,11 @@ export interface UseFormRegister<T extends FieldValues> {
 
 export type UseFormSetFocus<FieldValues> = (name: keyof FieldValues) => void
 
-export type UseFormIsExistInErrors<FieldValues> = (name: keyof FieldValues) => boolean
+export type UseFormIsExistInErrors<FieldValues> = (
+  name: keyof FieldValues
+) => boolean
 
-export interface UseFormHandlers<
-  TFieldValues,
-  FieldName = keyof TFieldValues,
-  > {
+export interface UseFormHandlers<TFieldValues, FieldName = keyof TFieldValues> {
   getValues: UseFormGetValues<TFieldValues, FieldName>
   getFieldState: UseFormGetFieldState<FieldName>
   setError: UseFormSetError<FieldName>
@@ -134,14 +166,15 @@ export interface UseFormHandlers<
 export type FieldArrayDefaultValues = Record<number, any>
 
 export type UseFormControl<TFieldValues extends FieldValues> = {
-  _formState: FormState<TFieldValues>
+  _formState: ToRefs<FormState<TFieldValues>>
   _fieldArrayDefaultValues: FieldArrayDefaultValues
   _fields: Fields<TFieldValues, keyof TFieldValues>
 } & UseFormHandlers<TFieldValues>
 
 export type UseFormReturn<TFieldValues extends FieldValues> = {
   control: UseFormControl<TFieldValues>
-  formState: FormState<TFieldValues>
+  formState: ToRefs<FormState<TFieldValues>>
+  fields: Fields<TFieldValues, keyof TFieldValues>
 } & UseFormHandlers<TFieldValues>
 
 export interface FormState<TFieldValues> {

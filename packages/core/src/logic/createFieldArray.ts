@@ -1,4 +1,5 @@
 import { reactive } from 'vue'
+import { isArray, set } from '../utils'
 import type {
   UseFieldArrayAppend,
   UseFieldArrayField,
@@ -9,13 +10,16 @@ import type {
   UseFieldArraySwap,
 } from '../types/fieldArray'
 import type { FieldValues } from '../types/filed'
-import { isArray, set } from '../utils'
 
-export function createFieldArray<TFieldsValues extends FieldValues = FieldValues>(
-  _options: UseFieldArrayProps<TFieldsValues>,
-) {
+export function createFieldArray<
+  TFieldsValues extends FieldValues = FieldValues
+>(_options: UseFieldArrayProps<TFieldsValues>) {
   type TFields = UseFieldArrayField<TFieldsValues>
-  type TArrayField = TFieldsValues[typeof name] extends [infer R] ? R extends FieldValues ? R[] : FieldValues[] : FieldValues[]
+  type TArrayField = TFieldsValues[typeof name] extends [infer R]
+    ? R extends FieldValues
+      ? R[]
+      : FieldValues[]
+    : FieldValues[]
 
   const { name, control } = _options
 
@@ -23,17 +27,13 @@ export function createFieldArray<TFieldsValues extends FieldValues = FieldValues
 
   let fieldIndex = 0
 
-  const _createFields = (
-    fieldName: string,
-    defaultVal: unknown,
-  ) => {
-    let index = fieldIndex
+  const _createFields = (fieldName: string, defaultVal: unknown) => {
     fieldIndex++
 
-    set(control._fieldArrayDefaultValues, index, defaultVal)
+    set(control._fieldArrayDefaultValues, fieldIndex, defaultVal)
 
     return {
-      index,
+      index: fieldIndex,
       name: fieldName,
     } as TFields
   }
@@ -55,7 +55,7 @@ export function createFieldArray<TFieldsValues extends FieldValues = FieldValues
       indexes = [indexes]
     }
     for (const index of indexes) {
-      const targetIndex = _fields.findIndex(field => field.index === index)
+      const targetIndex = _fields.findIndex((field) => field.index === index)
 
       if (targetIndex >= 0) {
         _fields.splice(targetIndex, 1)
@@ -64,7 +64,9 @@ export function createFieldArray<TFieldsValues extends FieldValues = FieldValues
   }
 
   const insert: UseFieldArrayInsert<TArrayField> = (startIndex, fields) => {
-    const fieldsMap = Object.entries(fields).map(([fieldName, options]) => _createFields(fieldName, options))
+    const fieldsMap = Object.entries(fields).map(([fieldName, options]) =>
+      _createFields(fieldName, options)
+    )
 
     _fields.splice(startIndex, 0, ...fieldsMap)
   }

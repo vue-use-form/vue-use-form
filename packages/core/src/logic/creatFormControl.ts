@@ -1,14 +1,34 @@
-import { nextTick, reactive, ref, unref } from 'vue'
+import { nextTick, reactive, ref, toRefs, unref } from 'vue'
 import setWith from 'lodash.setwith'
 import { VALIDATION_MODE } from '../shared/constant'
-import type { FieldError, FieldErrors } from '../types/errors'
-import type { Field, FieldElement, FieldValues, Fields } from '../types/filed'
+import {
+  get,
+  isArray,
+  isEmptyObject,
+  isFunction,
+  isNullOrUndefined,
+  isNumber,
+  isString,
+  isUndefined,
+  set,
+  unset,
+} from '../utils'
+import { InvalidDate } from '../utils/constant'
+
+import { deepEqual } from '../utils/deepEqual'
+import { isRadioOrCheckboxInput } from '../utils/fieldElement'
+import { getFormEl } from '../utils/getFormEl'
+import { getValidationMode } from '../utils/getValidationMode'
+import { isFieldElement } from '../utils/isFieldElement'
+
+import { warn } from '../utils/warn'
+import { handleValidateError, validateField } from './validate'
+import type { RegisterOptions } from '../types/validator'
+import type { DefaultValues, UnpackNestedValue } from '../types/utils'
 import type {
   FieldNamesMarkedBoolean,
   FormState,
   GetValuesReturn,
-  SubmitErrorHandler,
-  SubmitHandler,
   UseFormClearErrors,
   UseFormGetFieldState,
   UseFormGetValues,
@@ -23,26 +43,12 @@ import type {
   UseFormTriggerValidate,
   UseFormUnregister,
 } from '../types/form'
-import type { DefaultValues, UnpackNestedValue } from '../types/utils'
-import { get, isArray, isEmptyObject, isFunction, isNullOrUndefined, isNumber, isString, isUndefined, set, unset } from '../utils'
+import type { Field, FieldElement, FieldValues, Fields } from '../types/filed'
+import type { FieldError, FieldErrors } from '../types/errors'
 
-import {
-  createErrorHandler as createErrorHandlerUtil,
-  createSubmitHandler as createSubmitHandlerUtil,
-} from '../utils/createHandler'
-
-import { deepEqual } from '../utils/deepEqual'
-import { isRadioOrCheckboxInput } from '../utils/fieldElement'
-import { getFormEl } from '../utils/getFormEl'
-import { getValidationMode } from '../utils/getValidationMode'
-import { isFieldElement } from '../utils/isFieldElement'
-import type { RegisterOptions } from '../types/validator'
-import { warn } from '../utils/warn'
-import { handleValidateError, validateField } from './validate'
-
-export function creatFormControl<TFieldValues extends FieldValues = FieldValues>(
-  _options: Partial<UseFormProps<TFieldValues>>,
-): UseFormReturn<TFieldValues> {
+export function creatFormControl<
+  TFieldValues extends FieldValues = FieldValues
+>(_options: Partial<UseFormProps<TFieldValues>>): UseFormReturn<TFieldValues> {
   type FieldsKey = keyof TFieldValues
   type TFormState = FormState<TFieldValues>
   type TFormStateKey = keyof TFormState
@@ -50,9 +56,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
   const _fields = {} as Fields<TFieldValues, FieldsKey>
 
   const _formState = reactive<TFormState>({
-    get isDirty() {
-      return !isEmptyObject(_formState.dirtyFields)
-    },
+    isDirty: false,
     isValidating: false,
     dirtyFields: {} as FieldNamesMarkedBoolean<TFieldValues>,
     isSubmitted: false,
@@ -62,18 +66,19 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     isValid: false,
     defaultValues: _options.defaultValues || {},
     errors: {} as FieldErrors<TFieldValues>,
-  }) as FormState<TFieldValues>
+  }) as TFormState
 
-  const _defaultValues = _options.defaultValues || {} as DefaultValues<TFieldValues>
+  const _defaultValues =
+    _options.defaultValues || ({} as DefaultValues<TFieldValues>)
   const _fieldArrayDefaultValues = {} as DefaultValues<TFieldValues>
 
   const validationModeBeforeSubmit = getValidationMode(_options.mode!)
-  const shouldDisplayAllAssociatedErrors
-    = _options.criteriaMode === VALIDATION_MODE.all
+  const shouldDisplayAllAssociatedErrors =
+    _options.criteriaMode === VALIDATION_MODE.all
 
-  const _setFormState = (props: { [K in TFormStateKey]?: TFormState[TFormStateKey] }) => {
+  const _setFormState = (props: { [K in TFormStateKey]?: TFormState[K] }) => {
     Object.entries(props).forEach(([key, val]) => {
-      set(_formState, key as TFormStateKey, val)
+      _formState[key] = val
     })
   }
 
@@ -81,7 +86,8 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     setWith(_formState.errors, fieldName, error)
   }
 
-  const _getFormStateError = (fieldName?: FieldsKey) => fieldName ? get(_formState.errors, fieldName) : _formState.errors
+  const _getFormStateError = (fieldName?: FieldsKey) =>
+    fieldName ? get(_formState.errors, fieldName) : _formState.errors
 
   const _removeFormStateError = (fieldName: FieldsKey) => {
     unset(_formState.errors, fieldName)
@@ -90,14 +96,17 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
   const _setFields = (name: FieldsKey, fieldOptions: Partial<Field>) => {
     // init field
     const field = get(_fields, name)
-    if (isNullOrUndefined(field)) {
-      set(_fields, name, {})
-    }
+    if (isNullOrUndefined(field)) set(_fields, name, {})
 
     set(_fields, name, { ...field, ...fieldOptions })
   }
 
-  const _setValidating = (isValidating: boolean) => _setFormState({ isValidating })
+  const _getDefaultValue = (field: FieldsKey) => {
+    return _defaultValues[field as string]
+  }
+
+  const _setValidating = (isValidating: boolean) =>
+    _setFormState({ isValidating })
 
   const _getFieldProp = (name: FieldsKey, prop: keyof Field) => {
     return get(_fields[name], prop)
@@ -107,22 +116,31 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     return _getFieldProp(name, 'el') as FieldElement | undefined
   }
 
-  const _getDirtyFields = () => {
+  const _getDirtyFields = (handleIsDirty = true) => {
     const dirtyFields = {} as TFormState['dirtyFields']
 
     Object.entries(_fields).forEach(([key, val]) => {
-      if (val.isDirty) {
+      if (
+        val.isDirty ||
+        (_getDefaultValue(key) &&
+          val.inputValue.value !== _getDefaultValue(key)) ||
+        val.inputValue.value !== ''
+      ) {
         set(dirtyFields, key, true)
       }
     })
+
+    if (handleIsDirty) {
+      _setFormState({
+        isDirty: !isEmptyObject(dirtyFields),
+      })
+    }
 
     return dirtyFields
   }
 
   const _handleDirtyField = (fieldName: FieldsKey) => {
-    if (_fields[fieldName].isUnregistered) {
-      return
-    }
+    if (_fields[fieldName].isUnregistered) return
 
     const defaultVal = get(_defaultValues, fieldName as string)
     const val = _fields[fieldName].inputValue.value
@@ -139,7 +157,9 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
   }
 
   // validate `isDirty` must via this function
-  const _handleAllDirtyFieldsOperate = (fieldNames?: FieldsKey | FieldsKey[]) => {
+  const _handleAllDirtyFieldsOperate = (
+    fieldNames?: FieldsKey | FieldsKey[]
+  ) => {
     if (isUndefined(fieldNames)) {
       Object.keys(_fields).forEach((fieldName) => {
         _handleDirtyField(fieldName)
@@ -164,7 +184,10 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     })
   }
 
-  const _validate = async (fieldName: FieldsKey, isValidateAllFields = false) => {
+  const _validate = async (
+    fieldName: FieldsKey,
+    isValidateAllFields = false
+  ) => {
     const field = _fields[fieldName]
 
     if (isEmptyObject(_fields) || isNullOrUndefined(field)) {
@@ -176,28 +199,69 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
       return
     }
 
-    const setValidating = (payload: boolean) => !isValidateAllFields && _setValidating(payload)
-
+    const setValidating = (payload: boolean) =>
+      !isValidateAllFields && _setValidating(payload)
     const resolver = _options.resolver
+    const el = unref(field.el)
+    let res: FieldError = {}
+    const { valueAsNumber, valueAsDate, setValueAs } = field.rule
 
     setValidating(true)
-    let res: FieldError = {}
 
+    if (isFieldElement(el)) {
+      if (valueAsNumber) {
+        const elVal = (el as HTMLInputElement).value
+        set(
+          field,
+          'inputValue',
+          ref(
+            (el as HTMLInputElement).valueAsNumber || elVal === ''
+              ? elVal
+              : Number.parseFloat(elVal)
+          )
+        )
+      } else if (valueAsDate) {
+        set(
+          field,
+          'inputValue',
+          ref((el as HTMLInputElement).valueAsDate || InvalidDate)
+        )
+      } else if (setValueAs) {
+        const inputVal = unref(field.inputValue)
+        set(field, 'inputValue', ref(inputVal))
+      }
+
+      if (isRadioOrCheckboxInput(el)) {
+        set(field, 'inputValue', ref(el.checked))
+      }
+    }
     // resolver
     if (isFunction(resolver)) {
-      const values = Object.fromEntries(Object.entries(_fields).map(([key, val]) => [key, val.inputValue.value]))
+      const values = Object.fromEntries(
+        Object.entries(_fields).map(([key, val]) => [key, val.inputValue.value])
+      )
       const errors = await resolver(values as Record<keyof TFieldValues, any>)
-      if (!isEmptyObject(errors)) {
-        res = errors[fieldName] as FieldError
-      }
+      if (!isEmptyObject(errors)) res = errors[fieldName] as FieldError
     } else {
-      res = await validateField(field, unref(_options.shouldFocusError!), shouldDisplayAllAssociatedErrors)
+      res = await validateField(
+        field,
+        unref(_options.shouldFocusError!),
+        shouldDisplayAllAssociatedErrors
+      )
     }
 
     // Additional validation when using resolver
-    if (isFunction(resolver) && isEmptyObject(res) && !isEmptyObject(_fields[fieldName].rule)) {
-      res = await validateField(field, unref(_options.shouldFocusError!), shouldDisplayAllAssociatedErrors)
-    }
+    if (
+      isFunction(resolver) &&
+      isEmptyObject(res) &&
+      !isEmptyObject(_fields[fieldName].rule)
+    )
+      res = await validateField(
+        field,
+        unref(_options.shouldFocusError!),
+        shouldDisplayAllAssociatedErrors
+      )
+
     setValidating(false)
 
     // delayError
@@ -208,7 +272,8 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
         }, _options.delayError)
       })
     }
-    if (Object.keys(res || {}).length) {
+
+    if (Object.keys(res || {}).length > 0) {
       _setFormStateError(fieldName, res)
     } else {
       _removeFormStateError(fieldName)
@@ -217,9 +282,9 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
 
   const _validateAllFields = async () => {
     _setValidating(true)
-    for (const fieldName of Object.keys(_fields)) {
+    for (const fieldName of Object.keys(_fields))
       await _validate(fieldName, true)
-    }
+
     _setValidating(false)
   }
 
@@ -233,7 +298,9 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     _handleIsValidFields()
   }
 
-  const triggerValidate: UseFormTriggerValidate<FieldsKey> = async (fieldNames) => {
+  const triggerValidate: UseFormTriggerValidate<FieldsKey> = async (
+    fieldNames
+  ) => {
     if (isUndefined(fieldNames)) {
       await _validateAllFields()
     } else {
@@ -241,42 +308,49 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
         fieldNames = [fieldNames]
       }
 
-      await Promise.all(fieldNames.map(name => _validate(name)))
+      await Promise.all(fieldNames.map((name) => _validate(name)))
     }
   }
 
   const reset: UseFormReset<TFieldValues> = (values, keepStateOptions?) => {
-    if (!keepStateOptions) {
-      keepStateOptions = {} as any
-    }
-
     if (!values) {
       values = {} as DefaultValues<TFieldValues>
-    }
-
-    const setFormState = () => {
-      const dirtyFields = _getDirtyFields()
-
-      _setFormState({
-        isSubmitted: keepStateOptions!.keepIsSubmitted ? _formState.isSubmitted : false,
-        submitCount: keepStateOptions!.keepSubmitCount ? _formState.submitCount : 0,
-        errors: keepStateOptions!.keepErrors ? _formState.errors : {},
-        isDirty: keepStateOptions!.keepDirty ? _formState.isDirty : !isEmptyObject(dirtyFields),
-        dirtyFields: keepStateOptions!.keepDirty ? _formState.dirtyFields : dirtyFields,
-        isSubmitting: false,
-        isSubmitSuccessful: false,
-        isValid: keepStateOptions!.keepIsValid ? _formState.isValid : false,
-      })
     }
 
     Object.entries(values).forEach(([key, val]) => {
       _fields[key].inputValue.value = val
     })
 
-    setFormState()
+    const dirtyFields = _getDirtyFields(false)
+
+    if (!keepStateOptions) {
+      keepStateOptions = {} as any
+    }
+
+    _setFormState({
+      isSubmitted: keepStateOptions!.keepIsSubmitted
+        ? _formState.isSubmitted
+        : false,
+      submitCount: keepStateOptions!.keepSubmitCount
+        ? _formState.submitCount
+        : 0,
+      errors: keepStateOptions!.keepErrors ? _formState.errors : {},
+      isDirty: keepStateOptions!.keepDirty
+        ? _formState.isDirty
+        : !isEmptyObject(dirtyFields),
+      dirtyFields: keepStateOptions!.keepDirty
+        ? _formState.dirtyFields
+        : dirtyFields,
+      isSubmitting: false,
+      isSubmitSuccessful: false,
+      isValid: keepStateOptions!.keepIsValid ? _formState.isValid : false,
+    })
   }
 
-  const handleSubmit: UseFormHandleSubmit<TFieldValues> = (onSubmit, onError?) => {
+  const handleSubmit: UseFormHandleSubmit<TFieldValues> = (
+    onSubmit,
+    onError?
+  ) => {
     _setFormState({
       isSubmitting: true,
     })
@@ -285,21 +359,22 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
       // validate all fields
       await _onChange()
       _handleAllDirtyFieldsOperate()
-      if (!isEmptyObject(_formState.errors)) {
-        if (isFunction(onError)) {
-          await onError(_formState.errors, e)
-          _setFormState({
-            isSubmitting: false,
-            isSubmitted: true,
-          })
-        }
+
+      if (!isEmptyObject(_formState.errors) && isFunction(onError)) {
+        await onError(_formState.errors, e)
+        _setFormState({
+          isSubmitting: false,
+          isSubmitted: true,
+        })
 
         return
       }
+
       const res: Record<string, any> = {}
-      for (const fieldName in _fields) {
+      for (const fieldName of Object.keys(_fields)) {
         res[fieldName] = _fields[fieldName].inputValue
       }
+
       await onSubmit(_fields as UnpackNestedValue<TFieldValues>, e)
       _setFormState({
         isSubmitting: false,
@@ -308,9 +383,6 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
       })
     }
   }
-
-  const createErrorHandler = (fn: SubmitErrorHandler<TFieldValues>) => createErrorHandlerUtil<TFieldValues>(fn)
-  const createSubmitHandler = (fn: SubmitHandler<TFieldValues>) => createSubmitHandlerUtil<TFieldValues>(fn)
 
   const setError: UseFormSetError<FieldsKey> = (fieldName, error, config) => {
     if (!config) {
@@ -321,18 +393,15 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
 
     _setFormStateError(fieldName, error)
 
-    if (config.shouldFocusError) {
+    if (config.shouldFocusError)
       handleValidateError(error, true, _getFieldDom(fieldName))
-    }
   }
 
   const clearErrors: UseFormClearErrors<FieldsKey> = (fieldName) => {
     if (isUndefined(fieldName)) {
       set(_formState, 'errors', {})
     } else {
-      if (!isArray(fieldName)) {
-        fieldName = [fieldName]
-      }
+      if (!isArray(fieldName)) fieldName = [fieldName]
 
       fieldName.forEach((name) => {
         _removeFormStateError(name)
@@ -344,7 +413,11 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     _fields[name].inputValue.value = value
   }
 
-  const setValue: UseFormSetValue<TFieldValues, FieldsKey> = async (name, value, config = {}) => {
+  const setValue: UseFormSetValue<TFieldValues, FieldsKey> = async (
+    name,
+    value,
+    config = {}
+  ) => {
     if (isNullOrUndefined(_fields[name])) {
       warn(`setValue cannot set not exist field #${name as string}`)
       return
@@ -358,21 +431,17 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
 
     _setFieldsValue(name, value)
 
-    if (config.shouldDirty) {
-      _handleAllDirtyFieldsOperate(name)
-    }
-    if (config.shouldValidate) {
-      await trigger(name)
-    }
+    if (config.shouldDirty) _handleAllDirtyFieldsOperate(name)
+
+    if (config.shouldValidate) await trigger(name)
   }
 
-  const setFocus: UseFormSetFocus<TFieldValues> = name => nextTick(() => {
-    const el = _getFieldDom(name)
+  const setFocus: UseFormSetFocus<TFieldValues> = (name) =>
+    nextTick(() => {
+      const el = _getFieldDom(name)
 
-    if (el) {
-      el.focus()
-    }
-  })
+      if (el) el.focus()
+    })
 
   const getValues: UseFormGetValues<FieldValues, FieldsKey> = (fieldNames) => {
     const res: GetValuesReturn<FieldValues, FieldsKey> = {}
@@ -382,9 +451,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
         set(res, name, field.inputValue.value)
       })
     } else {
-      if (!isArray(fieldNames)) {
-        fieldNames = [fieldNames]
-      }
+      if (!isArray(fieldNames)) fieldNames = [fieldNames]
 
       fieldNames.forEach((name) => {
         set(res, name as string, _fields[name].inputValue.value)
@@ -402,22 +469,27 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     }
   }
 
-  const register: UseFormRegister<TFieldValues> = (fieldName, options?: RegisterOptions) => {
-    if (isUndefined(options)) {
-      options = {}
-    }
+  const register: UseFormRegister<TFieldValues> = (
+    fieldName,
+    options?: RegisterOptions
+  ) => {
+    if (isUndefined(options)) options = {}
 
     let isModelValue = false
     let field = get(_fields, fieldName)
 
-    const {
-      vModelBinding = 'modelValue',
-    } = options
+    const { vModelBinding = 'modelValue' } = options
 
-    const defaultVal = options?.value
-      || get(_defaultValues, fieldName as string)
-      || get(_fieldArrayDefaultValues, (fieldName as string).split('.').find(item => isNumber(parseInt(item))))
-      || ''
+    const defaultVal =
+      options?.value ||
+      get(_defaultValues, fieldName as string) ||
+      get(
+        _fieldArrayDefaultValues,
+        (fieldName as string)
+          .split('.')
+          .find((item) => isNumber(Number.parseInt(item)))
+      ) ||
+      ''
 
     if (!field) {
       _setFields(fieldName, {
@@ -435,12 +507,14 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
       if (isFieldElement(field.el) || _fields[fieldName].isUnregistered) {
         return
       }
+
       const el = getFormEl(field.el)
       _setFields(fieldName, { ..._fields[fieldName], el })
 
       if (isRadioOrCheckboxInput(el)) {
         set(_defaultValues, fieldName as string, !!defaultVal)
       }
+
       set(_defaultValues, fieldName as string, defaultVal)
 
       // bind validate mode
@@ -468,29 +542,25 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
 
     return {
       // avoid rebinding ref
-      ...!isFieldElement(field.el) && { ref: _fields[fieldName].el },
+      ...(!isFieldElement(field.el) && { ref: _fields[fieldName].el }),
 
-      ...vModelBinding === 'modelValue'
-      && {
+      ...(vModelBinding === 'modelValue' && {
         value: field.inputValue.value,
         onInput: (e) => {
-          if (_fields[fieldName].isUnregistered) {
-            return
-          }
+          if (_fields[fieldName].isUnregistered) return
+
           addEventListenerToElement()
-          queueMicrotask(async () => {
+          queueMicrotask(() => {
             if (!isModelValue) {
-              await handleValueChange(e.target?.value)
+              handleValueChange(e.target?.value)
             }
           })
         },
-      },
+      }),
 
       [vModelBinding]: field.inputValue.value,
       [`onUpdate:${vModelBinding}`]: (input: any) => {
-        if (_fields[fieldName].isUnregistered) {
-          return
-        }
+        if (_fields[fieldName].isUnregistered) return
 
         isModelValue = true
         addEventListenerToElement()
@@ -499,7 +569,10 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     }
   }
 
-  const unregister: UseFormUnregister<TFieldValues> = (fieldName, options = {}) => {
+  const unregister: UseFormUnregister<TFieldValues> = (
+    fieldName,
+    options = {}
+  ) => {
     if (isNullOrUndefined(_fields[fieldName])) {
       warn(`cannot unregister not exist field #${fieldName as string}`)
       return
@@ -509,7 +582,7 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
       keepDirty: false,
       keepError: false,
       keepValue: false,
-      ...(options),
+      ...options,
     }
 
     if (!options.keepDirty) {
@@ -521,22 +594,24 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     }
 
     if (!options.keepValue) {
-      _setFieldsValue(fieldName as string, _defaultValues[fieldName as string] || '')
+      _setFieldsValue(
+        fieldName as string,
+        _defaultValues[fieldName as string] || ''
+      )
     }
 
     set(_fields[fieldName as string], 'isUnregistered', true)
   }
 
-  const isExistInErrors = (fieldName: keyof TFieldValues) => Object.keys(_formState.errors).includes(fieldName as string)
+  const isExistInErrors = (fieldName: keyof TFieldValues) =>
+    Object.keys(_formState.errors).includes(fieldName as string)
 
-  return reactive({
+  return {
     control: {
       _fields,
-      _formState,
+      _formState: toRefs(_formState),
       _fieldArrayDefaultValues,
       handleSubmit,
-      createErrorHandler,
-      createSubmitHandler,
       register,
       unregister,
       reset,
@@ -548,10 +623,9 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
       getFieldState,
       triggerValidate,
     },
-    formState: _formState,
+    formState: toRefs(_formState),
+    fields: _fields,
     handleSubmit,
-    createErrorHandler,
-    createSubmitHandler,
     register,
     unregister,
     reset,
@@ -563,5 +637,5 @@ export function creatFormControl<TFieldValues extends FieldValues = FieldValues>
     getFieldState,
     triggerValidate,
     isExistInErrors,
-  }) as unknown as UseFormReturn<TFieldValues>
+  } as unknown as UseFormReturn<TFieldValues>
 }

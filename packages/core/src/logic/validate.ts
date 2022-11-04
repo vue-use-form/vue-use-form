@@ -1,35 +1,34 @@
-import { ref, unref } from 'vue'
-import type { FieldError } from '../types/errors'
+import { unref } from 'vue'
 import {
-  isEmpty, isEmptyObject,
+  isEmpty,
+  isEmptyObject,
   isFunction,
   isNullOrUndefined,
   isObject,
   isRegex,
   isString,
-  set,
 } from '../utils'
-import type { Field, FieldElement } from '../types/filed'
 import { isCheckBoxInput, isRadioInput } from '../utils/fieldElement'
 import { getValueAndMessage } from '../utils/transformMessage'
 import { getValidatorError } from '../utils/getValidatorError'
-
 import { isFieldElement } from '../utils/isFieldElement'
-import { InvalidDate } from '../utils/constant'
+import type { Field, FieldElement } from '../types/filed'
+import type { FieldError } from '../types/errors'
 
-export function handleValidateError(error: FieldError, shouldFocusOnError: boolean, el?: FieldElement) {
-  if (!isFieldElement(el)) {
-    return
-  }
-  if (!isEmptyObject(error) && shouldFocusOnError) {
-    el.focus()
-  }
+export function handleValidateError(
+  error: FieldError,
+  shouldFocusOnError: boolean,
+  el?: FieldElement
+) {
+  if (!isFieldElement(el)) return
+
+  if (!isEmptyObject(error) && shouldFocusOnError) el.focus()
 }
 
 export async function validateField(
   field: Field,
   shouldFocusOnError: boolean,
-  validateAllFieldCriteria: boolean,
+  validateAllFieldCriteria: boolean
 ): Promise<FieldError> {
   const inputValue = unref(field.inputValue)
 
@@ -41,9 +40,6 @@ export async function validateField(
     minLength,
     pattern,
     validate,
-    valueAsNumber,
-    valueAsDate,
-    setValueAs,
     disabled = false,
   } = field.rule
 
@@ -59,17 +55,6 @@ export async function validateField(
   let error: FieldError = {}
 
   try {
-    if (isFieldElement(el)) {
-      if (valueAsNumber) {
-        const elVal = (el as HTMLInputElement).value
-        set(field, 'inputValue', ref((el as HTMLInputElement).valueAsNumber || elVal === '' ? elVal : parseFloat(elVal)))
-      } else if (valueAsDate) {
-        set(field, 'inputValue', ref((el as HTMLInputElement).valueAsDate || InvalidDate))
-      } else if (setValueAs) {
-        set(field, 'inputValue', ref(setValueAs(unrefInputVal)))
-      }
-    }
-
     if (required && !isRadioOrCheckBox) {
       const { value, message } = getValueAndMessage(required)
 
@@ -79,8 +64,7 @@ export async function validateField(
           message,
         }
 
-        if (!validateAllFieldCriteria)
-          return error
+        if (!validateAllFieldCriteria) return error
       }
     }
 
@@ -90,17 +74,12 @@ export async function validateField(
       const { value: maxValue, message: maxMsg } = getValueAndMessage(max)
       const { value: minValue, message: minMsg } = getValueAndMessage(min)
 
-      if (!isNaN(unrefInputVal)) {
-        if (minValue && unrefInputVal < minValue)
-          exceedMin = true
-        if (maxValue && unrefInputVal > maxValue)
-          exceedMax = true
-      }
-      else {
-        if (minValue && unrefInputVal < minValue)
-          exceedMin = true
-        if (maxValue && unrefInputVal > maxValue)
-          exceedMax = true
+      if (!Number.isNaN(unrefInputVal)) {
+        if (minValue && unrefInputVal < minValue) exceedMin = true
+        if (maxValue && unrefInputVal > maxValue) exceedMax = true
+      } else {
+        if (minValue && unrefInputVal < minValue) exceedMin = true
+        if (maxValue && unrefInputVal > maxValue) exceedMax = true
       }
 
       if (exceedMax || exceedMin) {
@@ -109,8 +88,7 @@ export async function validateField(
           message: exceedMax ? maxMsg : minMsg,
         }
 
-        if (!validateAllFieldCriteria)
-          return error
+        if (!validateAllFieldCriteria) return error
       }
     }
 
@@ -120,11 +98,9 @@ export async function validateField(
       const { value: maxValue, message: maxMsg } = getValueAndMessage(maxLength)
       const { value: minValue, message: minMsg } = getValueAndMessage(minLength)
 
-      if (minValue && inputValue.length <= minValue)
-        exceedMin = true
+      if (minValue && inputValue.length <= minValue) exceedMin = true
 
-      if (maxValue && inputValue.length >= maxValue)
-        exceedMax = true
+      if (maxValue && inputValue.length >= maxValue) exceedMax = true
 
       if (exceedMax || exceedMin) {
         error = {
@@ -145,16 +121,12 @@ export async function validateField(
           message,
         }
 
-        if (!validateAllFieldCriteria)
-          return error
+        if (!validateAllFieldCriteria) return error
       }
     }
 
-    if (disabled && isFieldElement(el)) {
-      el.setAttribute('disabled', '')
-    } else if (!disabled && isFieldElement(el)) {
-      el.removeAttribute('disabled')
-    }
+    if (disabled && isFieldElement(el)) el.setAttribute('disabled', '')
+    else if (!disabled && isFieldElement(el)) el.removeAttribute('disabled')
 
     if (validate) {
       if (isFunction(validate)) {
@@ -162,22 +134,18 @@ export async function validateField(
 
         const validateResult = getValidatorError(result)
 
-        if (validateResult)
-          error = validateResult
+        if (validateResult) error = validateResult
 
-        if (!validateAllFieldCriteria)
-          return error
+        if (!validateAllFieldCriteria) return error
       } else if (isObject(validate)) {
-        for (const key in validate) {
+        for (const key of Object.keys(validate)) {
           const result = await validate[key](unrefInputVal)
 
           const validateResult = getValidatorError(result, key)
 
-          if (validateResult)
-            error = validateResult
+          if (validateResult) error = validateResult
 
-          if (!validateAllFieldCriteria)
-            return error
+          if (!validateAllFieldCriteria) return error
         }
       }
     }
@@ -187,4 +155,3 @@ export async function validateField(
 
   return error
 }
-
