@@ -19,6 +19,7 @@ import { InvalidDate } from '../utils/constant'
 import { deepEqual } from '../utils/deepEqual'
 import { isRadioOrCheckboxInput } from '../utils/fieldElement'
 import { getFormEl } from '../utils/getFormEl'
+import { getPath } from '../utils/getPath'
 import { getValidationMode } from '../utils/getValidationMode'
 import { isFieldElement } from '../utils/isFieldElement'
 
@@ -55,6 +56,7 @@ export function creatFormControl<
   type TFormStateKey = keyof TFormState
 
   const _fields = {} as Fields<TFieldValues, FieldsKey>
+  const _originalFieldsKey = new Set<string>()
 
   const _formState = reactive<TFormState>({
     isDirty: false,
@@ -98,22 +100,25 @@ export function creatFormControl<
     const paths = toPath(fieldName)
 
     if (paths.length !== 1) {
-      let error: any = _formState.errors
-      for (const path of paths.slice(0, -1)) {
-        error = error[path]
-      }
+      const error = getPath(fieldName as string, _formState.errors, -1)
       unset(error, paths.at(-1))
     } else {
       unset(_formState.errors, fieldName)
     }
   }
 
+  const _getField = (name: FieldsKey) => {
+    return getPath(name as string, _fields) as Field | undefined
+  }
+
   const _setFields = (name: FieldsKey, fieldOptions: Partial<Field>) => {
     // init field
-    const field = get(_fields, name)
-    if (isNullOrUndefined(field)) set(_fields, name, {})
+    const field = _getField(name)
+    if (isNullOrUndefined(field)) {
+      setWith(_fields, name, {})
+    }
 
-    set(_fields, name, { ...field, ...fieldOptions })
+    setWith(_fields, name, { ...field, ...fieldOptions })
   }
 
   const _getDefaultValue = (field: FieldsKey) => {
@@ -124,11 +129,11 @@ export function creatFormControl<
     _setFormState({ isValidating })
 
   const _getFieldDom = (name: FieldsKey) => {
-    return _fields[name].el.value as FieldElement | undefined
+    return _getField(name).el.value as FieldElement | undefined
   }
 
   const _isDirtyField = (fieldName: FieldsKey) => {
-    const field = _fields[fieldName]
+    const field = _getField(fieldName)
 
     if (!field) {
       return false
@@ -156,14 +161,14 @@ export function creatFormControl<
   const _getDirtyFields = (handleIsDirty = true) => {
     const dirtyFields = {} as TFormState['dirtyFields']
 
-    Object.keys(_fields).forEach((key) => {
+    for (const key of _originalFieldsKey.keys()) {
       if (_isDirtyField(key)) {
         set(dirtyFields, key, true)
       } else {
         unset(dirtyFields, key)
-        _fields[key].isDirty = false
+        _getField(key).isDirty = false
       }
-    })
+    }
 
     if (handleIsDirty) {
       _setFormState({
@@ -175,10 +180,14 @@ export function creatFormControl<
   }
 
   const _handleDirtyField = (fieldName: FieldsKey) => {
-    if (_fields[fieldName].isUnregistered) return
+    const field = _getField(fieldName)
+
+    if (field.isUnregistered) {
+      return
+    }
 
     const defaultVal = get(_defaultValues, fieldName as string)
-    const val = _fields[fieldName].inputValue.value
+    const val = field.inputValue.value
 
     if (deepEqual(defaultVal, val)) {
       _setFields(fieldName, {
@@ -196,9 +205,9 @@ export function creatFormControl<
     fieldNames?: FieldsKey | FieldsKey[]
   ) => {
     if (isUndefined(fieldNames)) {
-      Object.keys(_fields).forEach((fieldName) => {
+      for (const fieldName of _originalFieldsKey.keys()) {
         _handleDirtyField(fieldName)
-      })
+      }
     } else if (!isArray(fieldNames)) {
       fieldNames = [fieldNames]
 
@@ -223,7 +232,7 @@ export function creatFormControl<
     fieldName: FieldsKey,
     isValidateAllFields = false
   ) => {
-    const field = _fields[fieldName]
+    const field = _getField(fieldName)
 
     if (isEmptyObject(_fields) || isNullOrUndefined(field)) {
       return
@@ -289,7 +298,7 @@ export function creatFormControl<
     if (
       isFunction(resolver) &&
       isEmptyObject(res) &&
-      !isEmptyObject(_fields[fieldName].rule)
+      !isEmptyObject(_getField(fieldName).rule)
     )
       res = await validateField(
         field,
@@ -317,7 +326,7 @@ export function creatFormControl<
 
   const _validateAllFields = async () => {
     _setValidating(true)
-    for (const fieldName of Object.keys(_fields))
+    for (const fieldName of _originalFieldsKey.keys())
       await _validate(fieldName, true)
 
     _setValidating(false)
@@ -354,13 +363,14 @@ export function creatFormControl<
     }
 
     Object.entries(values).forEach(([key, val]) => {
-      const el = _fields[key].el.value
+      const field = _getField(key)
+      const el = field.el.value
 
       if (!keepStateOptions.keepDefaultValues) {
         _formState.defaultValues[key as keyof TFieldValues] = val
       }
       if (!keepStateOptions.keepValues) {
-        _fields[key].inputValue.value = val
+        field.inputValue.value = val
       }
       if (isRadioOrCheckboxInput(el)) {
         el.checked = val
@@ -418,8 +428,8 @@ export function creatFormControl<
       }
 
       const res: Record<string, any> = {}
-      for (const fieldName of Object.keys(_fields)) {
-        res[fieldName] = _fields[fieldName].inputValue
+      for (const fieldName of _originalFieldsKey.keys()) {
+        res[fieldName] = _getField(fieldName).inputValue
       }
 
       await onSubmit(_fields as UnpackNestedValue<TFieldValues>, e)
@@ -439,7 +449,7 @@ export function creatFormControl<
     _setFormStateError(fieldName, {
       message: '',
       ...error,
-      el: _fields[fieldName].el,
+      el: _getField(fieldName).el,
     } as FieldError)
 
     _setFormState({
@@ -466,7 +476,21 @@ export function creatFormControl<
   }
 
   const _setFieldsValue = (name: FieldsKey, value: TFieldValues[FieldsKey]) => {
-    _fields[name].inputValue.value = value
+    const field = _getField(name)
+    const el = field.el.value
+
+    field.inputValue.value = value
+
+    if (isRadioOrCheckboxInput(el)) {
+      el.checked = value
+    }
+  }
+
+  const _setField = (name: FieldsKey, options: TFieldValues[FieldsKey]) => {
+    setWith(_fields, name, {
+      ..._getField(name),
+      ..._options,
+    })
   }
 
   const setValue: UseFormSetValue<TFieldValues, FieldsKey> = async (
@@ -474,7 +498,7 @@ export function creatFormControl<
     value,
     config = {}
   ) => {
-    if (isNullOrUndefined(_fields[name])) {
+    if (isNullOrUndefined(_getField(name))) {
       warn(`setValue cannot set not exist field #${name as string}`)
       return
     }
@@ -487,9 +511,13 @@ export function creatFormControl<
 
     _setFieldsValue(name, value)
 
-    if (config.shouldDirty) _handleAllDirtyFieldsOperate(name)
+    if (config.shouldDirty) {
+      _handleAllDirtyFieldsOperate(name)
+    }
 
-    if (config.shouldValidate) await trigger(name)
+    if (config.shouldValidate) {
+      await trigger(name)
+    }
   }
 
   const setFocus: UseFormSetFocus<TFieldValues> = (name) =>
@@ -503,14 +531,14 @@ export function creatFormControl<
     const res: GetValuesReturn<FieldValues, FieldsKey> = {}
 
     if (isUndefined(fieldNames)) {
-      Object.entries(_fields).forEach(([name, field]) => {
-        set(res, name, field.inputValue.value)
-      })
+      for (const name of _originalFieldsKey.keys()) {
+        set(res, name, _getField(name).inputValue.value)
+      }
     } else {
       if (!isArray(fieldNames)) fieldNames = [fieldNames]
 
       fieldNames.forEach((name) => {
-        set(res, name as string, _fields[name].inputValue.value)
+        set(res, name as string, _getField(name).inputValue.value)
       })
     }
 
@@ -532,9 +560,10 @@ export function creatFormControl<
     if (isUndefined(options)) {
       options = {}
     }
+    _originalFieldsKey.add(fieldName)
 
     let isModelValue = false
-    let field = get(_fields, fieldName)
+    let field = _getField(fieldName)
 
     const { vModelBinding = 'modelValue' } = options
 
@@ -557,23 +586,23 @@ export function creatFormControl<
         isUnregistered: false,
         el: ref(null),
       })
-      field = get(_fields, fieldName)
+      field = _getField(fieldName)
 
       nextTick(() => {
         const el = field.el.value
-        if (el instanceof HTMLElement && isRadioOrCheckboxInput(el)) {
+        if (el instanceof HTMLInputElement && isRadioOrCheckboxInput(el)) {
           el.checked = defaultVal === '' ? false : defaultVal
         }
       })
     }
 
     const addEventListenerToElement = () => {
-      if (isFieldElement(field.el) || _fields[fieldName].isUnregistered) {
+      if (isFieldElement(field.el) || field.isUnregistered) {
         return
       }
 
       const el = getFormEl(field.el)
-      _fields[fieldName].el.value = el
+      field.el.value = el
 
       if (isRadioOrCheckboxInput(el)) {
         set(_defaultValues, fieldName as string, !!defaultVal)
@@ -604,12 +633,12 @@ export function creatFormControl<
 
     return {
       // avoid rebinding ref
-      ...(!isFieldElement(field.el) && { ref: _fields[fieldName].el }),
+      ...(!isFieldElement(field.el) && { ref: field.el }),
 
       ...(vModelBinding === 'modelValue' && {
         value: field.inputValue.value,
         onInput: (e) => {
-          if (_fields[fieldName].isUnregistered) return
+          if (field.isUnregistered) return
 
           addEventListenerToElement()
           queueMicrotask(() => {
@@ -622,7 +651,7 @@ export function creatFormControl<
 
       [vModelBinding]: field.inputValue.value,
       [`onUpdate:${vModelBinding}`]: (input: any) => {
-        if (_fields[fieldName].isUnregistered) return
+        if (field.isUnregistered) return
 
         isModelValue = true
         addEventListenerToElement()
@@ -635,7 +664,7 @@ export function creatFormControl<
     fieldName,
     options = {}
   ) => {
-    if (isNullOrUndefined(_fields[fieldName])) {
+    if (isNullOrUndefined(_getField(fieldName))) {
       warn(`cannot unregister not exist field #${fieldName as string}`)
       return
     }
@@ -662,11 +691,13 @@ export function creatFormControl<
       )
     }
 
-    set(_fields[fieldName as string], 'isUnregistered', true)
+    _setFields(fieldName, {
+      isUnregistered: true,
+    })
   }
 
   const isExistInErrors = (fieldName: keyof TFieldValues) =>
-    Object.keys(_formState.errors).includes(fieldName as string)
+    !isEmptyObject(getPath(fieldName as string, _formState.errors))
 
   return {
     control: {
