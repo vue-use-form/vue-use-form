@@ -10,7 +10,7 @@
     "build": "pnpm run --filter=\"./packages/*\" --parallel build",
     "lint": "eslint --cache .",
     "play:build": "pnpm i && npm run build && cd playground && npm run build",
-    "play:dev": "npm run core:build && cd playground && npm run dev",
+    "play:dev": "pnpm run -C ./playground dev",
     "release": "bumpp && npm publish",
     "test": "vitest"
   },
@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.21.1",
+    "@sxzz/eslint-config": "^2.4.4",
     "@types/jest": "^27.4.1",
     "@types/node": "^17.0.23",
     "@vitejs/plugin-vue": "^3.0.1",
@@ -34,6 +35,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "eslint": "8.15.0",
+    "eslint-define-config": "^1.11.0",
     "eslint-plugin-jest": "^26.1.4",
     "esno": "^0.14.1",
     "fast-glob": "^3.2.11",

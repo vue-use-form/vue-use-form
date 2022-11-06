@@ -11,35 +11,36 @@
     "vue-use-form"
   ],
   "license": "MIT",
-  "author": "snowingfox",
   "repository": {
     "url": "https://github.com/vue-use-form/vue-use-form"
   },
-  "main": "./dist/index.cjs",
+  "author": "snowingfox",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/index.cjs",
+      "require": "./dist/index.js",
       "import": "./dist/index.mjs"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch src"
+    "dev": "tsup --watch src",
+    "build": "tsup"
   },
   "peerDependencies": {
     "vue": ">=3.0.0"
   },
-  "devDependencies": {
-    "@types/lodash": "^4.14.186",
-    "@types/lodash.setwith": "^4.3.7",
-    "tsup": "^5.12.9"
-  },
   "dependencies": {
-    "lodash.setwith": "^4.3.2"
+    "lodash.setwith": "^4.3.2",
+    "lodash.topath": "^4.5.2"
+  },
+  "devDependencies": {
+    "@types/lodash.setwith": "^4.3.7",
+    "@types/lodash.topath": "^4.5.7",
+    "tsup": "^5.12.9"
   }
 }
