@@ -1,5 +1,6 @@
 import { nextTick, reactive, ref, toRefs, unref } from 'vue'
 import setWith from 'lodash.setwith'
+import toPath from 'lodash.topath'
 import { VALIDATION_MODE } from '../shared/constant'
 import {
   get,
@@ -90,7 +91,21 @@ export function creatFormControl<
     fieldName ? get(_formState.errors, fieldName) : _formState.errors
 
   const _removeFormStateError = (fieldName: FieldsKey) => {
-    unset(_formState.errors, fieldName)
+    if (isEmptyObject(_formState.errors)) {
+      return
+    }
+
+    const paths = toPath(fieldName)
+
+    if (paths.length !== 1) {
+      let error: any = _formState.errors
+      for (const path of paths.slice(0, -1)) {
+        error = error[path]
+      }
+      unset(error, paths.at(-1))
+    } else {
+      unset(_formState.errors, fieldName)
+    }
   }
 
   const _setFields = (name: FieldsKey, fieldOptions: Partial<Field>) => {
@@ -102,31 +117,51 @@ export function creatFormControl<
   }
 
   const _getDefaultValue = (field: FieldsKey) => {
-    return _defaultValues[field as string]
+    return _defaultValues[field]
   }
 
   const _setValidating = (isValidating: boolean) =>
     _setFormState({ isValidating })
 
-  const _getFieldProp = (name: FieldsKey, prop: keyof Field) => {
-    return get(_fields[name], prop)
+  const _getFieldDom = (name: FieldsKey) => {
+    return _fields[name].el.value as FieldElement | undefined
   }
 
-  const _getFieldDom = (name: FieldsKey) => {
-    return _getFieldProp(name, 'el') as FieldElement | undefined
+  const _isDirtyField = (fieldName: FieldsKey) => {
+    const field = _fields[fieldName]
+
+    if (!field) {
+      return false
+    }
+
+    const inputVal = field.inputValue.value
+    const defaultVal = _getDefaultValue(fieldName)
+    const el = field.el.value
+
+    if (!isUndefined(defaultVal)) {
+      if (isRadioOrCheckboxInput(el)) {
+        return inputVal !== defaultVal && el.checked !== defaultVal
+      } else {
+        return inputVal !== defaultVal
+      }
+    }
+
+    if (isRadioOrCheckboxInput(el)) {
+      return inputVal !== el.checked
+    } else {
+      return inputVal !== ''
+    }
   }
 
   const _getDirtyFields = (handleIsDirty = true) => {
     const dirtyFields = {} as TFormState['dirtyFields']
 
-    Object.entries(_fields).forEach(([key, val]) => {
-      if (
-        val.isDirty ||
-        (_getDefaultValue(key) &&
-          val.inputValue.value !== _getDefaultValue(key)) ||
-        val.inputValue.value !== ''
-      ) {
+    Object.keys(_fields).forEach((key) => {
+      if (_isDirtyField(key)) {
         set(dirtyFields, key, true)
+      } else {
+        unset(dirtyFields, key)
+        _fields[key].isDirty = false
       }
     })
 
@@ -293,6 +328,7 @@ export function creatFormControl<
   }
 
   const _onChange = async (name?: FieldsKey) => {
+    _getDirtyFields()
     await trigger(name)
 
     _handleIsValidFields()
@@ -318,13 +354,23 @@ export function creatFormControl<
     }
 
     Object.entries(values).forEach(([key, val]) => {
-      _fields[key].inputValue.value = val
+      const el = _fields[key].el.value
+
+      if (!keepStateOptions.keepDefaultValues) {
+        _formState.defaultValues[key as keyof TFieldValues] = val
+      }
+      if (!keepStateOptions.keepValues) {
+        _fields[key].inputValue.value = val
+      }
+      if (isRadioOrCheckboxInput(el)) {
+        el.checked = val
+      }
     })
 
     const dirtyFields = _getDirtyFields(false)
 
     if (!keepStateOptions) {
-      keepStateOptions = {} as any
+      keepStateOptions = {}
     }
 
     _setFormState({
@@ -335,12 +381,13 @@ export function creatFormControl<
         ? _formState.submitCount
         : 0,
       errors: keepStateOptions!.keepErrors ? _formState.errors : {},
-      isDirty: keepStateOptions!.keepDirty
+      isDirty: keepStateOptions.keepDirtyValues
         ? _formState.isDirty
         : !isEmptyObject(dirtyFields),
-      dirtyFields: keepStateOptions!.keepDirty
-        ? _formState.dirtyFields
-        : dirtyFields,
+      dirtyFields:
+        keepStateOptions!.keepDirty || keepStateOptions.keepDirtyValues
+          ? _formState.dirtyFields
+          : dirtyFields,
       isSubmitting: false,
       isSubmitSuccessful: false,
       isValid: keepStateOptions!.keepIsValid ? _formState.isValid : false,
@@ -384,24 +431,33 @@ export function creatFormControl<
     }
   }
 
-  const setError: UseFormSetError<FieldsKey> = (fieldName, error, config) => {
-    if (!config) {
-      config = {
-        shouldFocusError: true,
-      }
-    }
+  const setError: UseFormSetError<FieldsKey> = (
+    fieldName,
+    error,
+    config = { shouldFocusError: true }
+  ) => {
+    _setFormStateError(fieldName, {
+      message: '',
+      ...error,
+      el: _fields[fieldName].el,
+    } as FieldError)
 
-    _setFormStateError(fieldName, error)
+    _setFormState({
+      isValid: false,
+    })
 
-    if (config.shouldFocusError)
+    if (config.shouldFocusError) {
       handleValidateError(error, true, _getFieldDom(fieldName))
+    }
   }
 
   const clearErrors: UseFormClearErrors<FieldsKey> = (fieldName) => {
     if (isUndefined(fieldName)) {
       set(_formState, 'errors', {})
     } else {
-      if (!isArray(fieldName)) fieldName = [fieldName]
+      if (!isArray(fieldName)) {
+        fieldName = [fieldName]
+      }
 
       fieldName.forEach((name) => {
         _removeFormStateError(name)
@@ -473,7 +529,9 @@ export function creatFormControl<
     fieldName,
     options?: RegisterOptions
   ) => {
-    if (isUndefined(options)) options = {}
+    if (isUndefined(options)) {
+      options = {}
+    }
 
     let isModelValue = false
     let field = get(_fields, fieldName)
@@ -499,8 +557,14 @@ export function creatFormControl<
         isUnregistered: false,
         el: ref(null),
       })
-
       field = get(_fields, fieldName)
+
+      nextTick(() => {
+        const el = field.el.value
+        if (el instanceof HTMLElement && isRadioOrCheckboxInput(el)) {
+          el.checked = defaultVal === '' ? false : defaultVal
+        }
+      })
     }
 
     const addEventListenerToElement = () => {
@@ -509,13 +573,11 @@ export function creatFormControl<
       }
 
       const el = getFormEl(field.el)
-      _setFields(fieldName, { ..._fields[fieldName], el })
+      _fields[fieldName].el.value = el
 
       if (isRadioOrCheckboxInput(el)) {
         set(_defaultValues, fieldName as string, !!defaultVal)
       }
-
-      set(_defaultValues, fieldName as string, defaultVal)
 
       // bind validate mode
       if (isFieldElement(el)) {
@@ -596,7 +658,7 @@ export function creatFormControl<
     if (!options.keepValue) {
       _setFieldsValue(
         fieldName as string,
-        _defaultValues[fieldName as string] || ''
+        _defaultValues[fieldName] || ('' as any)
       )
     }
 

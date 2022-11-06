@@ -22,7 +22,7 @@ export type FieldNamesMarkedBoolean<TFieldValues extends FieldValues> = DeepMap<
 export interface UseFormProps<TFieldValues extends object> {
   mode: Mode
   reValidateMode: Exclude<Mode, 'onTouched' | 'all'>
-  defaultValues: DefaultValues<TFieldValues>
+  defaultValues: Partial<DefaultValues<TFieldValues>>
   resolver: Resolver<TFieldValues>
   shouldFocusError: boolean
   shouldUnregister: boolean
@@ -186,6 +186,6 @@ export interface FormState<TFieldValues> {
   isSubmitting: boolean
   isValidating: boolean
   isValid: boolean
-  defaultValues: Partial<DefaultValues<TFieldValues>>
+  defaultValues: DefaultValues<TFieldValues>
   errors: FieldErrors<TFieldValues>
 }

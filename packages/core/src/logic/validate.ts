@@ -20,9 +20,13 @@ export function handleValidateError(
   shouldFocusOnError: boolean,
   el?: FieldElement
 ) {
-  if (!isFieldElement(el)) return
+  if (!isFieldElement(el)) {
+    return
+  }
 
-  if (!isEmptyObject(error) && shouldFocusOnError) el.focus()
+  if (!isEmptyObject(error) && shouldFocusOnError) {
+    el.focus()
+  }
 }
 
 export async function validateField(

@@ -4,11 +4,14 @@ import type { FieldError } from './errors'
 
 export type FieldValues = Record<string, any>
 
-export type FieldElement = HTMLInputElement| HTMLSelectElement | HTMLTextAreaElement
+export type FieldElement =
+  | HTMLInputElement
+  | HTMLSelectElement
+  | HTMLTextAreaElement
 
 export interface Field {
   inputValue: Ref
-  el: FieldElement
+  el: Ref<FieldElement>
   rule: RegisterOptions
   isDirty: boolean
   isUnregistered: boolean
@@ -21,5 +24,7 @@ export interface FieldState {
   error?: FieldError
 }
 
-export type Fields<FieldValues extends object, FieldKeys extends keyof FieldValues> = Record<FieldKeys, Field>
-
+export type Fields<
+  FieldValues extends object,
+  FieldKeys extends keyof FieldValues
+> = Record<FieldKeys, Field>
