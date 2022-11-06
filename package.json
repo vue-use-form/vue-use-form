@@ -4,6 +4,7 @@
   "description": "Some composables form validator for vue",
   "license": "MIT",
   "author": "Snowingfox",
+  "packageManager": "pnpm@7.4.0",
   "main": "index.js",
   "scripts": {
     "dev": "pnpm run --filter=\"./packages/*\" --parallel dev",
