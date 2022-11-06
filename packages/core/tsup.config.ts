@@ -1,3 +1,9 @@
 import build from '../../scripts/build'
+import type { Options } from 'tsup'
 
-export default build
+export default <Options>{
+  ...build,
+  entryPoints: [
+    'src/index.ts',
+  ],
+}
