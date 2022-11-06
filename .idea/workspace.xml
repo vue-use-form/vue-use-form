@@ -1,25 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="81a696ad-c55d-42c6-a121-24a9c08c9956" name="Changes" comment=":zap: improve DX">
-      <change afterPath="$PROJECT_DIR$/.eslintrc.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.prettierignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.prettierrc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.eslintrc" beforeDir="false" />
+    <list default="true" id="81a696ad-c55d-42c6-a121-24a9c08c9956" name="Changes" comment=":white_check_mark: add tests">
+      <change afterPath="$PROJECT_DIR$/packages/core/src/utils/getPath.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/utils.test.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/core/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/core/src/logic/creatFormControl.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/src/logic/creatFormControl.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/core/src/logic/validate.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/src/logic/validate.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/core/src/types/errors.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/src/types/errors.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/core/src/types/filed.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/src/types/filed.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/core/src/types/form.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/src/types/form.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/core/src/types/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/src/types/utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/core/src/useForm.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/src/useForm.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/core/tsup.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/tsup.config.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/components/Login.vue" beforeDir="false" afterPath="$PROJECT_DIR$/test/components/Login.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/core.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/test/core.test.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vitest.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/vitest.config.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -63,6 +52,7 @@
     "node.js.detected.package.standard": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.standard": "",
+    "nodejs.jest.jest_package": "D:/Dev/fork/vue-use-form/node_modules/jest",
     "nodejs_package_manager_path": "pnpm",
     "prettierjs.PrettierConfiguration.Package": "D:\\Dev\\fork\\vue-use-form\\node_modules\\prettier",
     "settings.editor.selected.configurable": "settings.javascript.prettier",
@@ -75,19 +65,32 @@
       <recent name="D:\Dev\vue-use-form\playground\src\pages\class-validator" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.play:dev">
-    <configuration name="build (1)" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/package.json" />
+  <component name="RunManager" selected="Jest.getPath">
+    <configuration name="getPath" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <node-options value="" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/test/utils.test.ts" />
+      <test-names>
+        <test-name value="getPath" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="dev (1)" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/playground/package.json" />
       <command value="run" />
       <scripts>
-        <script value="build" />
+        <script value="dev" />
       </scripts>
       <node-interpreter value="project" />
       <envs />
       <method v="2" />
     </configuration>
-    <configuration name="dev (1)" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/playground/package.json" />
+    <configuration name="dev (2)" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
       <scripts>
         <script value="dev" />
@@ -116,23 +119,13 @@
       <envs />
       <method v="2" />
     </configuration>
-    <configuration name="release" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="release" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Jest.getPath" />
+        <item itemvalue="npm.dev (2)" />
         <item itemvalue="npm.play:dev" />
         <item itemvalue="npm.dev" />
         <item itemvalue="npm.dev (1)" />
-        <item itemvalue="npm.release" />
-        <item itemvalue="npm.build (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -184,13 +177,7 @@
       <workItem from="1667275307850" duration="10043000" />
       <workItem from="1667536465288" duration="6494000" />
       <workItem from="1667726849814" duration="9964000" />
-    </task>
-    <task id="LOCAL-00011" summary=":memo: update doc">
-      <created>1653405761091</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1653405761091</updated>
+      <workItem from="1667742730418" duration="3738000" />
     </task>
     <task id="LOCAL-00012" summary=":clapper: add class-validator demo">
       <created>1653456571294</created>
@@ -528,7 +515,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667555170923</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary=":zap: use ci">
+      <created>1667746539706</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1667746539706</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -546,8 +540,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value=":sparkles: setup yup resolver" />
-    <MESSAGE value=":sparkles: setup tsconfig" />
     <MESSAGE value=":racehorse: better type support" />
     <MESSAGE value=":fire: fix type err" />
     <MESSAGE value=":sparkles: make sure to get real dom" />
@@ -571,7 +563,9 @@
     <MESSAGE value=":zap: change build package" />
     <MESSAGE value=":fire: fix some bugs" />
     <MESSAGE value=":zap: improve DX" />
-    <option name="LAST_COMMIT_MESSAGE" value=":zap: improve DX" />
+    <MESSAGE value=":zap: use ci" />
+    <MESSAGE value=":white_check_mark: add tests" />
+    <option name="LAST_COMMIT_MESSAGE" value=":white_check_mark: add tests" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
