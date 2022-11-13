@@ -10,6 +10,7 @@
     "dev": "pnpm run --filter=\"./packages/*\" --parallel dev",
     "build": "pnpm run --filter=\"./packages/*\" --parallel build",
     "lint": "eslint --cache .",
+    "typecheck": "tsc --noEmit",
     "play:build": "pnpm i && npm run build && cd playground && npm run build",
     "play:dev": "pnpm run -C ./playground dev",
     "release": "bumpp && npm publish",
