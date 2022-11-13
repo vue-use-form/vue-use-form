@@ -9,18 +9,15 @@ import {
   isFunction,
   isNullOrUndefined,
   isNumber,
-  isObject,
   isString,
   isUndefined,
 } from '../utils'
 import { InvalidDate } from '../utils/constant'
-
 import { deepEqual } from '../utils/deepEqual'
 import { isRadioOrCheckboxInput } from '../utils/fieldElement'
 import { getFormEl } from '../utils/getFormEl'
 import { getValidationMode } from '../utils/getValidationMode'
 import { isFieldElement } from '../utils/isFieldElement'
-
 import { warn } from '../utils/warn'
 import { handleValidateError, validateField } from './validate'
 import type { RegisterOptions } from '../types/validator'
@@ -78,11 +75,9 @@ export function creatFormControl<
     _options.criteriaMode === VALIDATION_MODE.all
 
   const _setFormState = (props: { [K in TFormStateKey]?: TFormState[K] }) => {
-    Object.entries(props).forEach(([key, val]) => {
-      if (isObject(_formState[key])) {
-        _formState[key] = val
-      }
-    })
+    for (const [key, val] of Object.entries(props)) {
+      _formState[key] = val
+    }
   }
 
   const _setFormStateError = (fieldName: FieldsKey, error: FieldError) => {
@@ -91,6 +86,16 @@ export function creatFormControl<
 
   const _getFormStateError = (fieldName?: FieldsKey) =>
     fieldName ? get(_formState.errors, fieldName) : _formState.errors
+
+  const isEmptyErrors = () => {
+    for (const key of _originalFieldsKey.keys()) {
+      if (_getFormStateError(key as FieldsKey)) {
+        return false
+      }
+    }
+
+    return true
+  }
 
   const _removeFormStateError = (fieldName: FieldsKey) => {
     if (isEmptyObject(_formState.errors)) {
@@ -151,6 +156,16 @@ export function creatFormControl<
     }
   }
 
+  const isDirty = () => {
+    for (const key of _originalFieldsKey.keys()) {
+      if (_isDirtyField(key as FieldsKey)) {
+        return true
+      }
+    }
+
+    return false
+  }
+
   const _getDirtyFields = (handleIsDirty = true) => {
     const dirtyFields = {} as TFormState['dirtyFields']
 
@@ -165,7 +180,7 @@ export function creatFormControl<
 
     if (handleIsDirty) {
       _setFormState({
-        isDirty: !isEmptyObject(dirtyFields),
+        isDirty: isDirty(),
       })
     }
 
@@ -410,7 +425,7 @@ export function creatFormControl<
       await _onChange()
       _handleAllDirtyFieldsOperate()
 
-      if (!isEmptyObject(_formState.errors) && isFunction(onError)) {
+      if (!isEmptyErrors() && isFunction(onError)) {
         await onError(_formState.errors, e)
         _setFormState({
           isSubmitting: false,
