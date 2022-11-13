@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
-import { isArray, set } from '../utils'
+import set from 'lodash.setwith'
+import { isArray } from '../utils'
 import type {
   UseFieldArrayAppend,
   UseFieldArrayField,

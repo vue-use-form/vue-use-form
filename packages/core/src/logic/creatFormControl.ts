@@ -1,25 +1,23 @@
 import { nextTick, reactive, ref, toRefs, unref } from 'vue'
-import setWith from 'lodash.setwith'
-import toPath from 'lodash.topath'
+import set from 'lodash.setwith'
+import get from 'lodash.get'
+import unset from 'lodash.unset'
 import { VALIDATION_MODE } from '../shared/constant'
 import {
-  get,
   isArray,
   isEmptyObject,
   isFunction,
   isNullOrUndefined,
   isNumber,
+  isObject,
   isString,
   isUndefined,
-  set,
-  unset,
 } from '../utils'
 import { InvalidDate } from '../utils/constant'
 
 import { deepEqual } from '../utils/deepEqual'
 import { isRadioOrCheckboxInput } from '../utils/fieldElement'
 import { getFormEl } from '../utils/getFormEl'
-import { getPath } from '../utils/getPath'
 import { getValidationMode } from '../utils/getValidationMode'
 import { isFieldElement } from '../utils/isFieldElement'
 
@@ -81,12 +79,14 @@ export function creatFormControl<
 
   const _setFormState = (props: { [K in TFormStateKey]?: TFormState[K] }) => {
     Object.entries(props).forEach(([key, val]) => {
-      _formState[key] = val
+      if (isObject(_formState[key])) {
+        _formState[key] = val
+      }
     })
   }
 
   const _setFormStateError = (fieldName: FieldsKey, error: FieldError) => {
-    setWith(_formState.errors, fieldName, error)
+    set(_formState.errors, fieldName, error)
   }
 
   const _getFormStateError = (fieldName?: FieldsKey) =>
@@ -97,28 +97,21 @@ export function creatFormControl<
       return
     }
 
-    const paths = toPath(fieldName)
-
-    if (paths.length !== 1) {
-      const error = getPath(fieldName as string, _formState.errors, -1)
-      unset(error, paths.at(-1))
-    } else {
-      unset(_formState.errors, fieldName)
-    }
+    unset(_formState.errors, fieldName)
   }
 
   const _getField = (name: FieldsKey) => {
-    return getPath(name as string, _fields) as Field | undefined
+    return get(_fields, name)
   }
 
   const _setFields = (name: FieldsKey, fieldOptions: Partial<Field>) => {
     // init field
     const field = _getField(name)
     if (isNullOrUndefined(field)) {
-      setWith(_fields, name, {})
+      set(_fields, name, {})
     }
 
-    setWith(_fields, name, { ...field, ...fieldOptions })
+    set(_fields, name, { ...field, ...fieldOptions })
   }
 
   const _getDefaultValue = (field: FieldsKey) => {
@@ -186,7 +179,7 @@ export function creatFormControl<
       return
     }
 
-    const defaultVal = get(_defaultValues, fieldName as string)
+    const defaultVal = get(_defaultValues, fieldName)
     const val = field.inputValue.value
 
     if (deepEqual(defaultVal, val)) {
@@ -486,13 +479,6 @@ export function creatFormControl<
     }
   }
 
-  const _setField = (name: FieldsKey, options: TFieldValues[FieldsKey]) => {
-    setWith(_fields, name, {
-      ..._getField(name),
-      ..._options,
-    })
-  }
-
   const setValue: UseFormSetValue<TFieldValues, FieldsKey> = async (
     name,
     value,
@@ -569,7 +555,7 @@ export function creatFormControl<
 
     const defaultVal =
       options?.value ||
-      get(_defaultValues, fieldName as string) ||
+      get(_defaultValues, fieldName) ||
       get(
         _fieldArrayDefaultValues,
         (fieldName as string)
@@ -697,7 +683,7 @@ export function creatFormControl<
   }
 
   const isExistInErrors = (fieldName: keyof TFieldValues) =>
-    !isEmptyObject(getPath(fieldName as string, _formState.errors))
+    !isEmptyObject(get(_formState.errors, fieldName))
 
   return {
     control: {

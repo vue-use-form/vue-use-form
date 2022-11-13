@@ -35,12 +35,14 @@
     "vue": ">=3.0.0"
   },
   "dependencies": {
+    "lodash.get": "^4.4.2",
     "lodash.setwith": "^4.3.2",
-    "lodash.topath": "^4.5.2"
+    "lodash.unset": "^4.5.2"
   },
   "devDependencies": {
+    "@types/lodash.get": "^4.4.7",
     "@types/lodash.setwith": "^4.3.7",
-    "@types/lodash.topath": "^4.5.7",
+    "@types/lodash.unset": "^4.5.7",
     "tsup": "^5.12.9"
   }
 }
