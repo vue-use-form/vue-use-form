@@ -8,6 +8,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm run --filter=\"./packages/*\" --parallel dev",
+    "dev:core": "pnpm run --filter=\"./packages/core\" --parallel dev",
     "build": "pnpm run --filter=\"./packages/*\" --parallel build",
     "lint": "eslint --cache .",
     "typecheck": "tsc --noEmit",
