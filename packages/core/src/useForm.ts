@@ -18,3 +18,12 @@ export function useForm<TFieldValues extends FieldValues = FieldValues>(
     ...creatFormControl<TFieldValues>(props as UseFormProps<TFieldValues>),
   }
 }
+
+// const { register, handleSubmit, formState, isExistInErrors } = useForm<{
+//   user: {
+//     name: string
+//     data: { value: { data: string }[] }
+//   }
+// }>()
+//
+// register('user.data[0].value[0].data')

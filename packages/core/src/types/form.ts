@@ -9,6 +9,7 @@ import type {
 } from './utils'
 import type { FieldError, FieldErrors } from './errors'
 import type { RegisterOptions } from './validator'
+import type { FieldPath } from './path'
 
 export type Mode = 'onSubmit' | 'onBlur' | 'onChange' | 'onTouched' | 'all'
 
@@ -18,6 +19,12 @@ export type FieldNamesMarkedBoolean<TFieldValues extends FieldValues> = DeepMap<
   DeepPartial<TFieldValues>,
   boolean
 >
+
+declare const $NestedValue: unique symbol
+
+export type NestedValue<TValue extends object = object> = {
+  [$NestedValue]: never
+} & TValue
 
 export interface UseFormProps<TFieldValues extends object> {
   mode: Mode
@@ -104,6 +111,18 @@ export type UseFormTriggerValidate<FieldKeys> = (
   fieldNames?: FieldKeys | FieldKeys[]
 ) => Promise<void>
 
+export type UseFormResetField<TFieldValues extends FieldValues> = <
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>(
+  name: TFieldName,
+  options?: Partial<{
+    keepDirty: boolean
+    keepTouched: boolean
+    keepError: boolean
+    defaultValue: any
+  }>
+) => void
+
 export type UseFormReset<TFieldValues extends FieldValues> = (
   values?:
     | DefaultValues<TFieldValues>
@@ -137,30 +156,33 @@ export interface UseFormRegisterReturn<
 }
 
 // TODO solve register returnType problem
-export interface UseFormRegister<T extends FieldValues> {
-  (name: keyof T, options?: RegisterOptions): any // UseFormRegisterReturn<T[K]>
-  (name: string, options?: RegisterOptions): any // UseFormRegisterReturn<T[K]>
-}
+export type UseFormRegister<TFieldValues extends FieldValues> = <
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>(
+  name: TFieldName,
+  options?: RegisterOptions<TFieldValues, TFieldName>
+) => any // UseFormRegisterReturn<TFieldName>
 
-export type UseFormSetFocus<FieldValues> = (name: keyof FieldValues) => void
+export type UseFormSetFocus<FieldName> = (name: FieldName) => void
 
-export type UseFormIsExistInErrors<FieldValues> = (
-  name: keyof FieldValues
-) => boolean
+export type UseFormIsExistInErrors<FieldName> = (name: FieldName) => boolean
 
-export interface UseFormHandlers<TFieldValues, FieldName = keyof TFieldValues> {
+export interface UseFormHandlers<
+  TFieldValues extends FieldValues,
+  FieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> {
   getValues: UseFormGetValues<TFieldValues, FieldName>
   getFieldState: UseFormGetFieldState<FieldName>
   setError: UseFormSetError<FieldName>
   clearErrors: UseFormClearErrors<FieldName>
-  setValue: UseFormSetValue<TFieldValues, keyof TFieldValues>
+  setValue: UseFormSetValue<TFieldValues, FieldName>
   triggerValidate: UseFormTriggerValidate<FieldName>
   reset: UseFormReset<TFieldValues>
   handleSubmit: UseFormHandleSubmit<TFieldValues>
   unregister: UseFormUnregister<TFieldValues>
   register: UseFormRegister<TFieldValues>
-  setFocus: UseFormSetFocus<TFieldValues>
-  isExistInErrors: UseFormIsExistInErrors<TFieldValues>
+  setFocus: UseFormSetFocus<FieldName>
+  isExistInErrors: UseFormIsExistInErrors<FieldName>
 }
 
 export type FieldArrayDefaultValues = Record<number, any>
