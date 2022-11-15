@@ -20,6 +20,8 @@ import { getValidationMode } from '../utils/getValidationMode'
 import { isFieldElement } from '../utils/isFieldElement'
 import { warn } from '../utils/warn'
 import { handleValidateError, validateField } from './validate'
+import type { ResolverValues } from '../types/resolver'
+import type { FieldPath } from '../types/path'
 import type { RegisterOptions } from '../types/validator'
 import type { DefaultValues, UnpackNestedValue } from '../types/utils'
 import type {
@@ -46,7 +48,7 @@ import type { FieldError, FieldErrors } from '../types/errors'
 export function creatFormControl<
   TFieldValues extends FieldValues = FieldValues
 >(_options: Partial<UseFormProps<TFieldValues>>): UseFormReturn<TFieldValues> {
-  type FieldsKey = keyof TFieldValues
+  type FieldsKey = FieldPath<TFieldValues>
   type TFormState = FormState<TFieldValues>
   type TFormStateKey = keyof TFormState
 
@@ -80,11 +82,14 @@ export function creatFormControl<
     }
   }
 
-  const _setFormStateError = (fieldName: FieldsKey, error: FieldError) => {
+  const _setFormStateError = (
+    fieldName: FieldsKey | string,
+    error: FieldError
+  ) => {
     set(_formState.errors, fieldName, error)
   }
 
-  const _getFormStateError = (fieldName?: FieldsKey) =>
+  const _getFormStateError = (fieldName?: FieldsKey | string) =>
     fieldName ? get(_formState.errors, fieldName) : _formState.errors
 
   const isEmptyErrors = () => {
@@ -97,7 +102,7 @@ export function creatFormControl<
     return true
   }
 
-  const _removeFormStateError = (fieldName: FieldsKey) => {
+  const _removeFormStateError = (fieldName: FieldsKey | string) => {
     if (isEmptyObject(_formState.errors)) {
       return
     }
@@ -105,11 +110,14 @@ export function creatFormControl<
     unset(_formState.errors, fieldName)
   }
 
-  const _getField = (name: FieldsKey) => {
+  const _getField = (name: FieldsKey | string) => {
     return get(_fields, name)
   }
 
-  const _setFields = (name: FieldsKey, fieldOptions: Partial<Field>) => {
+  const _setFields = (
+    name: FieldsKey | string,
+    fieldOptions: Partial<Field>
+  ) => {
     // init field
     const field = _getField(name)
     if (isNullOrUndefined(field)) {
@@ -119,7 +127,7 @@ export function creatFormControl<
     set(_fields, name, { ...field, ...fieldOptions })
   }
 
-  const _getDefaultValue = (field: FieldsKey) => {
+  const _getDefaultValue = (field: FieldsKey | string) => {
     return _defaultValues[field]
   }
 
@@ -130,7 +138,7 @@ export function creatFormControl<
     return _getField(name).el.value as FieldElement | undefined
   }
 
-  const _isDirtyField = (fieldName: FieldsKey) => {
+  const _isDirtyField = (fieldName: FieldsKey | string) => {
     const field = _getField(fieldName)
 
     if (!field) {
@@ -187,7 +195,7 @@ export function creatFormControl<
     return dirtyFields
   }
 
-  const _handleDirtyField = (fieldName: FieldsKey) => {
+  const _handleDirtyField = (fieldName: FieldsKey | string) => {
     const field = _getField(fieldName)
 
     if (field.isUnregistered) {
@@ -237,7 +245,7 @@ export function creatFormControl<
   }
 
   const _validate = async (
-    fieldName: FieldsKey,
+    fieldName: FieldsKey | string,
     isValidateAllFields = false
   ) => {
     const field = _getField(fieldName)
@@ -290,10 +298,16 @@ export function creatFormControl<
     // resolver
     if (isFunction(resolver)) {
       const values = Object.fromEntries(
-        Object.entries(_fields).map(([key, val]) => [key, val.inputValue.value])
+        // TODO solve `any` type problem
+        Object.entries(_fields).map(([key, val]) => [
+          key,
+          (val as any).inputValue.value,
+        ])
       )
-      const errors = await resolver(values as Record<keyof TFieldValues, any>)
-      if (!isEmptyObject(errors)) res = errors[fieldName] as FieldError
+      const errors = await resolver(values as ResolverValues<FieldsKey>)
+      if (!isEmptyObject(errors)) {
+        res = errors[fieldName] as FieldError
+      }
     } else {
       res = await validateField(
         field,
@@ -483,7 +497,10 @@ export function creatFormControl<
     }
   }
 
-  const _setFieldsValue = (name: FieldsKey, value: TFieldValues[FieldsKey]) => {
+  const _setFieldsValue = (
+    name: FieldsKey | string,
+    value: TFieldValues[FieldsKey]
+  ) => {
     const field = _getField(name)
     const el = field.el.value
 
@@ -494,7 +511,7 @@ export function creatFormControl<
     }
   }
 
-  const setValue: UseFormSetValue<TFieldValues, FieldsKey> = async (
+  const setValue: UseFormSetValue<TFieldValues> = async (
     name,
     value,
     config = {}
@@ -529,7 +546,7 @@ export function creatFormControl<
     })
 
   const getValues: UseFormGetValues<FieldValues, FieldsKey> = (fieldNames) => {
-    const res: GetValuesReturn<FieldValues, FieldsKey> = {}
+    const res: GetValuesReturn<FieldValues> = {}
 
     if (isUndefined(fieldNames)) {
       for (const name of _originalFieldsKey.keys()) {
@@ -686,10 +703,7 @@ export function creatFormControl<
     }
 
     if (!options.keepValue) {
-      _setFieldsValue(
-        fieldName as string,
-        _defaultValues[fieldName] || ('' as any)
-      )
+      _setFieldsValue(fieldName, _defaultValues[fieldName] || ('' as any))
     }
 
     _setFields(fieldName, {

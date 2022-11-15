@@ -9,7 +9,7 @@ import type {
 } from './utils'
 import type { FieldError, FieldErrors } from './errors'
 import type { RegisterOptions } from './validator'
-import type { FieldPath } from './path'
+import type { FieldPath, FieldPathValue } from './path'
 
 export type Mode = 'onSubmit' | 'onBlur' | 'onChange' | 'onTouched' | 'all'
 
@@ -67,11 +67,10 @@ export type UseFormClearErrors<FieldName> = (
   fieldName?: FieldName | FieldName[]
 ) => void
 
-export type GetValuesReturn<
-  FieldValues,
-  FieldVal = FieldValues[keyof FieldValues]
-> = {
-  [K in keyof FieldValues]: FieldVal
+export type GetValuesReturn<TFieldValues extends FieldValues> = {
+  [K in keyof TFieldValues]: TFieldValues[K] extends NestedValue<infer U>
+    ? U
+    : TFieldValues[K]
 }
 
 export type UseFormGetValues<FieldValues, FieldKeys> = (
@@ -94,22 +93,21 @@ export type UseFormSetError<FieldName> = (
   config?: { shouldFocusError: boolean }
 ) => void
 
-export type UseFormSetValue<
-  FieldValues,
-  FieldName extends keyof FieldValues,
-  Value = FieldValues[FieldName]
-> = (
-  name: FieldName,
-  value: Value,
-  config?: {
+export type UseFormSetValue<TFieldValues extends FieldValues> = <
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>(
+  name: TFieldName,
+  value: FieldPathValue<TFieldValues, TFieldName>,
+  options?: {
     shouldValidate?: boolean
     shouldDirty?: boolean
   }
 ) => Promise<void>
 
-export type UseFormTriggerValidate<FieldKeys> = (
-  fieldNames?: FieldKeys | FieldKeys[]
-) => Promise<void>
+export type UseFormTriggerValidate<
+  TFieldValues extends FieldValues,
+  FieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> = (fieldNames?: FieldName | FieldName[]) => Promise<void>
 
 export type UseFormResetField<TFieldValues extends FieldValues> = <
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
@@ -131,8 +129,10 @@ export type UseFormReset<TFieldValues extends FieldValues> = (
   keepStateOptions?: KeepStateOptions
 ) => void
 
-export type UseFormUnregister<TFieldValues extends FieldValues> = (
-  name?: keyof TFieldValues,
+export type UseFormUnregister<TFieldValues extends FieldValues> = <
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>(
+  name?: TFieldName,
   options?: Omit<
     KeepStateOptions,
     | 'keepIsSubmitted'
@@ -163,9 +163,15 @@ export type UseFormRegister<TFieldValues extends FieldValues> = <
   options?: RegisterOptions<TFieldValues, TFieldName>
 ) => any // UseFormRegisterReturn<TFieldName>
 
-export type UseFormSetFocus<FieldName> = (name: FieldName) => void
+export type UseFormSetFocus<
+  TFieldValues extends FieldValues,
+  FieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> = (name: FieldName) => void
 
-export type UseFormIsExistInErrors<FieldName> = (name: FieldName) => boolean
+export type UseFormIsExistInErrors<
+  TFieldValues extends FieldValues,
+  FieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> = (name: FieldName) => boolean
 
 export interface UseFormHandlers<
   TFieldValues extends FieldValues,
@@ -175,7 +181,7 @@ export interface UseFormHandlers<
   getFieldState: UseFormGetFieldState<FieldName>
   setError: UseFormSetError<FieldName>
   clearErrors: UseFormClearErrors<FieldName>
-  setValue: UseFormSetValue<TFieldValues, FieldName>
+  setValue: UseFormSetValue<TFieldValues>
   triggerValidate: UseFormTriggerValidate<FieldName>
   reset: UseFormReset<TFieldValues>
   handleSubmit: UseFormHandleSubmit<TFieldValues>

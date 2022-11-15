@@ -113,7 +113,7 @@ export type PathValue<T, P extends Path<T> | ArrayPath<T>> = T extends any
  */
 export type FieldPathValue<
   TFieldValues extends FieldValues,
-  TFieldPath extends FieldPath<TFieldValues>
+  TFieldPath extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > = PathValue<TFieldValues, TFieldPath>
 
 /**
