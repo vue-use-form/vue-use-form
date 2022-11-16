@@ -573,7 +573,7 @@ export function creatFormControl<
 
   const register: UseFormRegister<TFieldValues> = (
     fieldName,
-    options?: RegisterOptions
+    options?: RegisterOptions<TFieldValues>
   ) => {
     if (isUndefined(options)) {
       options = {}
