@@ -5,5 +5,5 @@ module.exports = defineConfig({
   rules: {
     'vue/valid-attribute-name': 'off',
     'prettier/prettier': 'off',
-  },
+  }
 })
