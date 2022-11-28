@@ -542,7 +542,9 @@ export function creatFormControl<
     nextTick(() => {
       const el = _getFieldDom(name)
 
-      if (el) el.focus()
+      if (el) {
+        el.focus()
+      }
     })
 
   const getValues: UseFormGetValues<FieldValues, FieldsKey> = (fieldNames) => {
@@ -550,13 +552,15 @@ export function creatFormControl<
 
     if (isUndefined(fieldNames)) {
       for (const name of _originalFieldsKey.keys()) {
-        set(res, name, _getField(name).inputValue.value)
+        set(res, name, _getField(name))
       }
     } else {
-      if (!isArray(fieldNames)) fieldNames = [fieldNames]
+      if (!isArray(fieldNames)) {
+        fieldNames = [fieldNames]
+      }
 
       fieldNames.forEach((name) => {
-        set(res, name as string, _getField(name).inputValue.value)
+        set(res, name as string, _getField(name))
       })
     }
 
