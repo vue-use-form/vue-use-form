@@ -1,30 +1,66 @@
+import type { FieldArrayPathValue } from './path/path';
+import type { FieldArrayPath , FieldPath } from './path'
 import type { FieldValues } from './filed'
 import type { UseFormControl } from './form'
 
 export interface UseFieldArrayField<
   TFieldValues extends FieldValues = FieldValues,
-  > {
+  FieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> {
   index: number
-  name: keyof TFieldValues
+  name: FieldName
 }
 
-export interface UseFieldArrayProps<TFieldValues extends FieldValues> {
-  control: UseFormControl<TFieldValues>
-  name: keyof TFieldValues
-}
+export type UseFieldArrayProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldArrayName extends FieldArrayPath<TFieldValues> = FieldArrayPath<TFieldValues>,
+  TKeyName extends string = 'id',
+> = {
+  name: TFieldArrayName;
+  keyName?: TKeyName;
+  control?: UseFormControl<TFieldValues>;
+  shouldUnregister?: boolean;
+};
+
+export type FieldArray<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldArrayName extends FieldArrayPath<TFieldValues> = FieldArrayPath<TFieldValues>,
+> = FieldArrayPathValue<TFieldValues, TFieldArrayName> extends
+  | ReadonlyArray<infer U>
+  | null
+  | undefined
+  ? U
+  : never;
+
 
 export type FieldPayload<
   TFieldValues extends FieldValues[] = FieldValues[],
-  FieldNames extends string = TFieldValues extends (infer R)[] ? keyof R : '',
-  > = {
-    [K in FieldNames]?: TFieldValues extends (infer R)[] ? R[keyof R]: never
-  }
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> = TFieldName
 
-export type UseFieldArrayInsert<TFieldValues extends FieldValues[]> = (startIndex: number, field: FieldPayload<TFieldValues>) => void
+export interface FieldArrayMethodOptions { 
+  /**
+   * should focus when field update
+   * 
+   * @default false
+   */
+  shouldFocus?: boolean 
+}
 
-export type UseFieldArrayAppend<TFieldValues extends FieldValues[]> = (field: FieldPayload<TFieldValues>) => void
+export type UseFieldArrayInsert<TFieldValues extends FieldValues[]> = (
+  startIndex: number,
+  field: FieldPayload<TFieldValues>
+) => void
 
-export type UseFieldArrayPrepend<TFieldValues extends FieldValues[]> = (field: FieldPayload<TFieldValues>) => void
+export type UseFieldArrayAppend<TFieldValues extends FieldValues[]> = (
+  field: FieldPayload<TFieldValues>,
+  options?: FieldArrayMethodOptions,
+) => void
+
+export type UseFieldArrayPrepend<TFieldValues extends FieldValues[]> = (
+  field: FieldPayload<TFieldValues>,
+  options?: FieldArrayMethodOptions,
+) => void
 
 export type UseFieldArrayRemove = (id: number | number[]) => void
 

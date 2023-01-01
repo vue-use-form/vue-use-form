@@ -1,89 +1,87 @@
 import { reactive } from 'vue'
 import set from 'lodash.setwith'
-import { isArray } from '../utils'
-import type {
-  UseFieldArrayAppend,
-  UseFieldArrayField,
-  UseFieldArrayInsert,
-  UseFieldArrayPrepend,
-  UseFieldArrayProps,
-  UseFieldArrayRemove,
-  UseFieldArraySwap,
-} from '../types/fieldArray'
-import type { FieldValues } from '../types/filed'
+import type { FieldArray } from '../types/fieldArray';
+import type { FieldArrayPath } from '../types/path/path';
+import type { FieldValues } from '../types/filed';
 
+
+// _options: UseFieldArrayProps<TFieldValues, TFieldArrayName>
 export function createFieldArray<
-  TFieldsValues extends FieldValues = FieldValues
->(_options: UseFieldArrayProps<TFieldsValues>) {
-  type TFields = UseFieldArrayField<TFieldsValues>
-  type TArrayField = TFieldsValues[typeof name] extends [infer R]
-    ? R extends FieldValues
-      ? R[]
-      : FieldValues[]
-    : FieldValues[]
+TFieldValues extends FieldValues = FieldValues,
+TFieldArrayName extends FieldArrayPath<TFieldValues> = FieldArrayPath<TFieldValues>,
+>() {
+  // const { control, name } = _options
 
-  const { name, control } = _options
+  const fields = reactive([])
 
-  const _fields = reactive([]) as TFields[]
-
-  let fieldIndex = 0
-
-  const _createFields = (fieldName: string, defaultVal: unknown) => {
-    fieldIndex++
-
-    set(control._fieldArrayDefaultValues, fieldIndex, defaultVal)
-
-    return {
-      index: fieldIndex,
-      name: fieldName,
-    } as TFields
-  }
-
-  const append: UseFieldArrayAppend<TArrayField> = (fields) => {
-    Object.entries(fields).forEach(([fieldName, defaultVal]) => {
-      _fields.push(_createFields(fieldName, defaultVal))
-    })
-  }
-
-  const prepend: UseFieldArrayPrepend<TArrayField> = (fields) => {
-    Object.entries(fields).forEach(([fieldName, defaultVal]) => {
-      _fields.unshift(_createFields(fieldName, defaultVal))
-    })
-  }
-
-  const remove: UseFieldArrayRemove = (indexes) => {
-    if (!isArray(indexes)) {
-      indexes = [indexes]
-    }
-    for (const index of indexes) {
-      const targetIndex = _fields.findIndex((field) => field.index === index)
-
-      if (targetIndex >= 0) {
-        _fields.splice(targetIndex, 1)
+  const updateField = (
+    value: 
+    Partial<FieldArray<TFieldValues, TFieldArrayName>>
+    | Partial<FieldArray<TFieldValues, TFieldArrayName>>[],
+    cb: (obj: any) => void
+    ) => {
+      if (!Array.isArray(value)) {
+        value = [value]
       }
+  
+      value.forEach(v => {
+        const obj = Object.create(null)
+        Object.entries(v).forEach(([key, val]) => {
+          set(obj, key, val)
+        })
+        cb(obj)
+      })
     }
+
+  const append = (
+    value: 
+      Partial<FieldArray<TFieldValues, TFieldArrayName>>
+      | Partial<FieldArray<TFieldValues, TFieldArrayName>>[],
+  ) => {
+    updateField(value, (obj) => fields.push(obj))
   }
 
-  const insert: UseFieldArrayInsert<TArrayField> = (startIndex, fields) => {
-    const fieldsMap = Object.entries(fields).map(([fieldName, options]) =>
-      _createFields(fieldName, options)
-    )
-
-    _fields.splice(startIndex, 0, ...fieldsMap)
+  const prepend = (
+    value: 
+    |  Partial<FieldArray<TFieldValues, TFieldArrayName>>
+      | Partial<FieldArray<TFieldValues, TFieldArrayName>>[],
+  ) => {
+    updateField(value, (obj) => fields.unshift(obj))
   }
 
-  const swap: UseFieldArraySwap = (from, to) => {
-    const temp = _fields[from]
-    _fields[from] = _fields[to]
-    _fields[to] = temp
+  const insert = (
+    index: number, value: Partial<FieldArray<TFieldValues, TFieldArrayName>>
+    | Partial<FieldArray<TFieldValues, TFieldArrayName>>[],
+  ) => {
+    updateField(value, (obj) => fields.splice(index, 0, obj))
+  }
+
+  const swap = (from: number, to: number) => {
+    const temp = fields[from]
+    fields[from] = fields[to]
+    fields[to] = temp
+  }
+
+  const remove = (index?: number | number[]) => {
+    if (!index) {
+      fields.splice(0, fields.length)
+      return
+    }
+    if (!Array.isArray(index)) {
+      index = [index]
+    }
+
+    index.forEach(i => {
+      fields.splice(i, 1)
+    })
   }
 
   return {
     append,
     prepend,
-    remove,
     insert,
     swap,
-    fields: _fields,
+    remove,
+    fields,
   }
 }

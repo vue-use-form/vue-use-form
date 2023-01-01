@@ -4,23 +4,23 @@
   "description": "class-validator resolver for vue-use-form",
   "keywords": ["class-validator", "vue-use-form", "vue-hook-form", "vue-use-form-resolver"],
   "license": "MIT",
-  "author": "snowingfox",
+  "homepage": "https://github.com/vue-use-form/vue-use-form/tree/master/packages/resolver-class-validator#readme",
   "repository": {
     "url": "https://github.com/vue-use-form/vue-use-form/packages/resolver-class-validator"
   },
+  "author": "snowingfox",
+  "files": [
+    "dist"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "homepage": "https://github.com/vue-use-form/vue-use-form/tree/master/packages/resolver-class-validator#readme",
   "exports": {
     ".": {
       "require": "./dist/index.cjs",
       "import": "./dist/index.mjs"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch src"

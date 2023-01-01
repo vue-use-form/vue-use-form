@@ -104,10 +104,17 @@ export type UseFormSetValue<TFieldValues extends FieldValues> = <
   }
 ) => Promise<void>
 
+export type UseFormTriggerValidateOptions = {
+  shouldFocus?: boolean
+}
+
 export type UseFormTriggerValidate<
   TFieldValues extends FieldValues,
   FieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
-> = (fieldNames?: FieldName | FieldName[]) => Promise<void>
+> = (
+  fieldNames?: FieldName | FieldName[],
+  options?: UseFormTriggerValidateOptions
+) => Promise<void>
 
 export type UseFormResetField<TFieldValues extends FieldValues> = <
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
@@ -160,7 +167,7 @@ export type UseFormRegister<TFieldValues extends FieldValues> = <
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >(
   name: TFieldName,
-  options?: RegisterOptions<TFieldValues, TFieldName>
+  options?: RegisterOptions<TFieldValues>
 ) => any // UseFormRegisterReturn<TFieldName>
 
 export type UseFormSetFocus<

@@ -246,9 +246,21 @@ export function creatFormControl<
 
   const _validate = async (
     fieldName: FieldsKey | string,
-    isValidateAllFields = false
+    options: {
+      isValidateAllFields?: boolean
+      shouldFocus?: boolean
+    } = {
+      isValidateAllFields: false,
+      shouldFocus: false,
+    }
   ) => {
     const field = _getField(fieldName)
+
+    if (isUndefined(options.isValidateAllFields)) {
+      options.isValidateAllFields = false
+    } else if (isUndefined(options.shouldFocus)) {
+      options.shouldFocus = false
+    }
 
     if (isEmptyObject(_fields) || isNullOrUndefined(field)) {
       return
@@ -260,7 +272,7 @@ export function creatFormControl<
     }
 
     const setValidating = (payload: boolean) =>
-      !isValidateAllFields && _setValidating(payload)
+      !options.isValidateAllFields && _setValidating(payload)
     const resolver = _options.resolver
     const el = unref(field.el)
     let res: FieldError = {}
@@ -327,7 +339,6 @@ export function creatFormControl<
         unref(_options.shouldFocusError!),
         shouldDisplayAllAssociatedErrors
       )
-
     setValidating(false)
 
     // delayError
@@ -346,16 +357,27 @@ export function creatFormControl<
     }
   }
 
-  const _validateAllFields = async () => {
+  const _validateAllFields = async (shouldFocus?: boolean) => {
     _setValidating(true)
     for (const fieldName of _originalFieldsKey.keys())
-      await _validate(fieldName, true)
+      await _validate(fieldName, { isValidateAllFields: true, shouldFocus })
 
     _setValidating(false)
   }
 
-  const trigger = async (name?: FieldsKey) => {
-    await (isString(name) ? _validate(name) : _validateAllFields())
+  const trigger = async (names?: FieldsKey | FieldsKey[]) => {
+    if (isUndefined(names)) {
+      await _validateAllFields()
+      return
+    }
+
+    if (isString(names)) {
+      names = [names]
+    }
+
+    for (const name of names) {
+      await _validate(name)
+    }
   }
 
   const _onChange = async (name?: FieldsKey) => {
@@ -366,16 +388,21 @@ export function creatFormControl<
   }
 
   const triggerValidate: UseFormTriggerValidate<FieldsKey> = async (
-    fieldNames
+    fieldNames,
+    options
   ) => {
     if (isUndefined(fieldNames)) {
-      await _validateAllFields()
+      await _validateAllFields(options.shouldFocus)
     } else {
       if (!isArray(fieldNames)) {
         fieldNames = [fieldNames]
       }
 
-      await Promise.all(fieldNames.map((name) => _validate(name)))
+      await Promise.all(
+        fieldNames.map((name) =>
+          _validate(name, { shouldFocus: options.shouldFocus })
+        )
+      )
     }
   }
 
