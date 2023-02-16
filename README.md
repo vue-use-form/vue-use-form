@@ -59,6 +59,6 @@ const {
 
 
 ## use with schema
-- [@vue-use-form/class-validator](https://github.com/vue-use-form/vue-use-form/tree/master/packages/resolver-class-validator)
-- [@vue-use-form/yup](https://github.com/vue-use-form/vue-use-form/tree/master/packages/resolver-yup)
+- [@vue-use-form/class-validator](https://github.com/vue-use-form/vue-use-form/tree/main/packages/resolver-class-validator)
+- [@vue-use-form/yup](https://github.com/vue-use-form/vue-use-form/tree/main/packages/resolver-yup)
 

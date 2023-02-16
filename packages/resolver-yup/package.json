@@ -8,7 +8,7 @@
   "repository": {
     "url": "https://github.com/vue-use-form/vue-use-form/packages/resolver-yup"
   },
-  "homepage": "https://github.com/vue-use-form/vue-use-form/tree/master/packages/resolver-yup#readme",
+  "homepage": "https://github.com/vue-use-form/vue-use-form/tree/main/packages/resolver-yup#readme",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

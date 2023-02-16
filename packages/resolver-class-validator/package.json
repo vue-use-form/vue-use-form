@@ -4,7 +4,7 @@
   "description": "class-validator resolver for vue-use-form",
   "keywords": ["class-validator", "vue-use-form", "vue-hook-form", "vue-use-form-resolver"],
   "license": "MIT",
-  "homepage": "https://github.com/vue-use-form/vue-use-form/tree/master/packages/resolver-class-validator#readme",
+  "homepage": "https://github.com/vue-use-form/vue-use-form/tree/main/packages/resolver-class-validator#readme",
   "repository": {
     "url": "https://github.com/vue-use-form/vue-use-form/packages/resolver-class-validator"
   },

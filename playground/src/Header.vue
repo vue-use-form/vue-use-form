@@ -113,7 +113,7 @@ async function fetchVersions(): Promise<string[]> {
           </li>
           <li>
             <a
-              href="https://github.com/vue-use-form/vue-use-form/commits/master"
+              href="https://github.com/vue-use-form/vue-use-form/commits/main"
               target="_blank"
             >Commits History</a>
           </li>
@@ -151,7 +151,7 @@ async function fetchVersions(): Promise<string[]> {
       </button>
       <button title="View on GitHub" class="github">
         <a
-          href="https://github.com/vue-use-form/vue-use-form/tree/master/playground"
+          href="https://github.com/vue-use-form/vue-use-form/tree/main/playground"
           target="_blank"
         >
           <GitHub />
